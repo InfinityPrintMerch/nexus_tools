@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Convertir Imagen | Eduardo Workspace</title>
+
+    <!-- SCRIPT DE PROTECCIÓN DE ACCESO SILENCIOSO -->
+    <script>
+        if (!sessionStorage.getItem('secure_app_token')) {
+            document.documentElement.style.display = 'none';
+            window.location.replace("../../index.html");
+        }
+    </script>
+
+    <!-- Librerías requeridas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Fuente Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* VARIABLES DE AURO STUDIO */
+        :root {
+            --primary: #6F8A3C;
+            --primary-hover: #58702f;
+            --primary-light: #f2f5eb;
+            --bg-color: #f4f6f4;
+            --surface: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: url('../../assets/auro/bg.png');
+            /* Ajusta la ruta a tu imagen de fondo */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            flex: 1;
+        }
+
+        /* BANNER Y NAVEGACIÓN */
+        .back-nav {
+            margin-bottom: 20px;
+        }
+
+        .back-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .back-nav a:hover {
+            color: var(--primary);
+        }
+
+        .top-banner {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-radius: var(--radius-xl);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            text-align: center;
+        }
+
+        .top-banner h1 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .top-banner p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* TARJETA PRINCIPAL */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            padding: 40px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* ZONA DE DRAG & DROP INICIAL */
+        .file-upload {
+            border: 2px dashed var(--border);
+            background: var(--primary-light);
+            padding: 60px 20px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .file-upload.dragover,
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: #e4efe0;
+        }
+
+        .file-upload i {
+            color: var(--primary);
+            font-size: 45px;
+        }
+
+        .file-upload span {
+            font-weight: 500;
+            color: var(--text-main);
+            font-size: 1.1rem;
+        }
+
+        /* CONTENEDOR DE TRABAJO (Oculto al inicio) */
+        .pdf2jpg-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        @media (min-width: 900px) {
+            .pdf2jpg-container {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+        }
+
+        /* ZONA DE PREVISUALIZACIONES */
+        .pdf2jpg-preview {
+            flex: 1;
+            background: var(--bg-color);
+            border-radius: var(--radius-lg);
+            border: 1px inset var(--border);
+            padding: 20px;
+            min-height: 300px;
+        }
+
+        .pdf2jpg-preview h3 {
+            font-size: 1.05rem;
+            color: var(--text-main);
+            margin-bottom: 15px;
+        }
+
+        /* Cuadrícula de Imágenes generada por JS */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 15px;
+        }
+
+        .image-preview-item {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .image-preview-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
+
+        .image-preview-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .file-type-display {
+            padding: 8px;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-main);
+            background: var(--surface);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* PANEL DE CONTROLES LATERAL */
+        .pdf2jpg-controls {
+            width: 100%;
+            max-width: 320px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        #addMoreContainer label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed var(--primary);
+            color: var(--primary);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--primary-light);
+            gap: 8px;
+        }
+
+        #addMoreContainer label:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Controles de Formulario */
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .control-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--border);
+            background: var(--bg-color);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        select:focus {
+            border-color: var(--primary);
+        }
+
+        /* Botones Globales */
+        .pdf2jpg-btn {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.2);
+        }
+
+        .pdf2jpg-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .pdf2jpg-btn:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Barras de Progreso */
+        .progress-wrapper {
+            display: none;
+            margin-bottom: 10px;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        /* Status de conversión */
+        .pdf2jpg-status {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="back-nav">
+            <a href="../../index.html"><i class="fas fa-arrow-left"></i> Volver al Portal</a>
+        </div>
+
+        <section class="top-banner">
+            <h1>Convertir Imagen</h1>
+            <p>Convierte tus imágenes a múltiples formatos y resoluciones de forma local.</p>
+        </section>
+
+        <main class="card">
+
+            <!-- Zona de Carga Inicial -->
+            <label for="inputImage" class="file-upload" id="dragDropArea">
+                <i class="fas fa-images"></i>
+                <span>Arrastra y suelta tus imágenes aquí, o haz click para seleccionar archivos</span>
+                <input type="file" id="inputImage" accept="image/*" multiple style="display:none;" />
+            </label>
+
+            <!-- Progreso de Carga -->
+            <div id="loadingProgressContainer" class="progress-wrapper">
+                <div id="loadingProgressText" class="progress-text">Cargando imágenes...</div>
+                <div class="progress-container">
+                    <div id="loadingProgressBar" class="progress-bar"></div>
+                </div>
+            </div>
+
+            <!-- Contenedor Principal (Workspace) -->
+            <div class="pdf2jpg-container">
+
+                <!-- Vista Previa -->
+                <div class="pdf2jpg-preview">
+                    <h3>Previsualización de Imágenes:</h3>
+                    <div id="imagePreviewPages" class="image-grid"></div>
+                </div>
+
+                <!-- Panel de Controles -->
+                <div class="pdf2jpg-controls">
+
+                    <div id="addMoreContainer">
+                        <label for="inputImage">
+                            <i class="fas fa-plus"></i> Agregar Imágenes
+                        </label>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="convertFormatSelect">Convertir a:</label>
+                        <select id="convertFormatSelect">
+                            <option value="jpeg">JPG</option>
+                            <option value="png">PNG</option>
+                            <option value="webp">WEBP</option>
+                            <option value="avif">AVIF</option>
+                            <option value="bmp">BMP</option>
+                            <option value="tiff">TIFF</option>
+                            <option value="heic">HEIC</option>
+                            <option value="ico">ICO</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="resolutionSelect">Resolución (DPI):</label>
+                        <select id="resolutionSelect">
+                            <option value="72">72 dpi</option>
+                            <option value="150">150 dpi</option>
+                            <option value="300" selected>300 dpi</option>
+                            <option value="600">600 dpi</option>
+                            <option value="1200">1200 dpi</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="colorProfileSelect">Perfil de Color:</label>
+                        <select id="colorProfileSelect">
+                            <option value="rgb" selected>RGB</option>
+                            <option value="cmyk">CMYK</option>
+                        </select>
+                    </div>
+
+                    <!-- Progreso de Conversión -->
+                    <div id="progressContainerWrapper" class="progress-wrapper" style="display: none;">
+                        <div id="progressText" class="progress-text">Procesando imágenes...</div>
+                        <div class="progress-container" id="progressContainer">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+                    </div>
+
+                    <!-- Este botón se reutiliza en el JS para Convertir y Descargar -->
+                    <button id="convertBtn" class="pdf2jpg-btn">Convertir</button>
+                    <a id="downloadBtn" class="pdf2jpg-btn" style="display: none;" download>Descargar</a>
+
+                    <div id="status" class="pdf2jpg-status"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Script de lógica -->
+    <script src="image_converter.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,93 @@
+const db = {
+            doctores: [
+        {
+                    id: 1, nombre: "Guadalupe Maximina Arpidez Gutiérrez", cedula: "3662273", matricula: "", universidad: "Universidad Nacional Autónoma de México"
+        },
+        {
+                    id: 2, nombre: "Graciela Dionicio Ruiz", cedula: "3662275", matricula: "", universidad: "Universidad Nacional Autónoma de México"
+        },
+        {
+                    id: 3, nombre: "Ranulfo Cruz Rosalino", cedula: "3662277", matricula: "", universidad: "Universidad Nacional Autónoma de México"
+        }
+    ],
+            clinicas: [
+        {
+                    id: "tlaxcala", nombre: "UMF No. 19 Tlaxcala (Matutino)", delegacion: "Tlaxcala", unidad: "UMF 19", consultorio: "11", clave: "C223602210", turno: "Matutino", direccion: "Blvd. Francisco I. Madero 601, Centro, C.P. 90300, Ciudad de Apizaco, Tlaxcala"
+        },
+        {
+                    id: "tlaxcala", nombre: "UMF No. 2 Tlaxcala (Matutino)", delegacion: "Tlaxcala", unidad: "UMF 2", consultorio: "2", clave: "HGZMF2", turno: "Matutino", direccion: "Calle Centenario y Venustiano Carranza S/N, Unidad INFONAVIT CTM, C.P. 90350, Ciudad de Apizaco, Tlaxcala."
+        }
+    ],
+            recetas: [
+        {
+                    id: "dolor_leve",
+                    nombre: "Dolor Leve / Fiebre (Paracetamol)",
+                    texto: "PARACETAMOL 500 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 8 horas en caso de dolor o fiebre durante 5 Día(s).\nCantidad a surtir 1 ENV."
+        },
+        {
+                    id: "dolor_fuerte",
+                    nombre: "Dolor Moderado a Severo (Ketorolaco)",
+                    texto: "KETOROLACO 10 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 8 horas en caso de dolor intenso, máximo por 5 Día(s).\nCantidad a surtir 1 ENV."
+        },
+        {
+                    id: "dolor_inflamatorio",
+                    nombre: "Dolor Articular / Antiinflamatorio (Ibuprofeno)",
+                    texto: "IBUPROFENO 400 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 8 horas después de los alimentos durante 5 Día(s).\nCantidad a surtir 1 ENV."
+        },
+        {
+                    id: "dolor_colico",
+                    nombre: "Espasmo / Cólico Abdominal (Butilhioscina)",
+                    texto: "BUTILHIOSCINA 10 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 8 horas en caso de dolor o cólico durante 3 Día(s).\nCantidad a surtir 1 ENV."
+        },
+        {
+                    id: "gastritis_reflujo",
+                    nombre: "Gastritis / Reflujo (Omeprazol)",
+                    texto: "OMEPRAZOL 20 MG CÁPSULAS.\nVía oral. Tomar 1 cápsula cada 24 horas por las mañanas en ayuno durante 30 Día(s).\nCantidad a surtir 2 ENV."
+        },
+        {
+                    id: "diabetes_control",
+                    nombre: "Control Diabetes (Metformina / Glibenclamida)",
+                    texto: "METFORMINA 850 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 12 horas con los alimentos durante 30 Día(s).\nCantidad a surtir 3 ENV.\n\nGLIBENCLAMIDA 5 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 24 horas antes del desayuno durante 30 Día(s).\nCantidad a surtir 1 ENV."
+        },
+        {
+                    id: "hipertension",
+                    nombre: "Control Hipertensión (Losartán)",
+                    texto: "LOSARTÁN 50 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 12 horas durante 30 Día(s).\nCantidad a surtir 2 ENV."
+        },
+        {
+                    id: "hipertension_amlodipino",
+                    nombre: "Control Hipertensión (Amlodipino)",
+                    texto: "AMLODIPINO 5 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 24 horas durante 30 Día(s).\nCantidad a surtir 1 ENV."
+        },
+        {
+                    id: "colesterol_trigliceridos",
+                    nombre: "Dislipidemia / Colesterol (Atorvastatina)",
+                    texto: "ATORVASTATINA 20 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 24 horas por las noches durante 30 Día(s).\nCantidad a surtir 1 ENV."
+        },
+        {
+                    id: "infeccion_resp",
+                    nombre: "Infección Respiratoria (Amoxicilina)",
+                    texto: "AMOXICILINA 500 MG CÁPSULAS.\nVía oral. Tomar 1 cápsula cada 8 horas durante 7 Día(s).\nCantidad a surtir 2 ENV.\n\nPARACETAMOL 500 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 8 horas en caso de dolor o fiebre durante 5 Día(s).\nCantidad a surtir 1 ENV."
+        },
+        {
+                    id: "infeccion_urinaria",
+                    nombre: "Infección Urinaria (Nitrofurantoína)",
+                    texto: "NITROFURANTOÍNA 100 MG CÁPSULAS.\nVía oral. Tomar 1 cápsula cada 6 horas junto con alimentos durante 7 Día(s).\nCantidad a surtir 2 ENV."
+        },
+        {
+                    id: "infeccion_gastro",
+                    nombre: "Gastroenteritis / Infección Intestinal (Trimetoprima)",
+                    texto: "TRIMETOPRIMA Y SULFAMETOXAZOL 160/800 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 12 horas durante 5 Día(s).\nCantidad a surtir 1 ENV."
+        },
+        {
+                    id: "alergia_rinitis",
+                    nombre: "Alergia / Rinitis (Loratadina)",
+                    texto: "LORATADINA 10 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 24 horas durante 10 Día(s).\nCantidad a surtir 1 ENV."
+        },
+        {
+                    id: "tos_flemas",
+                    nombre: "Tos con Expectoración (Ambroxol)",
+                    texto: "AMBROXOL 30 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 8 horas durante 5 Día(s).\nCantidad a surtir 1 ENV."
+        }
+    ]
+};

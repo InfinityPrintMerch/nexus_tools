@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Eduardo Workspace</title>
+
+    <!-- Fuente Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* VARIABLES GLOBALES EXTRAÍDAS DE AURO COTIZER */
+        :root {
+            --primary: #6F8A3C;
+            --primary-hover: #58702f;
+            --primary-light: #f2f5eb;
+            --border-focus: #6F8A3C;
+
+            --bg-color: #f4f6f4;
+            --surface: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --danger: #e53e3e;
+            --danger-light: #fff5f5;
+
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: url('assets/auro/bg.png');
+            /* Se mantendrá si tienes la imagen en el directorio raíz */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            line-height: 1.5;
+            -webkit-user-select: none;
+            user-select: none;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        input {
+            -webkit-user-select: auto;
+            user-select: auto;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        /* ===== PANTALLA DE LOGIN ===== */
+        .login-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            padding: 35px 30px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .login-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 15px auto;
+        }
+
+        .login-header h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .login-header p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(111, 138, 60, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 24px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.2);
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(111, 138, 60, 0.3);
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 0.85rem;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: 500;
+            display: none;
+        }
+
+        /* ===== DASHBOARD ===== */
+        .dashboard-wrapper {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .top-banner {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 16px 30px;
+            border-radius: var(--radius-xl);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-profile img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-light);
+        }
+
+        .user-info h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        .user-info p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .btn-logout {
+            background: var(--danger-light);
+            color: var(--danger);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-logout:hover {
+            background: var(--danger);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* GRID DE HERRAMIENTAS */
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            width: 100%;
+        }
+
+        .tool-card {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            padding: 26px;
+            box-shadow: var(--shadow-md);
+            border: 1.5px solid transparent;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .tool-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -5px rgba(111, 138, 60, 0.15);
+        }
+
+        .tool-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: var(--radius-md);
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 16px;
+            transition: var(--transition);
+        }
+
+        .tool-card:hover .tool-icon {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .tool-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .tool-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            flex: 1;
+        }
+
+        /* Animación suave al entrar */
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- PANTALLA DE LOGIN -->
+        <div id="loginScreen" class="login-wrapper fade-in">
+            <div class="card text-center">
+                <div class="login-header">
+                    <div class="login-icon">
+                        <i class="fas fa-fingerprint"></i>
+                    </div>
+                    <h1>Eduardo Workspace</h1>
+                    <p>Acceso seguro a herramientas</p>
+                </div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>Usuario</label>
+                        <input type="text" id="username" placeholder="Ej. eduardo" required autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" id="password" placeholder="••••••••" required>
+                    </div>
+                    <div id="loginError" class="error-msg">
+                        Credenciales incorrectas.
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        Iniciar Sesión
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div id="dashboardScreen" class="dashboard-wrapper fade-in">
+
+            <!-- Banner Superior -->
+            <div class="top-banner">
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Eduardo&background=6F8A3C&color=fff&bold=true"
+                        alt="Eduardo">
+                    <div class="user-info">
+                        <h2>Eduardo</h2>
+                        <p>Desarrollador</p>
+                    </div>
+                </div>
+
+                <button id="logoutBtn" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Salir
+                </button>
+            </div>
+
+            <!-- Grid de Herramientas -->
+            <h3 class="section-title">
+                <i class="fas fa-layer-group" style="color: var(--primary);"></i>
+                Mis Aplicaciones
+            </h3>
+
+            <div class="main-grid" id="toolsContainer">
+                <!-- Se inyectan las tarjetas desde JavaScript -->
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Lógica de Seguridad y Renderizado -->
+    <script>
+        const validUser = "eduardo";
+        const validPassHash = btoa("AccesoSeguro2026!");
+
+        const loginScreen = document.getElementById('loginScreen');
+        const dashboardScreen = document.getElementById('dashboardScreen');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const toolsContainer = document.getElementById('toolsContainer');
+
+        const tools = [
+            {
+                name: "AuroCotizer",
+                description: "Cotizador de impresión 3D y generador de facturas PDF.",
+                icon: "fa-cube",
+                path: "./tools/auro_cotizer/index.html"
+            },
+            {
+                name: "Magazine Maker",
+                description: "Creador de revistas digitales con plantillas personalizables.",
+                icon: "fa-book",
+                path: "./tools/magazine_maker/index.html"
+            },
+            {
+                name: "PDF Converter",
+                description: "Convierte documentos a PDF y viceversa de manera rápida.",
+                icon: "fa-file-pdf",
+                path: "./tools/pdf_converter/index.html"
+            },
+            {
+                name: "PDF Reorder",
+                description: "Reordena páginas de documentos PDF de manera sencilla.",
+                icon: "fa-file-alt",
+                path: "./tools/pdf_reorder/index.html"
+            },
+            {
+                name: "Image Converter",
+                description: "Convierte imágenes a diferentes formatos de manera rápida.",
+                icon: "fa-file-image",
+                path: "./tools/image_converter/index.html"
+            },
+            {
+                name: "IMSS Prescription",
+                description: "Generador de recetas médicas para el IMSS.",
+                icon: "fa-expand",
+                path: "./tools/imss_prescription/index.html"
+            },
+            {
+                name: "Audio Converter",
+                description: "Convierte archivos de audio a diferentes formatos de manera rápida.",
+                icon: "fa-music",
+                path: "./tools/audio_converter/index.html"
+            },
+            {
+                name: "Fusion Text",
+                description: "Personaliza plantillas en lote. Agrega un campo editable sobre tu PDF y genera un archivo con una página por cada nombre de tu lista.",
+                icon: "fa-text-height",
+                path: "./tools/fusion_text/index.html"
+            }
+        ];
+
+        function renderTools() {
+            toolsContainer.innerHTML = tools.map(tool => `
+                <a href="${tool.path}" class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas ${tool.icon}"></i>
+                    </div>
+                    <div class="tool-title">${tool.name}</div>
+                    <div class="tool-desc">${tool.description}</div>
+                </a>
+            `).join('');
+        }
+
+        function checkSession() {
+            const token = sessionStorage.getItem('secure_app_token');
+            if (token === validPassHash) {
+                loginScreen.style.display = 'none';
+                dashboardScreen.style.display = 'flex';
+                renderTools();
+            } else {
+                loginScreen.style.display = 'flex';
+                dashboardScreen.style.display = 'none';
+            }
+        }
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value;
+
+            if (user.toLowerCase() === validUser && btoa(pass) === validPassHash) {
+                sessionStorage.setItem('secure_app_token', btoa(pass));
+                loginError.style.display = 'none';
+                loginForm.reset();
+                checkSession();
+            } else {
+                loginError.style.display = 'block';
+            }
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            sessionStorage.removeItem('secure_app_token');
+            checkSession();
+        });
+
+        // Iniciar comprobación al cargar
+        checkSession();
+    </script>
+</body>
+
+</html>

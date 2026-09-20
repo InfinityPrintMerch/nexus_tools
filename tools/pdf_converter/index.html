@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PDF a JPG | Eduardo Workspace</title>
+
+    <!-- SCRIPT DE PROTECCIÓN DE ACCESO SILENCIOSO -->
+    <script>
+        if (!sessionStorage.getItem('secure_app_token')) {
+            document.documentElement.style.display = 'none';
+            window.location.replace("../../index.html");
+        }
+    </script>
+
+    <!-- Librerías requeridas -->
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Fuente Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* VARIABLES DE AURO STUDIO */
+        :root {
+            --primary: #6F8A3C;
+            --primary-hover: #58702f;
+            --primary-light: #f2f5eb;
+            --bg-color: #f4f6f4;
+            --surface: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: url('../../assets/auro/bg.png');
+            /* Ajusta la ruta a tu imagen de fondo si es necesario */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            flex: 1;
+        }
+
+        /* BANNER Y NAVEGACIÓN */
+        .back-nav {
+            margin-bottom: 20px;
+        }
+
+        .back-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .back-nav a:hover {
+            color: var(--primary);
+        }
+
+        .top-banner {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-radius: var(--radius-xl);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            text-align: center;
+        }
+
+        .top-banner h1 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .top-banner p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* TARJETA PRINCIPAL */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            padding: 40px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* ZONA DE DRAG & DROP INICIAL */
+        .file-upload {
+            border: 2px dashed var(--border);
+            background: var(--primary-light);
+            padding: 60px 20px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .file-upload.dragover,
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: #e4efe0;
+        }
+
+        .file-upload i {
+            color: var(--primary);
+            font-size: 45px;
+        }
+
+        .file-upload span {
+            font-weight: 500;
+            color: var(--text-main);
+            font-size: 1.1rem;
+        }
+
+        /* CONTENEDOR DE TRABAJO (Oculto al inicio) */
+        .pdf2jpg-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        @media (min-width: 900px) {
+            .pdf2jpg-container {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+        }
+
+        /* ZONA DE PREVISUALIZACIONES */
+        .pdf2jpg-preview {
+            flex: 1;
+            background: var(--bg-color);
+            border-radius: var(--radius-lg);
+            border: 1px inset var(--border);
+            padding: 20px;
+            min-height: 300px;
+            position: relative;
+        }
+
+        #pdfPreviewPages {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 20px;
+        }
+
+        /* Estilos inyectados por JS para las tarjetas de PDF */
+        .pdf-wrapper {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+
+        .pdf-wrapper:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
+
+        .pdf2jpg-canvas {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pdf-info-box {
+            padding: 10px;
+            background: var(--surface);
+            text-align: center;
+        }
+
+        .pdf-info-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+
+        .pdf-info-size {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* PANEL DE CONTROLES LATERAL */
+        .pdf2jpg-controls {
+            width: 100%;
+            max-width: 320px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        #addMoreContainer label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed var(--primary);
+            color: var(--primary);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--primary-light);
+        }
+
+        #addMoreContainer label:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Controles de Formulario */
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .control-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--border);
+            background: var(--bg-color);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        select:focus {
+            border-color: var(--primary);
+        }
+
+        /* Checkbox estilo Auro */
+        .styled-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
+        .styled-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Botones Globales */
+        .btn {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.2);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Barras de Progreso */
+        .progress-wrapper {
+            display: none;
+            margin-bottom: 10px;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        /* Status de conversión */
+        .pdf2jpg-status {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Overlay para Drag & Drop interno */
+        #dragOverlay {
+            position: absolute;
+            background: rgba(242, 245, 235, 0.9);
+            border: 3px dashed var(--primary);
+            border-radius: var(--radius-lg);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: var(--primary);
+            font-size: 1.2rem;
+            font-weight: 600;
+            gap: 15px;
+        }
+
+        #dragOverlay i {
+            font-size: 3rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="back-nav">
+            <a href="../../index.html"><i class="fas fa-arrow-left"></i> Volver al Portal</a>
+        </div>
+
+        <section class="top-banner">
+            <h1>PDF a JPG</h1>
+            <p>Convierte archivos PDF a JPG o PNG con alta resolución</p>
+        </section>
+
+        <main class="card">
+
+            <!-- Zona de Carga Inicial -->
+            <label for="inputPDF" class="file-upload" id="dragDropArea">
+                <i class="fas fa-file-image"></i>
+                <span>Arrastra y suelta tus PDF aquí, o haz clic para seleccionar</span>
+                <input type="file" id="inputPDF" accept="application/pdf" multiple style="display:none;" />
+            </label>
+
+            <!-- Barra de Progreso General (Lectura PDF) -->
+            <div id="loadingProgressContainer" class="progress-wrapper">
+                <div id="loadingProgressText" class="progress-text">Cargando PDF...</div>
+                <div class="progress-container">
+                    <div id="loadingProgressBar" class="progress-bar"></div>
+                </div>
+            </div>
+
+            <!-- Contenedor Principal (Workspace) -->
+            <div class="pdf2jpg-container">
+
+                <!-- Vista Previa -->
+                <div class="pdf2jpg-preview">
+                    <div id="pdfPreviewPages"></div>
+                </div>
+
+                <!-- Panel de Controles -->
+                <div class="pdf2jpg-controls">
+
+                    <div id="addMoreContainer">
+                        <label for="inputPDF">
+                            <i class="fas fa-plus"></i> Añadir más PDF
+                        </label>
+                    </div>
+
+                    <label class="styled-checkbox">
+                        <input type="checkbox" id="groupByFolder" checked>
+                        Agrupar por Carpetas
+                    </label>
+
+                    <div class="control-group">
+                        <label for="scaleInput">Resolución de Salida</label>
+                        <select id="scaleInput">
+                            <option value="150">150 dpi (Web)</option>
+                            <option value="300">300 dpi (Estándar)</option>
+                            <option value="600">600 dpi (Alta)</option>
+                            <option value="1200" selected>1200 dpi (Máxima)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="formatSelect">Formato de Imagen</label>
+                        <select id="formatSelect">
+                            <option value="jpeg">JPG</option>
+                            <option value="png">PNG</option>
+                        </select>
+                    </div>
+
+                    <!-- Progreso de Conversión -->
+                    <div id="progressContainerWrapper" class="progress-wrapper">
+                        <div id="progressText" class="progress-text">0% completado</div>
+                        <div class="progress-container" id="progressContainer">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+                    </div>
+
+                    <button id="convertBtn" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i> Convertir
+                    </button>
+
+                    <a id="downloadBtn" class="btn btn-primary" style="display: none;" download>
+                        <i class="fas fa-download"></i> Descargar ZIP
+                    </a>
+
+                    <div id="status" class="pdf2jpg-status">Esperando archivos...</div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Script de lógica -->
+    <script src="pdf_converter.js"></script>
+</body>
+
+</html>

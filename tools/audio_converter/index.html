@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Convertidor de Audio | Eduardo Workspace</title>
+
+    <!-- SCRIPT DE PROTECCIÓN DE ACCESO SILENCIOSO -->
+    <script>
+        if (!sessionStorage.getItem('secure_app_token')) {
+            document.documentElement.style.display = 'none';
+            window.location.replace("../../index.html");
+        }
+    </script>
+
+    <!-- Librerías locales (OFFLINE) -->
+    <script src="../../utils/jszip.min.js"></script>
+    <script src="../../utils/jsmediatags.min.js"></script>
+    <script src="../../utils/ffmpeg.min.js"></script>
+
+    <!-- Iconos y Fuente -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* VARIABLES DE AURO STUDIO */
+        :root {
+            --primary: #6F8A3C;
+            --primary-hover: #58702f;
+            --primary-light: #f2f5eb;
+            --bg-color: #f4f6f4;
+            --surface: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --danger: #e53e3e;
+            --danger-hover: #c53030;
+            --danger-light: #fff5f5;
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: url('../../assets/auro/bg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            flex: 1;
+        }
+
+        /* BANNER Y NAVEGACIÓN */
+        .back-nav {
+            margin-bottom: 20px;
+        }
+
+        .back-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .back-nav a:hover {
+            color: var(--primary);
+        }
+
+        .top-banner {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-radius: var(--radius-xl);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            text-align: center;
+        }
+
+        .top-banner h1 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .top-banner p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* TARJETA PRINCIPAL */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            padding: 40px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* ZONA DE DRAG & DROP */
+        .file-upload {
+            border: 2px dashed var(--border);
+            background: var(--primary-light);
+            padding: 50px 20px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .file-upload.dragover,
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: #e4efe0;
+        }
+
+        .file-upload i {
+            color: var(--primary);
+            font-size: 45px;
+        }
+
+        .file-upload span {
+            font-weight: 500;
+            color: var(--text-main);
+            font-size: 1.1rem;
+        }
+
+        /* CONTENEDOR DE TRABAJO */
+        .converter-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        @media (min-width: 900px) {
+            .converter-container {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+        }
+
+        /* ZONA DE PREVISUALIZACIONES (Sin bordes oscuros) */
+        .preview-zone {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 10px 0;
+            min-height: 300px;
+            max-height: calc(100vh - 260px);
+            overflow-y: auto;
+            padding-right: 12px;
+        }
+
+        /* Barra de desplazamiento personalizada para la lista de audios */
+        .preview-zone::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .preview-zone::-webkit-scrollbar-track {
+            background: var(--primary-light);
+            border-radius: 20px;
+        }
+
+        .preview-zone::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 20px;
+            border: 2px solid var(--primary-light);
+        }
+
+        .preview-zone::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-hover);
+        }
+
+        .preview-zone {
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--primary-light);
+        }
+
+        .preview-zone h3 {
+            font-size: 1.05rem;
+            color: var(--text-main);
+            margin-bottom: 15px;
+        }
+
+        .audio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 15px;
+        }
+
+        /* TARJETA DE AUDIO */
+        .audio-item {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        .audio-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
+
+        .audio-cover {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            background: var(--bg-color);
+            object-fit: cover;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .audio-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .audio-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .audio-artist {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .audio-meta {
+            font-size: 0.7rem;
+            color: var(--primary);
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        /* PANEL LATERAL DE CONTROLES */
+        .controls-sidebar {
+            width: 100%;
+            max-width: 320px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .control-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--border);
+            background: var(--bg-color);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        select:focus {
+            border-color: var(--primary);
+        }
+
+        /* BOTONES GLOBALES */
+        .btn {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.2);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 2px dashed var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+            border-style: solid;
+        }
+
+        .btn-danger {
+            background: var(--danger-light);
+            color: var(--danger);
+            border: 2px dashed var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+            border-style: solid;
+        }
+
+        /* PROGRESO */
+        .progress-wrapper {
+            display: none;
+            margin-bottom: 10px;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .status-text {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="back-nav">
+            <a href="../../index.html"><i class="fas fa-arrow-left"></i> Volver al Portal</a>
+        </div>
+
+        <section class="top-banner">
+            <h1>Convertidor de Audio</h1>
+            <p>Convierte formatos de audio conservando metadatos y portadas de forma 100% offline.</p>
+        </section>
+
+        <main class="card">
+
+            <label for="inputAudio" class="file-upload" id="dragDropArea">
+                <i class="fas fa-music"></i>
+                <span>Arrastra y suelta tus audios aquí, o haz clic para seleccionar</span>
+                <input type="file" id="inputAudio" accept="audio/*" multiple style="display:none;" />
+            </label>
+
+            <div class="converter-container" id="converterContainer" style="display: none;">
+
+                <!-- Vista Previa Limpia -->
+                <div class="preview-zone">
+                    <h3>Pistas a Procesar:</h3>
+                    <div id="audioPreviewGrid" class="audio-grid"></div>
+                </div>
+
+                <!-- Controles Laterales -->
+                <div class="controls-sidebar">
+
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-outline" id="addMoreBtn"
+                            style="flex: 1; padding: 14px 10px; font-size: 0.85rem;">
+                            <i class="fas fa-plus"></i> Añadir
+                        </button>
+                        <button class="btn btn-danger" id="clearBtn"
+                            style="flex: 1; padding: 14px 10px; font-size: 0.85rem;">
+                            <i class="fas fa-trash-can"></i> Limpiar
+                        </button>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="formatSelect">Convertir a:</label>
+                        <select id="formatSelect">
+                            <option value="mp3">MP3</option>
+                            <option value="wav">WAV (Sin pérdida)</option>
+                            <option value="flac">FLAC (Alta calidad)</option>
+                            <option value="ogg">OGG Vorbis</option>
+                            <option value="m4a">M4A (AAC)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group" id="bitrateGroup">
+                        <label for="bitrateSelect">Calidad (Bitrate):</label>
+                        <select id="bitrateSelect">
+                            <option value="128k">128 kbps (Estándar)</option>
+                            <option value="192k">192 kbps (Alta)</option>
+                            <option value="320k" selected>320 kbps (Máxima)</option>
+                        </select>
+                    </div>
+
+                    <div id="progressWrapper" class="progress-wrapper">
+                        <div id="progressText" class="progress-text">Iniciando motor...</div>
+                        <div class="progress-container">
+                            <div id="progressBar" class="progress-bar"></div>
+                        </div>
+                    </div>
+
+                    <button id="convertBtn" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i> Convertir
+                    </button>
+
+                    <a id="downloadBtn" class="btn btn-primary" style="display: none;" download>
+                        <i class="fas fa-download"></i> Descargar
+                    </a>
+
+                    <div id="status" class="status-text"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Script de Lógica -->
+    <script src="audio_converter.js"></script>
+</body>
+
+</html>

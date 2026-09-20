@@ -1,0 +1,2021 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Auro Studio</title>
+
+    <link rel="icon" type="image/x-icon" href="assets/auro/icon.ico">
+
+    <style>
+        @font-face {
+            font-family: 'Akira';
+            src: url('assets/fonts/Akira Expanded.otf') format('opentype');
+            font-weight: normal;
+        }
+
+        /* FUENTES Y VARIABLES GLOBALES */
+        :root {
+            /* COLOR VERDE PRINCIPAL */
+            --primary: #6F8A3C;
+            --primary-hover: #58702f;
+            --primary-light: #f2f5eb;
+            --border-focus: #6F8A3C;
+
+            --bg-color: #f4f6f4;
+            --surface: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --danger: #e53e3e;
+            --danger-hover: #c53030;
+            --danger-light: #fff5f5;
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* BLOQUEO DE SELECCIÓN Y ARRASTRE PARA SENSACIÓN DE APP NATIVA */
+        body {
+            background-color: var(--bg-color);
+            background-image: url('assets/auro/bg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            color: var(--text-main);
+            line-height: 1.5;
+            padding-bottom: 20px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        input,
+        select,
+        textarea {
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
+            user-select: auto;
+        }
+
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* BANNER SUPERIOR */
+        .top-banner {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 16px 30px;
+            border-radius: var(--radius-xl);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .top-banner-center {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .top-banner img {
+            max-height: 50px;
+            object-fit: contain;
+        }
+
+        .btn-settings {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-settings:hover {
+            background: var(--border);
+            color: var(--text-main);
+        }
+
+        /* GRID RESPONSIVO DE ESCRITORIO */
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            align-items: stretch;
+            width: 100%;
+            flex: 1;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            padding: 26px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ORDENAMIENTO DE COLUMNAS EN ESCRITORIO */
+        .col-config {
+            order: 1;
+        }
+
+        .col-results {
+            order: 2;
+        }
+
+        /* Lote de piezas centrado en escritorio */
+        .col-inputs {
+            order: 3;
+        }
+
+        /* TÍTULOS CON FUENTE AKIRA */
+        h2 {
+            font-family: 'Akira', sans-serif;
+            font-size: 0.95rem;
+            font-weight: normal;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+            letter-spacing: 0.5px;
+        }
+
+        h2 svg {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+        }
+
+        .section-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 24px 0;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(111, 138, 60, 0.1);
+        }
+
+        /* CARRUSEL DE FILAMENTOS */
+        .materials-carousel {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 15px 10px 25px 10px;
+            scroll-snap-type: x mandatory;
+        }
+
+        .materials-carousel::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .materials-carousel::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        .material-btn {
+            min-width: 80px;
+            height: 80px;
+            border-radius: var(--radius-md);
+            border: 2px solid transparent;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            scroll-snap-align: start;
+            position: relative;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 14px rgba(0, 0, 0, 0.10);
+        }
+
+        .material-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .material-btn:hover {
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+        }
+
+        .material-btn.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(111, 138, 60, 0.2), 0 8px 20px rgba(111, 138, 60, 0.25);
+        }
+
+        /* INFO MATERIAL ACTIVO (MISMA LINEA) */
+        .active-material-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: nowrap;
+            margin-bottom: 12px;
+            padding: 8px 0;
+            overflow-x: auto;
+        }
+
+        .active-material-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .active-material-name {
+            font-family: 'Akira', sans-serif;
+            font-size: 1.15rem;
+            color: var(--primary);
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .material-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap;
+        }
+
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, .15);
+            display: inline-block;
+        }
+
+        /* MODALES */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            padding: 30px;
+            border-radius: var(--radius-xl);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-md);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        /* TÍTULOS DE MODALES CON AKIRA */
+        .modal-header h3 {
+            font-family: 'Akira', sans-serif !important;
+            font-size: 0.95rem;
+            font-weight: normal;
+            margin: 0;
+            color: var(--text-main);
+            letter-spacing: 0.5px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        /* MODAL DE CONFIGURACIÓN DE MATERIAL */
+        .color-slider {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding: 5px 5px 15px 5px;
+            scroll-snap-type: x mandatory;
+        }
+
+        .color-slider::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .color-slider::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        .color-box {
+            min-width: 85px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--surface);
+            scroll-snap-align: start;
+        }
+
+        .color-box.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            box-shadow: 0 4px 10px rgba(111, 138, 60, 0.15);
+        }
+
+        .color-box .dot {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .color-box span {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .finish-selector {
+            display: flex;
+            gap: 12px;
+        }
+
+        .finish-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--surface);
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        .finish-btn svg {
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .finish-btn.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+            box-shadow: 0 4px 10px rgba(111, 138, 60, 0.15);
+        }
+
+        .finish-btn.selected svg {
+            color: var(--primary);
+        }
+
+        /* DISEÑO MODAL DE AJUSTES (PILLS Y VISTAS) */
+        .settings-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .setting-pill {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px 20px;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .setting-pill:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: translateX(4px);
+        }
+
+        .setting-pill svg {
+            color: var(--primary);
+        }
+
+        .setting-view {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 20px;
+            padding: 0;
+            transition: var(--transition);
+        }
+
+        .btn-back:hover {
+            color: var(--primary);
+            transform: translateX(-4px);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .about-section {
+            background: var(--primary-light);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            margin-top: 10px;
+            border: 1px dashed var(--primary);
+        }
+
+        .about-section h4 {
+            color: var(--primary);
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .about-section p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* BOTONES GLOBALES */
+        .btn {
+            width: 100%;
+            padding: 14px 24px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(111, 138, 60, 0.3);
+        }
+
+        .btn-outline-primary {
+            background: transparent;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary-light);
+            color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-danger {
+            background: transparent;
+            color: var(--danger);
+            border: 1.5px solid var(--danger);
+            border-radius: 50px;
+            padding: 6px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            width: auto;
+        }
+
+        .btn-outline-danger:hover {
+            background: var(--danger-light);
+            border-color: var(--danger-hover);
+            color: var(--danger-hover);
+        }
+
+        .btn-icon {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .btn-icon:hover {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        /* ZONA CARGA GCODE Y MANUAL */
+        .file-upload {
+            border: 2px dashed var(--border);
+            background: var(--primary-light);
+            padding: 30px 20px;
+            text-align: center;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: #e4efe0;
+            transform: translateY(-2px);
+        }
+
+        .file-upload svg {
+            color: var(--primary);
+            width: 36px;
+            height: 36px;
+        }
+
+        .btn-toggle-mode {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            margin-bottom: 20px;
+        }
+
+        .manual-entry-box {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            background: var(--surface);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+        }
+
+        /* LISTA DE PIEZAS */
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .list-header h3 {
+            font-family: 'Akira', sans-serif;
+            font-size: 0.95rem;
+            font-weight: normal;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .items-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 150px;
+            padding-right: 8px;
+        }
+
+        .items-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .items-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 10px;
+            color: var(--text-muted);
+            margin: auto;
+        }
+
+        .item-card {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            display: flex;
+            align-items: flex-start;
+            border: 1px solid var(--border);
+            border-left: 5px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .item-card:hover {
+            box-shadow: var(--shadow-sm);
+            border-color: #cbd5e1;
+        }
+
+        .item-thumb {
+            width: 70px;
+            height: 70px;
+            border-radius: var(--radius-sm);
+            background: #2d3748;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 14px;
+            overflow: hidden;
+            flex-shrink: 0;
+            color: #fff;
+        }
+
+        .item-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .item-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 70px;
+        }
+
+        .item-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-main);
+            flex: 1;
+            padding-right: 10px;
+        }
+
+        .item-footer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .item-meta-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .item-meta {
+            display: flex;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 8px;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .item-meta .meta-pill {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .item-material-akira {
+            font-family: 'Akira', sans-serif;
+            font-size: 0.65rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .item-material-akira svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .item-price-col {
+            text-align: right;
+            flex-shrink: 0;
+            margin-left: 10px;
+        }
+
+        .item-cost-display {
+            display: flex;
+            align-items: baseline;
+            color: var(--primary);
+            font-family: 'Akira', sans-serif;
+        }
+
+        .item-cost-display .currency {
+            font-size: 0.85rem;
+            margin-right: 2px;
+            font-family: 'Akira', sans-serif;
+        }
+
+        .item-cost-display .amount {
+            font-size: 1.15rem;
+            letter-spacing: 0px;
+            font-family: 'Akira', sans-serif;
+        }
+
+        .item-cost-display .decimals {
+            font-size: 0.75rem;
+            margin-left: 3px;
+            color: var(--text-muted);
+            font-family: 'Akira', sans-serif;
+        }
+
+        /* RESUMEN TOTAL */
+        .summary-card {
+            background: var(--primary-light);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-top: auto;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .summary-row.muted {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .divider {
+            height: 1px;
+            background: rgba(111, 138, 60, 0.2);
+            margin: 12px 0;
+        }
+
+        /* TOTAL usa Akira - FORZADO CON !IMPORTANT */
+        .total-row,
+        .total-row span {
+            font-family: 'Akira', sans-serif !important;
+            font-size: 1.15rem;
+            color: var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        /* NAVEGACIÓN MÓVIL (STEPPER) */
+        .mobile-nav {
+            display: none;
+            /* Oculto en escritorio */
+        }
+
+        /* ===== ADAPTACIÓN A MÓVIL (RESPONSIVE REDUCIDO) ===== */
+        @media (max-width: 1023px) {
+            .container {
+                padding: 10px;
+            }
+
+            .top-banner {
+                padding: 10px 15px;
+                margin-bottom: 15px;
+            }
+
+            .card {
+                padding: 15px;
+                border-radius: var(--radius-lg);
+            }
+
+            .section-divider {
+                margin: 15px 0;
+            }
+
+            h2 {
+                margin-bottom: 15px;
+                font-size: 0.85rem;
+            }
+
+            .form-group {
+                margin-bottom: 10px;
+            }
+
+            .grid-2,
+            .grid-3 {
+                margin-bottom: 10px;
+                gap: 8px;
+                grid-template-columns: 1fr;
+            }
+
+            /* Ajustes en inputs para menor padding */
+            input,
+            select {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+
+            /* Carrusel de materiales en móvil */
+            .materials-carousel {
+                padding: 5px 5px 15px 5px;
+                gap: 10px;
+            }
+
+            .material-btn {
+                min-width: 60px;
+                height: 60px;
+            }
+
+            .active-material-name {
+                font-size: 0.95rem;
+            }
+
+            .material-pill {
+                padding: 4px 10px;
+                font-size: 0.75rem;
+            }
+
+            /* Tarjetas de items (Reducción de fuentes e imágenes) */
+            .item-card {
+                padding: 10px;
+                border-radius: var(--radius-sm);
+                border-left-width: 4px;
+            }
+
+            .item-thumb {
+                width: 50px;
+                height: 50px;
+                margin-right: 10px;
+            }
+
+            .item-info {
+                min-height: 50px;
+            }
+
+            .item-name {
+                font-size: 0.85rem;
+            }
+
+            .item-meta {
+                font-size: 0.65rem;
+                gap: 6px;
+            }
+
+            .item-material-akira {
+                font-size: 0.55rem;
+            }
+
+            .item-cost-display .amount {
+                font-size: 0.95rem;
+            }
+
+            .item-cost-display .currency,
+            .item-cost-display .decimals {
+                font-size: 0.65rem;
+            }
+
+            .btn-icon svg {
+                width: 14px;
+                height: 14px;
+            }
+
+            /* Summary & Buttons */
+            .summary-card {
+                padding: 15px;
+            }
+
+            .summary-row {
+                font-size: 0.85rem;
+                margin-bottom: 6px;
+            }
+
+            .total-row,
+            .total-row span {
+                font-size: 0.95rem !important;
+                margin-top: 10px;
+            }
+
+            .btn {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+            }
+
+            /* Anular Grid por defecto para el Stepper móvil */
+            .main-grid {
+                display: block;
+            }
+
+            /* Controles inferiores en móvil */
+            .mobile-nav {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 15px;
+                padding: 12px;
+                background: var(--surface);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-sm);
+                border: 1px solid rgba(0, 0, 0, 0.03);
+            }
+
+            .step-dots {
+                display: flex;
+                gap: 8px;
+            }
+
+            .step-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: var(--border);
+                transition: var(--transition);
+            }
+
+            .step-dot.active {
+                background: var(--primary);
+                transform: scale(1.3);
+            }
+
+            /* Modales en móvil */
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+                max-height: 95vh;
+            }
+
+            .finish-selector {
+                flex-direction: column;
+            }
+
+            #modeManual .grid-3 {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+
+            #view-prices .grid-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+    </style>
+    <!-- Fuente Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Librerías para PDFMake -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="top-banner">
+            <div style="width: 40px;"></div> <!-- Spacer -->
+            <div class="top-banner-center">
+                <img id="mainLogo" src="assets/auro/logotipe.png" alt="Auro Studio" onerror="this.style.display='none'">
+            </div>
+            <!-- Botón Ajustes -->
+            <button class="btn-settings" onclick="openModal('settingsModal')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="main-grid">
+
+            <!-- ================= COLUMNA 1: MATERIAL Y CLIENTE ================= -->
+            <div class="card col-config" id="col-config">
+                <h2>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path
+                            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                        </path>
+                    </svg>
+                    Material Activo
+                </h2>
+                <div class="materials-carousel">
+                    <div class="material-btn active" id="btn-PLA" onclick="openMaterialModal('PLA')">
+                        <img src="assets/img/PLA.png" alt="PLA"
+                            onerror="this.style.display='none'; this.parentElement.innerText='PLA'">
+                    </div>
+                    <div class="material-btn" id="btn-PETG" onclick="openMaterialModal('PETG')">
+                        <img src="assets/img/PETG.png" alt="PETG"
+                            onerror="this.style.display='none'; this.parentElement.innerText='PETG'">
+                    </div>
+                    <div class="material-btn" id="btn-TPU" onclick="openMaterialModal('TPU')">
+                        <img src="assets/img/TPU.png" alt="TPU"
+                            onerror="this.style.display='none'; this.parentElement.innerText='TPU'">
+                    </div>
+                    <div class="material-btn" id="btn-ABS" onclick="openMaterialModal('ABS')">
+                        <img src="assets/img/ABS.png" alt="ABS"
+                            onerror="this.style.display='none'; this.parentElement.innerText='ABS'">
+                    </div>
+                </div>
+
+                <div id="activeMaterialText"></div>
+
+                <div class="section-divider"></div>
+
+                <h2>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Datos del Cliente
+                </h2>
+                <div class="form-group">
+                    <label>Nombre del Cliente</label>
+                    <input type="text" id="clientName" placeholder="Ej. Juan Pérez">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Número Telefónico</label>
+                        <input type="text" id="clientPhone" placeholder="10 dígitos">
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre Proyecto</label>
+                        <input type="text" id="clientProject" placeholder="Opcional">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Fecha de Entrega</label>
+                    <input type="date" id="deliveryDate">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Anticipo ($)</label>
+                        <input type="number" id="anticipo" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Método de Pago</label>
+                        <select id="paymentMethod">
+                            <option value="Transferencia">Transferencia</option>
+                            <option value="Efectivo">Efectivo</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= COLUMNA 2: LOTE DE PIEZAS (CENTRAL EN ESCRITORIO, ÚLTIMA EN MÓVIL) ================= -->
+            <div class="card col-results" id="col-results">
+                <div class="list-header">
+                    <h3>Lote de Piezas (<span id="countPiezas">0</span>)</h3>
+                    <button class="btn-outline-danger" onclick="limpiarTodo()"
+                        style="padding: 4px 10px;">Limpiar</button>
+                </div>
+                <div class="items-container" id="itemsContainer"></div>
+            </div>
+
+            <!-- ================= COLUMNA 3: ENTRADA Y TOTALES ================= -->
+            <div class="card col-inputs" id="col-inputs">
+                <h2>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    Añadir Piezas
+                </h2>
+
+                <div id="modeUpload">
+                    <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <span>Cargar archivos .gcode</span>
+                    </div>
+                    <input type="file" id="fileInput" accept=".gcode" multiple style="display: none;"
+                        onchange="procesarMultiplesGcode(this)">
+                    <button class="btn-toggle-mode" onclick="toggleInputMode('manual')">Ingresar pieza
+                        manualmente</button>
+                </div>
+
+                <div id="modeManual" style="display: none;" class="manual-entry-box">
+                    <div class="manual-header"
+                        style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                        <h4 style="margin:0;">Ingreso Manual</h4>
+                        <button class="btn-icon" style="padding:0;" onclick="toggleInputMode('upload')">✕</button>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="mName" placeholder="Nombre de la pieza">
+                    </div>
+                    <div class="grid-3">
+                        <input type="number" step="0.1" id="mGrams" placeholder="Gramos">
+                        <input type="number" id="mHours" placeholder="Horas">
+                        <input type="number" id="mMins" placeholder="Mins" max="59">
+                    </div>
+                    <button class="btn btn-primary" onclick="agregarPiezaManual()">Añadir Pieza</button>
+                </div>
+
+                <!-- RESUMEN TOTAL -->
+                <div class="summary-card">
+                    <div class="summary-row muted"><span>Total de Material:</span><span id="totGrams">0.0 g</span></div>
+                    <div class="summary-row muted"><span>Tiempo Total:</span><span id="totTime">0h 0m</span></div>
+                    <div class="divider"></div>
+                    <div class="summary-row"><span>Costo Material:</span><span id="totMatCost">$0.00</span></div>
+                    <div class="summary-row"><span>Costo Tiempo:</span><span id="totTimeCost">$0.00</span></div>
+                    <div class="summary-row"><span>Costo Fijo:</span><span id="displayOrderFee">$0.00</span></div>
+                    <div class="summary-row" id="rowMargin" style="display: none; color: var(--primary);"><span>Ganancia
+                            Extra:</span><span id="displayMargin">$0.00</span></div>
+
+                    <div class="divider"></div>
+                    <div class="total-row"><span>TOTAL:</span><span id="totGlobalDesktop">$0.00 MXN</span></div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-outline-primary" onclick="handlerGenerarCotizacionPDF()"
+                            title="PDF para enviar propuesta al cliente">Cotización</button>
+                        <button class="btn btn-primary" onclick="handlerGenerarNotaVentaPDF()"
+                            title="PDF para confirmar la venta formal">Nota de Venta</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- NAV INFERIOR MÓVIL (Oculto en Escritorio) -->
+        <div class="mobile-nav" id="mobileNav">
+            <button id="btnPrevMobile" class="btn btn-outline-primary" style="width: auto; padding: 10px 20px;"
+                onclick="changeStep(-1)">
+                Anterior
+            </button>
+            <div class="step-dots">
+                <span class="step-dot active"></span>
+                <span class="step-dot"></span>
+                <span class="step-dot"></span>
+            </div>
+            <button id="btnNextMobile" class="btn btn-primary" style="width: auto; padding: 10px 20px;"
+                onclick="changeStep(1)">
+                Siguiente
+            </button>
+        </div>
+
+    </div>
+
+    <!-- ================= MODALES ================= -->
+
+    <!-- 1. Modal Materiales -->
+    <div class="modal-overlay" id="materialModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="matModalTitle">Configurar Material</h3>
+                <button class="modal-close" onclick="closeModal('materialModal')">✕</button>
+            </div>
+
+            <div class="form-group">
+                <label>Color del Filamento</label>
+                <div class="color-slider" id="colorContainer">
+                    <div class="color-box" data-color="Negro" onclick="selectColorBox(this)">
+                        <div class="dot" style="background: #111111;"></div><span>Negro</span>
+                    </div>
+                    <div class="color-box" data-color="Blanco" onclick="selectColorBox(this)">
+                        <div class="dot" style="background: #ffffff;"></div><span>Blanco</span>
+                    </div>
+                    <div class="color-box" data-color="Gris" onclick="selectColorBox(this)">
+                        <div class="dot" style="background: #808080;"></div><span>Gris</span>
+                    </div>
+                    <div class="color-box" data-color="Rojo" onclick="selectColorBox(this)">
+                        <div class="dot" style="background: #e53935;"></div><span>Rojo</span>
+                    </div>
+                    <div class="color-box" data-color="Azul" onclick="selectColorBox(this)">
+                        <div class="dot" style="background: #1e88e5;"></div><span>Azul</span>
+                    </div>
+                    <div class="color-box" data-color="Verde" onclick="selectColorBox(this)">
+                        <div class="dot" style="background: #43a047;"></div><span>Verde</span>
+                    </div>
+                    <div class="color-box" data-color="Amarillo" onclick="selectColorBox(this)">
+                        <div class="dot" style="background: #fdd835;"></div><span>Amarillo</span>
+                    </div>
+                    <div class="color-box" data-color="Naranja" onclick="selectColorBox(this)">
+                        <div class="dot" style="background: #fb8c00;"></div><span>Naranja</span>
+                    </div>
+                    <div class="color-box" data-color="Transparente" onclick="selectColorBox(this)">
+                        <div class="dot" style="background: #dff6ff; border: 1px dashed #94a3b8;"></div>
+                        <span>Transparente</span>
+                    </div>
+                    <div class="color-box" data-color="Plata/Oro" onclick="selectColorBox(this)">
+                        <div class="dot" style="background: linear-gradient(135deg, #e2e8f0, #fbbf24);"></div>
+                        <span>Plata/Oro</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label style="margin-bottom: 10px;">Tipo de Acabado (Determina el Precio)</label>
+                <div class="finish-selector">
+                    <div class="finish-btn" data-val="Brillante" onclick="selectFinishBox(this, 'Brillante')">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                            </path>
+                        </svg>
+                        Brillante
+                    </div>
+                    <div class="finish-btn" data-val="Mate" onclick="selectFinishBox(this, 'Mate')">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <path d="M3 9h18"></path>
+                            <path d="M9 21V9"></path>
+                        </svg>
+                        Mate
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="margin-top: 15px;" onclick="saveActiveMaterial()">Confirmar
+                Selección</button>
+        </div>
+    </div>
+
+    <!-- 2. Modal Ajustes Globales -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Ajustes del Sistema</h3>
+                <button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
+            </div>
+
+            <!-- MENU PRINCIPAL AJUSTES -->
+            <div id="settingsMenu" class="settings-menu">
+                <div class="setting-pill" onclick="openSettingView('global')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    Costos Globales
+                </div>
+                <div class="setting-pill" onclick="openSettingView('prices')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                        <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                    </svg>
+                    Precios por KG
+                </div>
+                <div class="setting-pill" onclick="openSettingView('about')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    Acerca de
+                </div>
+            </div>
+
+            <!-- VISTA: COSTOS GLOBALES -->
+            <div id="view-global" class="setting-view">
+                <button class="btn-back" onclick="backToSettingsMenu()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Regresar
+                </button>
+                <h4 style="color: var(--primary); margin-bottom: 15px;">Costos Globales</h4>
+                <div class="form-group">
+                    <label>Tarifa por Hora de Impresión ($)</label>
+                    <input type="number" id="setRateHour">
+                </div>
+                <div class="form-group">
+                    <label>Costo Fijo / Arranque de Máquina ($)</label>
+                    <input type="number" id="setOrderFee">
+                </div>
+                <div class="form-group">
+                    <label>Margen de Ganancia Extra (%)</label>
+                    <input type="number" id="setMargin">
+                </div>
+                <button class="btn btn-primary" style="margin-top: 15px;" onclick="saveGlobalSettings()">Guardar
+                    Cambios</button>
+            </div>
+
+            <!-- VISTA: PRECIOS KG -->
+            <div id="view-prices" class="setting-view">
+                <button class="btn-back" onclick="backToSettingsMenu()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Regresar
+                </button>
+                <h4 style="color: var(--primary); margin-bottom: 15px;">Precios por Kg ($ MXN)</h4>
+                <div style="max-height: 45vh; overflow-y: auto; padding-right: 5px;">
+                    <div
+                        style="background: var(--bg-color); padding: 12px; border-radius: var(--radius-md); margin-bottom: 10px;">
+                        <h5 style="margin-bottom: 8px; color: var(--text-main);">Filamento PLA</h5>
+                        <div class="grid-2" style="margin-bottom: 0;">
+                            <div><label>Brillante</label><input type="number" id="p_pla_b"></div>
+                            <div><label>Mate</label><input type="number" id="p_pla_m"></div>
+                        </div>
+                    </div>
+                    <div
+                        style="background: var(--bg-color); padding: 12px; border-radius: var(--radius-md); margin-bottom: 10px;">
+                        <h5 style="margin-bottom: 8px; color: var(--text-main);">Filamento PETG</h5>
+                        <div class="grid-2" style="margin-bottom: 0;">
+                            <div><label>Brillante</label><input type="number" id="p_petg_b"></div>
+                            <div><label>Mate</label><input type="number" id="p_petg_m"></div>
+                        </div>
+                    </div>
+                    <div
+                        style="background: var(--bg-color); padding: 12px; border-radius: var(--radius-md); margin-bottom: 10px;">
+                        <h5 style="margin-bottom: 8px; color: var(--text-main);">Filamento TPU</h5>
+                        <div class="grid-2" style="margin-bottom: 0;">
+                            <div><label>Brillante</label><input type="number" id="p_tpu_b"></div>
+                            <div><label>Mate</label><input type="number" id="p_tpu_m"></div>
+                        </div>
+                    </div>
+                    <div
+                        style="background: var(--bg-color); padding: 12px; border-radius: var(--radius-md); margin-bottom: 10px;">
+                        <h5 style="margin-bottom: 8px; color: var(--text-main);">Filamento ABS</h5>
+                        <div class="grid-2" style="margin-bottom: 0;">
+                            <div><label>Brillante</label><input type="number" id="p_abs_b"></div>
+                            <div><label>Mate</label><input type="number" id="p_abs_m"></div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" style="margin-top: 15px;" onclick="saveGlobalSettings()">Guardar
+                    Cambios</button>
+            </div>
+
+            <!-- VISTA: ACERCA DE -->
+            <div id="view-about" class="setting-view">
+                <button class="btn-back" onclick="backToSettingsMenu()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Regresar
+                </button>
+                <div class="about-section">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--primary)"
+                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                    <h4>Auro Studio</h4>
+                    <p>Sistema de Cotización y Gestión 3D v2.0</p>
+                    <p style="margin-top: 10px; font-size: 0.8rem;">Diseño y Funcionalidad a medida para operaciones de
+                        Impresión 3D profesional y análisis de G-code.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="js/pdf_service.js"></script>
+
+    <script>
+        // 1. ESTADO DE LA APLICACIÓN
+        let items = [];
+        let globalTotalNum = 0;
+        let currentMatSelection = 'PLA';
+
+        let tempSelectedColor = 'Negro';
+        let tempSelectedFinish = 'Brillante';
+
+        let activeMaterialConfig = {
+            material: 'PLA',
+            color: 'Negro',
+            finish: 'Brillante',
+            priceKg: 300
+        };
+
+        let sysSettings = {
+            global: { rateHour: 30, orderFee: 20, profitMargin: 0 },
+            prices: {
+                PLA: { b: 300, m: 320 },
+                PETG: { b: 350, m: 370 },
+                TPU: { b: 500, m: 500 },
+                ABS: { b: 250, m: 280 }
+            }
+        };
+
+        // 2. INICIALIZACIÓN
+        function initApp() {
+            const cached = localStorage.getItem('auroSettings');
+            if (cached) { sysSettings = JSON.parse(cached); }
+
+            const dateInput = document.getElementById('deliveryDate');
+            const d = new Date(); d.setDate(d.getDate() + 3);
+            dateInput.valueAsDate = d;
+
+            updateActiveMaterialBadge();
+            renderizarTodo();
+            updateMobileView(); // Init vista móvil
+        }
+
+        document.addEventListener("DOMContentLoaded", initApp);
+        window.addEventListener('resize', updateMobileView);
+
+        // ===== LÓGICA VISTA MÓVIL STEPPER =====
+        let currentStep = 0;
+        // Orden lógico para celular: Configurar -> Añadir -> Lote
+        const columnsOrder = ['col-config', 'col-inputs', 'col-results'];
+
+        function changeStep(dir) {
+            currentStep += dir;
+            if (currentStep < 0) currentStep = 0;
+            if (currentStep > 2) currentStep = 2;
+            updateMobileView();
+        }
+
+        function updateMobileView() {
+            const isMobile = window.innerWidth <= 1023;
+            const mobileNav = document.getElementById('mobileNav');
+
+            if (isMobile) {
+                mobileNav.style.display = 'flex';
+                // Mostrar solo la columna activa
+                columnsOrder.forEach((colId, index) => {
+                    const col = document.getElementById(colId);
+                    if (index === currentStep) {
+                        col.style.display = 'flex';
+                    } else {
+                        col.style.display = 'none';
+                    }
+                });
+
+                // Actualizar puntos
+                document.querySelectorAll('.step-dot').forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentStep);
+                });
+
+                // Actualizar visibilidad botones
+                document.getElementById('btnPrevMobile').style.visibility = currentStep === 0 ? 'hidden' : 'visible';
+                document.getElementById('btnNextMobile').style.visibility = currentStep === columnsOrder.length - 1 ? 'hidden' : 'visible';
+
+            } else {
+                // Restaurar vista Escritorio
+                mobileNav.style.display = 'none';
+                columnsOrder.forEach(colId => {
+                    document.getElementById(colId).style.display = 'flex';
+                });
+            }
+        }
+
+
+        // 3. LÓGICA DE MODALES GLOBALES
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.add('show');
+            document.body.classList.add('modal-open');
+            if (id === 'settingsModal') {
+                populateSettingsModal();
+                backToSettingsMenu();
+            }
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+            document.body.classList.remove('modal-open');
+        }
+
+        // 4. LÓGICA DE MATERIALES, SLIDERS Y CAROUSEL
+        function openMaterialModal(mat) {
+            currentMatSelection = mat;
+            document.getElementById('matModalTitle').innerText = "Configurar " + mat;
+
+            tempSelectedColor = activeMaterialConfig.color;
+            tempSelectedFinish = activeMaterialConfig.finish;
+
+            document.querySelectorAll('.color-box').forEach(b => {
+                if (b.dataset.color === tempSelectedColor) b.classList.add('selected');
+                else b.classList.remove('selected');
+            });
+
+            document.querySelectorAll('.finish-btn').forEach(b => {
+                if (b.dataset.val === tempSelectedFinish) b.classList.add('selected');
+                else b.classList.remove('selected');
+            });
+
+            openModal('materialModal');
+        }
+
+        function selectColorBox(el) {
+            document.querySelectorAll('.color-box').forEach(x => x.classList.remove('selected'));
+            el.classList.add('selected');
+            tempSelectedColor = el.dataset.color;
+            el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+
+        function selectFinishBox(el, val) {
+            document.querySelectorAll('.finish-btn').forEach(x => x.classList.remove('selected'));
+            el.classList.add('selected');
+            tempSelectedFinish = val;
+        }
+
+        function saveActiveMaterial() {
+            const typeKey = tempSelectedFinish === 'Brillante' ? 'b' : 'm';
+            const price = sysSettings.prices[currentMatSelection][typeKey];
+
+            activeMaterialConfig = {
+                material: currentMatSelection, color: tempSelectedColor, finish: tempSelectedFinish, priceKg: price
+            };
+
+            updateActiveMaterialBadge();
+            closeModal('materialModal');
+        }
+
+        function updateActiveMaterialBadge() {
+            document.querySelectorAll('.material-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + activeMaterialConfig.material).classList.add('active');
+
+            const colorMap = {
+                Negro: '#111111', Blanco: '#ffffff', Gris: '#808080', Rojo: '#e53935',
+                Azul: '#1e88e5', Verde: '#43a047', Amarillo: '#fdd835', Naranja: '#fb8c00',
+                Transparente: '#dff6ff', 'Plata/Oro': 'linear-gradient(135deg, #e2e8f0, #fbbf24)'
+            };
+
+            const finishIcon = activeMaterialConfig.finish === 'Brillante'
+                ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>`
+                : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>`;
+
+            const bgStyle = colorMap[activeMaterialConfig.color];
+            const isGradient = bgStyle.includes('gradient');
+
+            document.getElementById('activeMaterialText').innerHTML = `
+                <div class="active-material-container">
+                    <div class="active-material-name">${activeMaterialConfig.material}</div>
+                    <div class="material-pill">
+                        <span class="color-dot" style="background: ${bgStyle}; ${isGradient ? 'border:none;' : ''}"></span>
+                        ${activeMaterialConfig.color}
+                    </div>
+                    <div class="material-pill">
+                        ${finishIcon}
+                        ${activeMaterialConfig.finish}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 5. AJUSTES (SETTINGS)
+        function openSettingView(viewId) {
+            document.getElementById('settingsMenu').style.display = 'none';
+            document.querySelectorAll('.setting-view').forEach(v => v.style.display = 'none');
+            document.getElementById('view-' + viewId).style.display = 'block';
+        }
+
+        function backToSettingsMenu() {
+            document.querySelectorAll('.setting-view').forEach(v => v.style.display = 'none');
+            document.getElementById('settingsMenu').style.display = 'flex';
+        }
+
+        function populateSettingsModal() {
+            document.getElementById('setRateHour').value = sysSettings.global.rateHour;
+            document.getElementById('setOrderFee').value = sysSettings.global.orderFee;
+            document.getElementById('setMargin').value = sysSettings.global.profitMargin;
+            document.getElementById('p_pla_b').value = sysSettings.prices.PLA.b;
+            document.getElementById('p_pla_m').value = sysSettings.prices.PLA.m;
+            document.getElementById('p_petg_b').value = sysSettings.prices.PETG.b;
+            document.getElementById('p_petg_m').value = sysSettings.prices.PETG.m;
+            document.getElementById('p_tpu_b').value = sysSettings.prices.TPU.b;
+            document.getElementById('p_tpu_m').value = sysSettings.prices.TPU.m;
+            document.getElementById('p_abs_b').value = sysSettings.prices.ABS.b;
+            document.getElementById('p_abs_m').value = sysSettings.prices.ABS.m;
+        }
+
+        function saveGlobalSettings() {
+            sysSettings.global.rateHour = parseFloat(document.getElementById('setRateHour').value) || 0;
+            sysSettings.global.orderFee = parseFloat(document.getElementById('setOrderFee').value) || 0;
+            sysSettings.global.profitMargin = parseFloat(document.getElementById('setMargin').value) || 0;
+
+            sysSettings.prices.PLA.b = parseFloat(document.getElementById('p_pla_b').value) || 0;
+            sysSettings.prices.PLA.m = parseFloat(document.getElementById('p_pla_m').value) || 0;
+            sysSettings.prices.PETG.b = parseFloat(document.getElementById('p_petg_b').value) || 0;
+            sysSettings.prices.PETG.m = parseFloat(document.getElementById('p_petg_m').value) || 0;
+            sysSettings.prices.TPU.b = parseFloat(document.getElementById('p_tpu_b').value) || 0;
+            sysSettings.prices.TPU.m = parseFloat(document.getElementById('p_tpu_m').value) || 0;
+            sysSettings.prices.ABS.b = parseFloat(document.getElementById('p_abs_b').value) || 0;
+            sysSettings.prices.ABS.m = parseFloat(document.getElementById('p_abs_m').value) || 0;
+
+            localStorage.setItem('auroSettings', JSON.stringify(sysSettings));
+            const typeKey = activeMaterialConfig.finish === 'Brillante' ? 'b' : 'm';
+            activeMaterialConfig.priceKg = sysSettings.prices[activeMaterialConfig.material][typeKey];
+
+            closeModal('settingsModal');
+            renderizarTodo();
+        }
+
+        // 6. FLUJO DE AÑADIR PIEZAS
+        function toggleInputMode(mode) {
+            document.getElementById('modeUpload').style.display = mode === 'manual' ? 'none' : 'block';
+            document.getElementById('modeManual').style.display = mode === 'manual' ? 'block' : 'none';
+        }
+
+        function procesarMultiplesGcode(input) {
+            const files = Array.from(input.files);
+            if (!files.length) return;
+            let pendientes = files.length;
+
+            files.forEach(file => {
+                const sliceSize = 2000000;
+                const slices = [file.slice(0, sliceSize)];
+                if (file.size > sliceSize) { slices.push(file.slice(Math.max(0, file.size - 50000))); }
+
+                const combinedBlob = new Blob(slices);
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const text = e.target.result;
+                    const info = extraerDatosGcode(text);
+
+                    items.push({
+                        id: Date.now() + Math.random(),
+                        name: file.name.replace(/\.gcode$/i, ''), grams: info.grams, hours: info.h, mins: info.m,
+                        totalHours: info.h + (info.m / 60), thumbnail: info.thumbnail,
+                        matName: activeMaterialConfig.material, matColor: activeMaterialConfig.color, matPriceKg: activeMaterialConfig.priceKg
+                    });
+
+                    pendientes--;
+                    if (pendientes === 0) { input.value = ""; renderizarTodo(); }
+                };
+                reader.readAsText(combinedBlob);
+            });
+        }
+
+        function extraerDatosGcode(text) {
+            const filMatch = text.match(/filament used \[g\]\s*=\s*([\d.]+)/i) || text.match(/;\s*filament_weight\s*=\s*([\d.]+)/i);
+            const timeMatch = text.match(/estimated printing time \(normal mode\)\s*=\s*([^\r\n]+)/i) || text.match(/;\s*TIME:\s*(\d+)/i) || text.match(/model printing time:\s*([^\r\n]+)/i);
+
+            let grams = filMatch ? parseFloat(filMatch[1]) : 0;
+            let h = 0, m = 0;
+            if (timeMatch) {
+                const str = timeMatch[1].trim();
+                if (/^\d+$/.test(str)) {
+                    const sec = parseInt(str); h = Math.floor(sec / 3600); m = Math.floor((sec % 3600) / 60);
+                } else {
+                    const dM = str.match(/(\d+)d/); const hM = str.match(/(\d+)h/); const mM = str.match(/(\d+)m/);
+                    if (dM) h += parseInt(dM[1]) * 24; if (hM) h += parseInt(hM[1]); if (mM) m += parseInt(mM[1]);
+                }
+            }
+
+            let thumbnail = null;
+            const thumbRegex = /;\s*thumbnail begin\s+(\d+)x(\d+)\s+\d+\s*\n([\s\S]*?);\s*thumbnail end/gi;
+            let maxRes = 0, match;
+            while ((match = thumbRegex.exec(text)) !== null) {
+                let res = parseInt(match[1]) * parseInt(match[2]);
+                if (res > maxRes) { maxRes = res; thumbnail = 'data:image/png;base64,' + match[3].replace(/^;\s*/gm, '').replace(/\s+/g, ''); }
+            }
+            return { grams, h, m, thumbnail };
+        }
+
+        function agregarPiezaManual() {
+            const name = document.getElementById('mName').value.trim() || ("Pieza " + (items.length + 1));
+            const grams = parseFloat(document.getElementById('mGrams').value) || 0;
+            const hours = parseInt(document.getElementById('mHours').value) || 0;
+            const mins = parseInt(document.getElementById('mMins').value) || 0;
+            if (grams === 0 && hours === 0 && mins === 0) return;
+
+            items.push({
+                id: Date.now(), name: name, grams: grams, hours: hours, mins: mins, totalHours: hours + (mins / 60), thumbnail: null,
+                matName: activeMaterialConfig.material, matColor: activeMaterialConfig.color, matPriceKg: activeMaterialConfig.priceKg
+            });
+
+            document.getElementById('mName').value = ""; document.getElementById('mGrams').value = "";
+            document.getElementById('mHours').value = ""; document.getElementById('mMins').value = "";
+            toggleInputMode('upload');
+            renderizarTodo();
+        }
+
+        function eliminarItem(id) { items = items.filter(i => i.id !== id); renderizarTodo(); }
+        function limpiarTodo() { items = []; renderizarTodo(); }
+
+        // 7. RENDERIZADO Y CÁLCULOS
+        function renderizarTodo() {
+            const container = document.getElementById('itemsContainer');
+            const rateHour = sysSettings.global.rateHour;
+            const orderFee = sysSettings.global.orderFee;
+            const profitMargin = sysSettings.global.profitMargin;
+
+            let sumGrams = 0, sumTotalHours = 0, sumMatCost = 0, sumTimeCost = 0;
+
+            if (items.length === 0) {
+                container.innerHTML = `<div class="empty-state">
+                    <img src="assets/auro/watermark_a.png" alt="Auro Studio Logo" style="width: 80px; height: 80px; margin-bottom: 15px; opacity: 0.6; object-fit: contain;">
+                    <p>Aún no has añadido ninguna pieza al lote.</p>
+                </div>`;
+            } else {
+                container.innerHTML = "";
+                items.forEach(item => {
+                    const matCost = (item.grams / 1000) * item.matPriceKg;
+                    const timeCost = item.totalHours * rateHour;
+                    const itemSubtotal = matCost + timeCost;
+                    item.finalPrice = itemSubtotal;
+
+                    sumGrams += item.grams; sumTotalHours += item.totalHours;
+                    sumMatCost += matCost; sumTimeCost += timeCost;
+
+                    const thumbContent = item.thumbnail
+                        ? `<img src="${item.thumbnail}" alt="Preview">`
+                        : `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>`;
+
+                    const timeIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`;
+                    const weightIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>`;
+                    const typeIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"></circle><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path></svg>`;
+
+                    const div = document.createElement('div');
+                    div.className = 'item-card';
+                    div.innerHTML = `
+                        <div class="item-thumb">${thumbContent}</div>
+                        <div class="item-info">
+                            <div class="item-header-row">
+                                <div class="item-name" title="${item.name}">${item.name}</div>
+                                <button class="btn-icon" style="padding: 4px; margin-top: -4px; margin-right: -4px;" onclick="eliminarItem(${item.id})">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                </button>
+                            </div>
+                            <div class="item-footer-row">
+                                <div class="item-meta-container">
+                                    <div class="item-meta" title="⏱️ ${item.hours}h ${item.mins}m | ⚖️ ${item.grams.toFixed(1)}g">
+                                        <span class="meta-pill">${timeIcon} ${item.hours}h ${item.mins}m</span>
+                                        <span class="meta-pill">${weightIcon} ${item.grams.toFixed(1)}g</span>
+                                    </div>
+                                    <div class="item-material-akira" title="Material">
+                                        ${typeIcon} ${item.matName}
+                                    </div>
+                                </div>
+                                <div class="item-price-col">
+                                    <div class="item-cost-display">
+                                        <span class="currency">$</span><span class="amount">${Math.ceil(itemSubtotal)}</span><span class="decimals">.00 MXN</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            const baseTotal = sumMatCost + sumTimeCost + (items.length > 0 ? orderFee : 0);
+            const extraMargin = baseTotal * (profitMargin / 100);
+            globalTotalNum = baseTotal + extraMargin;
+
+            document.getElementById('countPiezas').innerText = items.length;
+            document.getElementById('totGrams').innerText = sumGrams.toFixed(1) + " g";
+            document.getElementById('totTime').innerText = Math.floor(sumTotalHours) + "h " + Math.round((sumTotalHours - Math.floor(sumTotalHours)) * 60) + "m";
+            document.getElementById('totMatCost').innerText = "$" + sumMatCost.toFixed(2);
+            document.getElementById('totTimeCost').innerText = "$" + sumTimeCost.toFixed(2);
+            document.getElementById('displayOrderFee').innerText = "$" + (items.length > 0 ? orderFee : 0).toFixed(2);
+
+            const rowMargin = document.getElementById('rowMargin');
+            if (profitMargin > 0 && items.length > 0) {
+                rowMargin.style.display = "flex";
+                document.getElementById('displayMargin').innerText = "+$" + extraMargin.toFixed(2);
+            } else {
+                rowMargin.style.display = "none";
+            }
+
+            document.getElementById('totGlobalDesktop').innerText = "$" + Math.ceil(globalTotalNum) + ".00 MXN";
+        }
+
+        // 8. FUNCIONES DE GENERACIÓN DE DOCUMENTOS
+        function _prepararDatosPDF() {
+            if (items.length === 0) { alert("Agrega piezas al lote primero."); return null; }
+            const cName = document.getElementById('clientName').value.trim() || "Cliente General";
+            const cPhone = document.getElementById('clientPhone').value.trim() || "N/A";
+            const cProject = document.getElementById('clientProject').value.trim() || (items[0].thumbnail || items[0].grams > 0 ? items[0].name : "Impresion 3D");
+            const dDate = document.getElementById('deliveryDate').value;
+            const anticipo = parseFloat(document.getElementById('anticipo').value) || 0;
+            const payment = document.getElementById('paymentMethod').value;
+
+            const feeProporcional = sysSettings.global.orderFee / items.length;
+            const itemsData = items.map(item => {
+                let sub = item.finalPrice + feeProporcional;
+                let finalItemPrice = sub + (sub * (sysSettings.global.profitMargin / 100));
+                return {
+                    name: item.name, material: item.matName, color: item.matColor, quantity: 1,
+                    price: Math.ceil(finalItemPrice), thumbnail: item.thumbnail
+                };
+            });
+
+            return { cName, cPhone, cProject, dDate, anticipo, payment, itemsData, total: Math.ceil(globalTotalNum) };
+        }
+
+        async function handlerGenerarCotizacionPDF() {
+            const data = _prepararDatosPDF();
+            if (!data) return;
+            await generarDocumentoPDF(data.itemsData, data.total, data.cName, data.cPhone, data.cProject, data.dDate, false, data.anticipo, data.payment);
+        }
+
+        async function handlerGenerarNotaVentaPDF() {
+            const data = _prepararDatosPDF();
+            if (!data) return;
+            await generarDocumentoPDF(data.itemsData, data.total, data.cName, data.cPhone, data.cProject, data.dDate, true, data.anticipo, data.payment);
+        }
+    </script>
+
+    <script>
+        if (!sessionStorage.getItem('secure_app_token')) {
+            document.documentElement.style.display = 'none';
+            window.location.replace("../../index.html");
+        }
+    </script>
+
+</body>
+
+</html>

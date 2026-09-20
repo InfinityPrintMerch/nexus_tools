@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Generador de Prescripciones | Eduardo Workspace</title>
+
+    <!-- SCRIPT DE PROTECCIÓN DE ACCESO SILENCIOSO -->
+    <script>
+        if (!sessionStorage.getItem('secure_app_token')) {
+            document.documentElement.style.display = 'none';
+            window.location.replace("../../index.html");
+        }
+    </script>
+
+    <!-- Librerías de PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/@pdf-lib/fontkit@0.0.4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+    <!-- Importar datos desde archivo externo -->
+    <script src="./datos.js"></script>
+
+    <!-- Iconos y Fuente -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* VARIABLES DE AURO STUDIO */
+        :root {
+            --primary: #6F8A3C;
+            --primary-hover: #58702f;
+            --primary-light: #f2f5eb;
+            --bg-color: #f4f6f4;
+            --surface: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --danger: #e53e3e;
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: url('../../assets/auro/bg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        /* NAVEGACIÓN */
+        .back-nav {
+            margin-bottom: 20px;
+        }
+
+        .back-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .back-nav a:hover {
+            color: var(--primary);
+        }
+
+        /* BANNER SUPERIOR */
+        .top-banner {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-radius: var(--radius-xl);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .top-banner h1 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba(111, 138, 60, 0.2);
+        }
+
+        /* TARJETAS */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            padding: 30px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-title {
+            color: var(--text-main);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        /* GRID */
+        .grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .grid-2,
+        .grid-3,
+        .grid-4 {
+            grid-template-columns: 1fr;
+        }
+
+        @media(min-width: 700px) {
+            .grid-2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grid-3 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .grid-4 {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* CAMPOS DE FORMULARIO */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            height: 48px;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            padding: 0 14px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        select {
+            appearance: auto;
+            cursor: pointer;
+        }
+
+        textarea {
+            height: 120px;
+            padding: 14px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(111, 138, 60, 0.1);
+        }
+
+        /* CAMPOS AUTOMÁTICOS */
+        .auto-filled {
+            background: var(--bg-color);
+            color: var(--text-muted);
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        /* BOTONES */
+        .btn-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        @media(min-width: 700px) {
+            .btn-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .btn {
+            height: 55px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover:not(:disabled) {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.2);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(111, 138, 60, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="back-nav">
+            <a href="../../index.html"><i class="fas fa-arrow-left"></i> Volver al Portal</a>
+        </div>
+
+        <div class="top-banner">
+            <h1>Sistema de Prescripción</h1>
+            <span class="badge"><i class="fas fa-bolt"></i> Versión Rápida</span>
+        </div>
+
+        <form id="recetaForm">
+            <!-- 1. PRE-CONFIGURACIÓN -->
+            <div class="card" style="background: var(--primary-light); border-color: rgba(111, 138, 60, 0.2);">
+                <h3 class="card-title" style="border-bottom-color: rgba(111, 138, 60, 0.2);">
+                    <i class="fas fa-sliders-h"></i> Configuración de Consulta
+                </h3>
+                <div class="grid grid-2">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Médico Tratante</label>
+                        <select id="sel_medico">
+                            <option value="">Seleccionar Médico...</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Unidad Médica</label>
+                        <select id="sel_clinica">
+                            <option value="">Seleccionar Clínica...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-2" style="margin-top: 16px;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Tratamiento 1 (Principal)</label>
+                        <select id="sel_receta">
+                            <option value="">Elegir tratamiento 1...</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Tratamiento 2 (Opcional - Máx. 2 tratamientos)</label>
+                        <select id="sel_receta_secundaria">
+                            <option value="">Ninguno (Opcional)...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. DATOS DEL PACIENTE -->
+            <div class="card">
+                <h3 class="card-title"><i class="fas fa-user-injured"></i> Datos del Paciente</h3>
+
+                <div class="form-group">
+                    <label>Nombre Completo</label>
+                    <input type="text" id="in_nombre" placeholder="Nombre del paciente">
+                </div>
+
+                <div class="grid grid-3">
+                    <div class="form-group"><label>NSS</label><input type="text" id="in_nss" placeholder="94058643357">
+                    </div>
+                    <div class="form-group"><label>CURP</label><input type="text" id="in_curp"
+                            placeholder="Ingrese CURP"></div>
+                    <div class="form-group"><label>Fecha de Nacimiento</label><input type="date" id="in_nacimiento">
+                    </div>
+                </div>
+
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label>A.MED (Autogenerado)</label>
+                        <input type="text" id="in_amed" class="auto-filled" readonly
+                            placeholder="Calculando por sistema...">
+                    </div>
+                    <div class="form-group">
+                        <label>Número de Folio (Único)</label>
+                        <input type="text" id="in_folio" class="auto-filled" readonly placeholder="Generando folio...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. DETALLES DE RECETA -->
+            <div class="card">
+                <h3 class="card-title"><i class="fas fa-file-prescription"></i> Detalles de la Prescripción</h3>
+
+                <div class="grid grid-4">
+                    <div class="form-group"><label>Delegación</label><input type="text" id="in_delegacion"
+                            class="auto-filled" readonly></div>
+                    <div class="form-group"><label>Unidad</label><input type="text" id="in_unidad" class="auto-filled"
+                            readonly></div>
+                    <div class="form-group"><label>Consultorio</label><input type="text" id="in_consultorio"
+                            class="auto-filled" readonly></div>
+                    <div class="form-group"><label>Turno</label><input type="text" id="in_turno" class="auto-filled"
+                            readonly></div>
+                </div>
+
+                <div class="grid grid-2">
+                    <div class="form-group"><label>Clave Presupuestal</label><input type="text" id="in_clave"
+                            class="auto-filled" readonly></div>
+                    <div class="form-group"><label>Fecha de Consulta</label><input type="date" id="in_fecha_selector">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Dirección de la Unidad</label>
+                    <input type="text" id="in_direccion" class="auto-filled" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Prescripción y Posología</label>
+                    <textarea id="in_prescripcion" class="auto-filled"
+                        placeholder="La posología aparecerá aquí..."></textarea>
+                </div>
+
+                <!-- SECCIÓN DE REPOSO -->
+                <div class="card" style="background: var(--bg-color); padding: 15px; margin-top: -10px; margin-bottom: 20px; border: 1px dashed var(--border); box-shadow: none; border-radius: var(--radius-md);">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <input type="checkbox" id="chk_reposo" style="width: 18px; height: 18px; cursor: pointer;">
+                        <label for="chk_reposo" style="margin: 0; font-size: 0.95rem; cursor: pointer; color: var(--text-main); font-weight: 500;">¿El paciente requiere días de reposo?</label>
+                    </div>
+                    <div id="div_dias_reposo" style="display: none; align-items: flex-end; gap: 15px; flex-wrap: wrap;">
+                        <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 150px;">
+                            <label>Tipo de Reposo</label>
+                            <select id="sel_tipo_reposo" style="background: var(--surface);">
+                                <option value="ABSOLUTO">Absoluto</option>
+                                <option value="">Normal / Sin absoluto</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 150px;">
+                            <label>Número de días</label>
+                            <input type="number" id="in_dias_reposo" min="1" value="3" style="background: var(--surface);">
+                        </div>
+                        <button type="button" class="btn btn-outline" id="btn_agregar_reposo" style="height: 48px; flex: 1; min-width: 150px; font-size: 0.9rem; border-radius: var(--radius-md);">
+                            <i class="fas fa-plus"></i> Anexar a Prescripción
+                        </button>
+                    </div>
+                </div>
+                <!-- FIN SECCIÓN DE REPOSO -->
+
+                <!-- Campos Ocultos -->
+                <input type="hidden" id="in_medico">
+                <input type="hidden" id="in_universidad">
+                <input type="hidden" id="in_cedula">
+                <input type="hidden" id="in_matricula">
+
+                <!-- BOTONES DE GENERACIÓN -->
+                <div class="btn-container">
+                    <button type="button" class="btn btn-outline" onclick="rellenarPDF(true)" id="btnGenerarEditable">
+                        <i class="fas fa-file-signature"></i> Descargar PDF Editable
+                    </button>
+
+                    <button type="button" class="btn btn-primary" onclick="rellenarPDF(false)"
+                        id="btnGenerarRasterizado">
+                        <i class="fas fa-shield-alt"></i> Descargar PDF Seguro
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- SCRIPT ORIGINAL (Funciones Matemáticas y PDF) -->
+    <script>
+        const db = {
+            doctores: [
+                { id: 1, nombre: "Guadalupe Maximina Arpidez Gutiérrez", cedula: "3662273", matricula: "99316327", universidad: "Universidad Nacional Autónoma de México" },
+                { id: 2, nombre: "Graciela Dionicio Ruiz", cedula: "3662275", matricula: "99317676", universidad: "Universidad Nacional Autónoma de México" },
+                { id: 3, nombre: "Ranulfo Cruz Rosalino", cedula: "3662277", matricula: "99316254", universidad: "Universidad Nacional Autónoma de México" }
+            ],
+            clinicas: [
+                { id: "tlaxcala", nombre: "UMF No. 19 Tlaxcala (Matutino)", delegacion: "Tlaxcala", unidad: "UMF 19", consultorio: "11", clave: "C223602210", turno: "Matutino", direccion: "Blvd. Francisco I. Madero 601, Centro, C.P. 90300, Ciudad de Apizaco, Tlaxcala" },
+                { id: "tlaxcala2", nombre: "UMF No. 2 Tlaxcala (Matutino)", delegacion: "Tlaxcala", unidad: "UMF 2", consultorio: "2", clave: "HGZMF2", turno: "Matutino", direccion: "Calle Centenario y Venustiano Carranza S/N, Unidad INFONAVIT CTM, C.P. 90350, Ciudad de Apizaco, Tlaxcala." }
+            ],
+            recetas: [
+                { id: "dolor_leve", nombre: "Dolor Leve / Fiebre (Paracetamol)", texto: "PARACETAMOL 500 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 8 horas en caso de dolor o fiebre durante 5 Día(s).\nCantidad a surtir 1 ENV." },
+                { id: "dolor_fuerte", nombre: "Dolor Moderado a Severo (Ketorolaco)", texto: "KETOROLACO 10 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 8 horas en caso de dolor intenso, máximo por 5 Día(s).\nCantidad a surtir 1 ENV." },
+                { id: "dolor_inflamatorio", nombre: "Dolor Articular / Antiinflamatorio (Ibuprofeno)", texto: "IBUPROFENO 400 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 8 horas después de los alimentos durante 5 Día(s).\nCantidad a surtir 1 ENV." },
+                { id: "dolor_colico", nombre: "Espasmo / Cólico Abdominal (Butilhioscina)", texto: "BUTILHIOSCINA 10 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 8 horas en caso de dolor o cólico durante 3 Día(s).\nCantidad a surtir 1 ENV." },
+                { id: "gastritis_reflujo", nombre: "Gastritis / Reflujo (Omeprazol)", texto: "OMEPRAZOL 20 MG CÁPSULAS.\nVía oral. Tomar 1 cápsula cada 24 horas por las mañanas en ayuno durante 30 Día(s).\nCantidad a surtir 2 ENV." },
+                { id: "diabetes_control", nombre: "Control Diabetes (Metformina / Glibenclamida)", texto: "METFORMINA 850 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 12 horas con los alimentos durante 30 Día(s).\nCantidad a surtir 3 ENV.\n\nGLIBENCLAMIDA 5 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 24 horas antes del desayuno durante 30 Día(s).\nCantidad a surtir 1 ENV." },
+                { id: "hipertension", nombre: "Control Hipertensión (Losartán)", texto: "LOSARTÁN 50 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 12 horas durante 30 Día(s).\nCantidad a surtir 2 ENV." },
+                { id: "hipertension_amlodipino", nombre: "Control Hipertensión (Amlodipino)", texto: "AMLODIPINO 5 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 24 horas durante 30 Día(s).\nCantidad a surtir 1 ENV." },
+                { id: "colesterol_trigliceridos", nombre: "Dislipidemia / Colesterol (Atorvastatina)", texto: "ATORVASTATINA 20 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 24 horas por las noches durante 30 Día(s).\nCantidad a surtir 1 ENV." },
+                { id: "infeccion_resp", nombre: "Infección Respiratoria (Amoxicilina)", texto: "AMOXICILINA 500 MG CÁPSULAS.\nVía oral. Tomar 1 cápsula cada 8 horas durante 7 Día(s).\nCantidad a surtir 2 ENV.\n\nPARACETAMOL 500 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 8 horas en caso de dolor o fiebre durante 5 Día(s).\nCantidad a surtir 1 ENV." },
+                { id: "infeccion_urinaria", nombre: "Infección Urinaria (Nitrofurantoína)", texto: "NITROFURANTOÍNA 100 MG CÁPSULAS.\nVía oral. Tomar 1 cápsula cada 6 horas junto con alimentos durante 7 Día(s).\nCantidad a surtir 2 ENV." },
+                { id: "infeccion_gastro", nombre: "Gastroenteritis / Infección Intestinal (Trimetoprima)", texto: "TRIMETOPRIMA Y SULFAMETOXAZOL 160/800 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 12 horas durante 5 Día(s).\nCantidad a surtir 1 ENV." },
+                { id: "alergia_rinitis", nombre: "Alergia / Rinitis (Loratadina)", texto: "LORATADINA 10 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 24 horas durante 10 Día(s).\nCantidad a surtir 1 ENV." },
+                { id: "tos_flemas", nombre: "Tos con Expectoración (Ambroxol)", texto: "AMBROXOL 30 MG TABLETAS.\nVía oral. Tomar 1 tableta cada 8 horas durante 5 Día(s).\nCantidad a surtir 1 ENV." }
+            ]
+        };
+
+        function actualizarPrescripciones() {
+            const val1 = document.getElementById("sel_receta").value;
+            const val2 = document.getElementById("sel_receta_secundaria").value;
+
+            const rec1 = db.recetas.find(r => r.id === val1);
+            const rec2 = db.recetas.find(r => r.id === val2);
+
+            let textos = [];
+            if (rec1) textos.push(rec1.texto);
+            if (rec2) textos.push(rec2.texto);
+
+            document.getElementById("in_prescripcion").value = textos.join("\n\n");
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const selMedico = document.getElementById("sel_medico");
+            db.doctores.forEach(doc => selMedico.innerHTML += `<option value="${doc.id}">${doc.nombre}</option>`);
+
+            const selClinica = document.getElementById("sel_clinica");
+            db.clinicas.forEach(clinica => selClinica.innerHTML += `<option value="${clinica.id}">${clinica.nombre}</option>`);
+
+            const selReceta = document.getElementById("sel_receta");
+            db.recetas.forEach(receta => selReceta.innerHTML += `<option value="${receta.id}">${receta.nombre}</option>`);
+
+            const selReceta2 = document.getElementById("sel_receta_secundaria");
+            db.recetas.forEach(receta => selReceta2.innerHTML += `<option value="${receta.id}">${receta.nombre}</option>`);
+
+            const hoy = new Date();
+            const fechaIso = hoy.toISOString().split('T')[0];
+            document.getElementById("in_fecha_selector").value = fechaIso;
+
+            // --- LÓGICA DE REPOSO ---
+            const chkReposo = document.getElementById("chk_reposo");
+            const divDiasReposo = document.getElementById("div_dias_reposo");
+            const btnAgregarReposo = document.getElementById("btn_agregar_reposo");
+            const inDiasReposo = document.getElementById("in_dias_reposo");
+            const selTipoReposo = document.getElementById("sel_tipo_reposo");
+            const inPrescripcion = document.getElementById("in_prescripcion");
+
+            chkReposo.addEventListener("change", function() {
+                divDiasReposo.style.display = this.checked ? "flex" : "none";
+            });
+
+            btnAgregarReposo.addEventListener("click", function() {
+                const dias = parseInt(inDiasReposo.value) || 0;
+                if(dias > 0) {
+                    const textoActual = inPrescripcion.value.trim();
+                    const separador = textoActual.length > 0 ? "\n\n" : "";
+                    const diasTexto = dias === 1 ? "1 DÍA" : `${dias} DÍAS`;
+                    const tipo = selTipoReposo.value;
+                    const textoReposo = tipo ? `FAVOR DE GUARDAR REPOSO ${tipo} DURANTE ${diasTexto}.` : `FAVOR DE GUARDAR REPOSO DURANTE ${diasTexto}.`;
+
+                    inPrescripcion.value = textoActual + separador + textoReposo;
+
+                    chkReposo.checked = false;
+                    divDiasReposo.style.display = "none";
+                    inDiasReposo.value = "3";
+                    selTipoReposo.value = "ABSOLUTO";
+                }
+            });
+        });
+
+        document.getElementById("sel_medico").addEventListener("change", (e) => {
+            const medico = db.doctores.find(d => d.id == e.target.value);
+            if (medico) {
+                document.getElementById("in_medico").value = medico.nombre;
+                document.getElementById("in_cedula").value = medico.cedula;
+                document.getElementById("in_matricula").value = medico.matricula;
+                document.getElementById("in_universidad").value = medico.universidad;
+            }
+        });
+
+        document.getElementById("sel_clinica").addEventListener("change", (e) => {
+            const clinica = db.clinicas.find(c => c.id == e.target.value);
+            if (clinica) {
+                document.getElementById("in_delegacion").value = clinica.delegacion;
+                document.getElementById("in_unidad").value = clinica.unidad;
+                document.getElementById("in_consultorio").value = clinica.consultorio;
+                document.getElementById("in_turno").value = clinica.turno;
+                document.getElementById("in_clave").value = clinica.clave;
+                document.getElementById("in_direccion").value = clinica.direccion;
+            }
+        });
+
+        document.getElementById("sel_receta").addEventListener("change", actualizarPrescripciones);
+        document.getElementById("sel_receta_secundaria").addEventListener("change", actualizarPrescripciones);
+
+        // ==========================================
+        // GENERADORES MATEMÁTICOS (A.MED Y FOLIO)
+        // ==========================================
+        function generarAMED() {
+            const nombre = document.getElementById('in_nombre').value.toUpperCase().replace(/[^A-Z]/g, '');
+            const nss = document.getElementById('in_nss').value.replace(/[^0-9]/g, '');
+            let p1 = nombre.length > 1 ? nombre.substring(0, 2) : "XX";
+            let p2 = nss.length > 0 ? nss.substring(nss.length - 1) : "0";
+            let p3 = Math.random().toString(36).substring(2, 4).toUpperCase();
+            let p4 = Math.floor(Math.random() * 9) + 1;
+            let p5 = Math.random().toString(36).substring(2, 4).toUpperCase();
+            const amed = (p1 + p2 + p3 + p4 + p5).substring(0, 8);
+            document.getElementById('in_amed').value = amed;
+            return amed;
+        }
+
+        function generarFolio() {
+            const base13 = Date.now().toString();
+            const digitoExtra = Math.floor(Math.random() * 10).toString();
+            const folio14 = base13 + digitoExtra;
+            document.getElementById('in_folio').value = folio14;
+            return folio14;
+        }
+
+        function formatearFechaPDF(fechaIso, formatoLargo = false) {
+            if (!fechaIso) return "";
+            const partes = fechaIso.split('-');
+            const fecha = new Date(partes[0], partes[1] - 1, partes[2]);
+            if (formatoLargo) {
+                const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                return `${partes[2]} de ${meses[fecha.getMonth()]} ${partes[0]}`;
+            } else {
+                return `${partes[2]}/${partes[1]}/${partes[0]}`;
+            }
+        }
+
+        function generarBarcodeBase64(texto) {
+            const canvas = document.createElement('canvas');
+            JsBarcode(canvas, texto, { format: "CODE128", displayValue: false, margin: 0, width: 2, height: 40 });
+            return canvas.toDataURL('image/png');
+        }
+
+        // ==========================================
+        // PROCESAMIENTO Y DESCARGA
+        // ==========================================
+        async function rellenarPDF(esEditable) {
+            const btnId = esEditable ? 'btnGenerarEditable' : 'btnGenerarRasterizado';
+            const btnPresionado = document.getElementById(btnId);
+            const btnEdit = document.getElementById('btnGenerarEditable');
+            const btnRast = document.getElementById('btnGenerarRasterizado');
+
+            const originalBtnText = btnPresionado.innerHTML;
+            btnPresionado.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Procesando...';
+
+            if (btnEdit) btnEdit.disabled = true;
+            if (btnRast) btnRast.disabled = true;
+
+            try {
+                generarAMED();
+                generarFolio();
+
+                let pdfBytesFile;
+                try {
+                    pdfBytesFile = await fetch('./plantilla.pdf').then(res => res.arrayBuffer());
+                } catch (e) {
+                    throw new Error("No se encontró el archivo 'plantilla.pdf' en la raíz.");
+                }
+
+                const { PDFDocument } = PDFLib;
+                const pdfDoc = await PDFDocument.load(pdfBytesFile);
+                pdfDoc.registerFontkit(window.fontkit);
+
+                let customFont;
+                try {
+                    const fontBytes = await fetch('./bahnschrift.ttf').then(res => res.arrayBuffer());
+                    customFont = await pdfDoc.embedFont(fontBytes);
+                } catch (error) {
+                    console.warn("Aviso: No se cargó la fuente bahnschrift.ttf.");
+                }
+
+                const form = pdfDoc.getForm();
+                const fechaNacimientoFormateada = formatearFechaPDF(document.getElementById('in_nacimiento').value, false);
+                const fechaConsultaFormateada = formatearFechaPDF(document.getElementById('in_fecha_selector').value, true);
+
+                const mapaCampos = {
+                    'nss': 'in_nss', 'a.med': 'in_amed', 'nombre': 'in_nombre',
+                    'curp': 'in_curp', 'delegacion': 'in_delegacion', 'clave': 'in_clave',
+                    'unidad': 'in_unidad', 'consultorio': 'in_consultorio',
+                    'turno': 'in_turno', 'folio': 'in_folio', 'direccion': 'in_direccion',
+                    'medico': 'in_medico', 'universidad': 'in_universidad',
+                    'cedula': 'in_cedula', 'matricula': 'in_matricula'
+                };
+
+                for (const [nombrePdf, idHtml] of Object.entries(mapaCampos)) {
+                    try {
+                        const campo = form.getTextField(nombrePdf);
+                        const htmlEl = document.getElementById(idHtml);
+                        const valor = htmlEl ? htmlEl.value.toUpperCase() : "";
+                        if (campo) { campo.setText(valor); }
+                    } catch (e) { }
+                }
+
+                try {
+                    const campoPrescripcion = form.getTextField('prescripcion');
+                    const elPrescripcion = document.getElementById('in_prescripcion');
+
+                    if (campoPrescripcion && elPrescripcion) {
+                        const widgets = campoPrescripcion.acroField.getWidgets();
+                        if (widgets.length > 0) {
+                            const rect = widgets[0].getRectangle();
+                            const page = pdfDoc.getPages()[0];
+                            const fontToUse = customFont || await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+                            const fontSize = 10;
+                            let currentY = rect.y + rect.height - 12;
+                            const maxWidth = rect.width - 4;
+
+                            const lineasTexto = elPrescripcion.value.replace(/\r\n/g, '\n').split('\n');
+
+                            function wrapText(text, maxW, font, fSize) {
+                                if (!text) return [];
+                                const words = text.split(' ');
+                                let lines = [];
+                                let currentLine = words[0];
+
+                                for (let i = 1; i < words.length; i++) {
+                                    const word = words[i];
+                                    let width = 0;
+                                    try {
+                                        width = font.widthOfTextAtSize(currentLine + ' ' + word, fSize);
+                                    } catch (e) {
+                                        width = (currentLine.length + word.length + 1) * (fSize * 0.5);
+                                    }
+
+                                    if (width < maxW) {
+                                        currentLine += ' ' + word;
+                                    } else {
+                                        lines.push(currentLine);
+                                        currentLine = word;
+                                    }
+                                }
+                                lines.push(currentLine);
+                                return lines;
+                            }
+
+                            for (const parrafo of lineasTexto) {
+                                if (parrafo.trim() === '') {
+                                    currentY -= (fontSize + 4);
+                                    continue;
+                                }
+
+                                const isTitle = (parrafo === parrafo.toUpperCase()) && /[A-Z]/.test(parrafo);
+                                const wrappedLines = wrapText(parrafo, maxWidth, fontToUse, fontSize);
+
+                                for (const line of wrappedLines) {
+                                    try {
+                                        page.drawText(line, {
+                                            x: rect.x + 2,
+                                            y: currentY,
+                                            size: fontSize,
+                                            font: fontToUse,
+                                            color: PDFLib.rgb(0, 0, 0)
+                                        });
+
+                                        if (isTitle) {
+                                            let textWidth = 0;
+                                            try { textWidth = fontToUse.widthOfTextAtSize(line, fontSize); }
+                                            catch (e) { textWidth = line.length * (fontSize * 0.5); }
+
+                                            page.drawLine({
+                                                start: { x: rect.x + 2, y: currentY - 2 },
+                                                end: { x: rect.x + 2 + textWidth, y: currentY - 2 },
+                                                thickness: 1,
+                                                color: PDFLib.rgb(0, 0, 0)
+                                            });
+                                        }
+                                    } catch (e) {
+                                        console.warn("Error dibujando línea:", line, e);
+                                    }
+                                    currentY -= (fontSize + 4);
+                                }
+                            }
+
+                            campoPrescripcion.setText('');
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error al procesar la prescripción manualmente:", error);
+                }
+
+                try { form.getTextField('nacimiento').setText(fechaNacimientoFormateada); } catch (e) { }
+                try { form.getTextField('fecha').setText(fechaConsultaFormateada); } catch (e) { }
+
+                try {
+                    const barcodeField = form.getField('barcode_af_image');
+                    if (barcodeField) {
+                        const rect = barcodeField.acroField.getWidgets()[0].getRectangle();
+                        const folioActivo = document.getElementById('in_folio').value;
+                        const barcodeImage = await pdfDoc.embedPng(generarBarcodeBase64(folioActivo));
+
+                        pdfDoc.getPages()[0].drawImage(barcodeImage, {
+                            x: rect.x, y: rect.y, width: rect.width, height: rect.height
+                        });
+                        form.removeField('barcode_af_image');
+                    }
+                } catch (error) { }
+
+                if (customFont) form.updateFieldAppearances(customFont);
+                else form.updateFieldAppearances();
+
+                form.flatten();
+
+                const finalPdfBytes = await pdfDoc.save();
+
+                let blob;
+
+                if (esEditable) {
+                    blob = new Blob([finalPdfBytes], { type: "application/pdf" });
+                } else {
+                    if (!window.pdfjsLib) {
+                        await new Promise((resolve, reject) => {
+                            const script = document.createElement('script');
+                            script.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js";
+                            script.onload = resolve;
+                            document.head.appendChild(script);
+                        });
+                        window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+                    }
+
+                    const loadingTask = window.pdfjsLib.getDocument({ data: finalPdfBytes });
+                    const pdfRenderizado = await loadingTask.promise;
+                    const page = await pdfRenderizado.getPage(1);
+
+                    const viewport = page.getViewport({ scale: 3.0 });
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+                    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+                    const nuevoPdf = await PDFLib.PDFDocument.create();
+                    const imgInPdf = await nuevoPdf.embedJpg(imgData);
+
+                    const originalViewport = page.getViewport({ scale: 1.0 });
+                    const nuevaPagina = nuevoPdf.addPage([originalViewport.width, originalViewport.height]);
+
+                    nuevaPagina.drawImage(imgInPdf, {
+                        x: 0,
+                        y: 0,
+                        width: originalViewport.width,
+                        height: originalViewport.height
+                    });
+
+                    const pdfRasterizadoBytes = await nuevoPdf.save();
+                    blob = new Blob([pdfRasterizadoBytes], { type: "application/pdf" });
+                }
+
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+
+                const pacNombre = document.getElementById('in_nombre').value || "Paciente";
+                const sufijo = esEditable ? "" : "_Rasterizado";
+
+                link.download = `Receta_${pacNombre.replace(/\s+/g, '_')}${sufijo}.pdf`;
+                link.click();
+
+            } catch (error) {
+                console.error(error);
+                alert(error.message || "Ocurrió un error inesperado al procesar el PDF.");
+            } finally {
+                btnPresionado.innerHTML = originalBtnText;
+                if (btnEdit) btnEdit.disabled = false;
+                if (btnRast) btnRast.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fusión de Texto | Eduardo Workspace</title>
+
+    <!-- SCRIPT DE PROTECCIÓN DE ACCESO SILENCIOSO -->
+    <script>
+        if (!sessionStorage.getItem('secure_app_token')) {
+            document.documentElement.style.display = 'none';
+            window.location.replace("../../index.html");
+        }
+    </script>
+
+    <!-- Fuentes para la Previsualización (Originales de tu código) -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto&family=Open+Sans&family=Lato&family=Montserrat&family=Oswald&family=Raleway&family=Merriweather&family=Nunito&family=Ubuntu&family=PT+Sans&family=Source+Sans+Pro&family=Playfair+Display&family=Rubik&family=Work+Sans&family=Quicksand&family=Anton&family=Poppins&family=Fira+Sans&family=Roboto+Slab&family=Josefin+Sans&family=Comfortaa&family=Exo+2&family=Cairo&family=Karla&family=Mukta&family=Inconsolata&family=Zilla+Slab&family=Indie+Flower&family=Arvo&family=Pacifico&family=Dancing+Script&family=Catamaran&family=Varela+Round&family=Hind&family=Acme&family=Signika&family=Asap&family=Orbitron&family=Cabin&family=Manrope&family=Chivo&family=Archivo&family=Hind+Siliguri&family=Crete+Round&family=Concert+One&family=Heebo&family=Amatic+SC&family=Great+Vibes&display=swap"
+        rel="stylesheet">
+
+    <!-- Iconos y Fuente Principal Poppins -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Librerías PDF -->
+    <!-- Librerías locales offline -->
+    <script src="../../lib/pdf-lib.min.js"></script>
+    <script src="../../lib/fontkit.umd.min.js"></script>
+    <script src="../../lib/pdf.min.js"></script>
+    <!-- Mapas de Fuentes locales (Tu archivo) -->
+    <script src="fontmap.js"></script>
+
+    <style>
+        /* VARIABLES DE AURO STUDIO */
+        :root {
+            --primary: #6F8A3C;
+            --primary-hover: #58702f;
+            --primary-light: #f2f5eb;
+            --bg-color: #f4f6f4;
+            --surface: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            background-image: url('../../assets/auro/bg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            flex: 1;
+        }
+
+        /* NAVEGACIÓN */
+        .back-nav {
+            margin-bottom: 20px;
+        }
+
+        .back-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .back-nav a:hover {
+            color: var(--primary);
+        }
+
+        /* BANNER SUPERIOR */
+        .top-banner {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-radius: var(--radius-xl);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            text-align: center;
+        }
+
+        .top-banner h1 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .top-banner p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* ZONA DE DRAG & DROP */
+        .file-upload {
+            background: var(--surface);
+            border: 2px dashed var(--border);
+            padding: 60px 20px;
+            border-radius: var(--radius-xl);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .file-upload.dragover,
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .file-upload i {
+            color: var(--primary);
+            font-size: 45px;
+        }
+
+        .file-upload span {
+            font-weight: 500;
+            color: var(--text-main);
+            font-size: 1.1rem;
+        }
+
+        /* CONTENEDOR DEL EDITOR */
+        .editor-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        @media (min-width: 900px) {
+            .editor-container {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+        }
+
+        /* ZONA DE PREVISUALIZACIÓN PDF */
+        .preview-panel {
+            flex: 1;
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            display: flex;
+            justify-content: center;
+            overflow: auto;
+            position: relative;
+        }
+
+        .pdf-preview-wrapper {
+            position: relative;
+            display: inline-block;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            background: white;
+        }
+
+        #pdfCanvas {
+            display: block;
+        }
+
+        /* TEXTO ARRASTRABLE */
+        #textOverlay {
+            position: absolute;
+            cursor: grab;
+            border: 1px dashed transparent;
+            padding: 2px 4px;
+            user-select: none;
+            white-space: nowrap;
+            transition: border 0.2s;
+            line-height: 1;
+        }
+
+        #textOverlay:hover {
+            border: 1px dashed var(--primary);
+            background: rgba(111, 138, 60, 0.05);
+        }
+
+        #textOverlay:active {
+            cursor: grabbing;
+            border: 1px dashed var(--primary);
+        }
+
+        #textOverlay:focus {
+            outline: none;
+            border: 1px solid var(--primary);
+            background: rgba(111, 138, 60, 0.1);
+        }
+
+        /* PANEL DE CONTROLES LATERAL */
+        .controls-panel {
+            width: 100%;
+            max-width: 350px;
+            background: var(--surface);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            border-radius: var(--radius-xl);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .control-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--border);
+            background: var(--bg-color);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary);
+        }
+
+        /* Color Picker Personalizado */
+        input[type="color"] {
+            border: 1px solid var(--border);
+            width: 100%;
+            height: 48px;
+            border-radius: var(--radius-md);
+            padding: 2px;
+            cursor: pointer;
+            background: var(--bg-color);
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: var(--radius-sm);
+        }
+
+        /* BOTONES GLOBALES */
+        .btn {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.2);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover:not(:disabled) {
+            background: var(--primary);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="back-nav">
+            <a href="../../index.html"><i class="fas fa-arrow-left"></i> Volver al Portal</a>
+        </div>
+
+        <section class="top-banner">
+            <h1>Fusión de Texto</h1>
+            <p>Genera automáticamente múltiples archivos PDF personalizados a partir de una lista y una plantilla base.
+            </p>
+        </section>
+
+        <main>
+            <!-- Zona de Carga -->
+            <label id="uploadArea" class="file-upload">
+                <i class="fas fa-file-pdf"></i>
+                <span>Arrastra tu archivo PDF (Plantilla) aquí o haz clic para seleccionar</span>
+                <input type="file" id="pdfInput" accept="application/pdf" hidden />
+            </label>
+
+            <!-- Editor (Oculto al inicio) -->
+            <div id="editorSection" class="editor-container" style="display: none;">
+
+                <!-- Panel de Canvas -->
+                <div class="preview-panel">
+                    <div class="pdf-preview-wrapper">
+                        <canvas id="pdfCanvas"></canvas>
+                        <div id="textOverlay" contenteditable="true" spellcheck="false">Nombre Aquí</div>
+                    </div>
+                </div>
+
+                <!-- Panel de Controles -->
+                <div class="controls-panel">
+
+                    <div class="control-group">
+                        <label><i class="fas fa-list"></i> Lista de Datos (Un registro por línea):</label>
+                        <textarea id="nameList"
+                            placeholder="Ej. Juan Pérez&#10;María Gómez&#10;Carlos López"></textarea>
+                    </div>
+
+                    <div class="control-group">
+                        <label><i class="fas fa-font"></i> Tipografía:</label>
+                        <!-- Selector original de tu código -->
+                        <select id="fontSelect">
+                            <option value="Arial-Regular">Arial</option>
+                            <option class="font-BirthstoneRegular" value="Birthstone-Regular">Birthstone</option>
+                            <option class="font-CookieRegular" value="Cookie-Regular">Cookie Regular</option>
+                            <option class="font-DelaGothicOneRegular" value="DelaGothicOne-Regular">Dela Gothic One
+                            </option>
+                            <option class="font-ImperialScriptRegular" value="ImperialScript-Regular">Imperial Script
+                            </option>
+                            <option class="font-LilitaOneRegular" value="LilitaOne-Regular">Lilita One</option>
+                            <option class="font-LimelightRegular" value="Limelight-Regular">Limelight</option>
+                            <option class="font-LobsterRegular" value="Lobster-Regular">Lobster</option>
+                            <option class="font-MonotonRegular" value="Monoton-Regular">Monoton</option>
+                            <option class="font-MonsieurLaDoulaiseRegular" value="MonsieurLaDoulaise-Regular">Monsieur
+                                La Doulaise</option>
+                            <option class="font-NotableRegular" value="Notable-Regular">Notable</option>
+                            <option class="font-TheNautigalBold" value="TheNautigal-Bold">The Nautigal Bold</option>
+                            <option class="font-TheNautigalRegular" value="TheNautigal-Regular">The Nautigal</option>
+                            <option class="font-UnifrakturMaguntiaRegular" value="UnifrakturMaguntia-Regular">
+                                UnifrakturMaguntia</option>
+                            <option class="font-YesteryearRegular" value="Yesteryear-Regular">Yesteryear</option>
+                            <option class="font-LexendDecaBlack" value="LexendDeca-Black">Lexend Deca Black</option>
+                            <option class="font-LexendDecaBold" value="LexendDeca-Bold">Lexend Deca Bold</option>
+                            <option class="font-LexendDecaExtraBold" value="LexendDeca-ExtraBold">Lexend Deca ExtraBold
+                            </option>
+                            <option class="font-LexendDecaExtraLight" value="LexendDeca-ExtraLight">Lexend Deca
+                                ExtraLight</option>
+                            <option class="font-LexendDecaLight" value="LexendDeca-Light">Lexend Deca Light</option>
+                            <option class="font-LexendDecaMedium" value="LexendDeca-Medium">Lexend Deca Medium</option>
+                            <option class="font-LexendDecaRegular" value="LexendDeca-Regular">Lexend Deca</option>
+                            <option class="font-LexendDecaSemiBold" value="LexendDeca-SemiBold">Lexend Deca SemiBold
+                            </option>
+                            <option class="font-LexendDecaThin" value="LexendDeca-Thin">Lexend Deca Thin</option>
+                            <option class="font-RobotoBlack" value="Roboto-Black">Roboto Black</option>
+                            <option class="font-RobotoBlackItalic" value="Roboto-BlackItalic">Roboto Black Italic
+                            </option>
+                            <option class="font-RobotoBold" value="Roboto-Bold">Roboto Bold</option>
+                            <option class="font-RobotoBoldItalic" value="Roboto-BoldItalic">Roboto Bold Italic</option>
+                            <option class="font-RobotoExtraBold" value="Roboto-ExtraBold">Roboto ExtraBold</option>
+                            <option class="font-RobotoExtraBoldItalic" value="Roboto-ExtraBoldItalic">Roboto ExtraBold
+                                Italic</option>
+                            <option class="font-RobotoExtraLight" value="Roboto-ExtraLight">Roboto ExtraLight</option>
+                            <option class="font-RobotoExtraLightItalic" value="Roboto-ExtraLightItalic">Roboto
+                                ExtraLight Italic</option>
+                            <option class="font-RobotoItalic" value="Roboto-Italic">Roboto Italic</option>
+                            <option class="font-RobotoLight" value="Roboto-Light">Roboto Light</option>
+                            <option class="font-RobotoLightItalic" value="Roboto-LightItalic">Roboto Light Italic
+                            </option>
+                            <option class="font-RobotoMedium" value="Roboto-Medium">Roboto Medium</option>
+                            <option class="font-RobotoMediumItalic" value="Roboto-MediumItalic">Roboto Medium Italic
+                            </option>
+                            <option class="font-RobotoRegular" value="Roboto-Regular">Roboto</option>
+                            <option class="font-RobotoSemiBold" value="Roboto-SemiBold">Roboto SemiBold</option>
+                            <option class="font-RobotoSemiBoldItalic" value="Roboto-SemiBoldItalic">Roboto SemiBold
+                                Italic</option>
+                            <option class="font-RobotoThin" value="Roboto-Thin">Roboto Thin</option>
+                            <option class="font-RobotoThinItalic" value="Roboto-ThinItalic">Roboto Thin Italic</option>
+                            <option class="font-RubikBlack" value="Rubik-Black">Rubik Black</option>
+                            <option class="font-RubikBlackItalic" value="Rubik-BlackItalic">Rubik Black Italic</option>
+                            <option class="font-RubikBold" value="Rubik-Bold">Rubik Bold</option>
+                            <option class="font-RubikBoldItalic" value="Rubik-BoldItalic">Rubik Bold Italic</option>
+                            <option class="font-RubikExtraBold" value="Rubik-ExtraBold">Rubik ExtraBold</option>
+                            <option class="font-RubikExtraBoldItalic" value="Rubik-ExtraBoldItalic">Rubik ExtraBold
+                                Italic</option>
+                            <option class="font-RubikItalic" value="Rubik-Italic">Rubik Italic</option>
+                            <option class="font-RubikLight" value="Rubik-Light">Rubik Light</option>
+                            <option class="font-RubikLightItalic" value="Rubik-LightItalic">Rubik Light Italic</option>
+                            <option class="font-RubikMedium" value="Rubik-Medium">Rubik Medium</option>
+                            <option class="font-RubikMediumItalic" value="Rubik-MediumItalic">Rubik Medium Italic
+                            </option>
+                            <option class="font-RubikRegular" value="Rubik-Regular">Rubik Regular</option>
+                            <option class="font-RubikSemiBold" value="Rubik-SemiBold">Rubik SemiBold</option>
+                            <option class="font-RubikSemiBoldItalic" value="Rubik-SemiBoldItalic">Rubik SemiBold Italic
+                            </option>
+                            <option class="font-PermanentMarkerRegular" value="PermanentMarker-Regular">Permanent Marker
+                                Regular</option>
+                            <option class="font-TangerineBold" value="Tangerine-Bold">Tangerine Bold</option>
+                            <option class="font-TangerineRegular" value="Tangerine-Regular">Tangerine Regular</option>
+                            <option class="font-MontserratBlack" value="Montserrat-Black">Montserrat Black</option>
+                            <option class="font-MontserratBlackItalic" value="Montserrat-BlackItalic">Montserrat Black
+                                Italic</option>
+                            <option class="font-MontserratBold" value="Montserrat-Bold">Montserrat Bold</option>
+                            <option class="font-MontserratBoldItalic" value="Montserrat-BoldItalic">Montserrat Bold
+                                Italic</option>
+                            <option class="font-MontserratExtraBold" value="Montserrat-ExtraBold">Montserrat ExtraBold
+                            </option>
+                            <option class="font-MontserratExtraBoldItalic" value="Montserrat-ExtraBoldItalic">Montserrat
+                                ExtraBold Italic</option>
+                            <option class="font-MontserratExtraLight" value="Montserrat-ExtraLight">Montserrat
+                                ExtraLight</option>
+                            <option class="font-MontserratExtraLightItalic" value="Montserrat-ExtraLightItalic">
+                                Montserrat ExtraLight Italic</option>
+                            <option class="font-MontserratItalic" value="Montserrat-Italic">Montserrat Italic</option>
+                            <option class="font-MontserratLight" value="Montserrat-Light">Montserrat Light</option>
+                            <option class="font-MontserratLightItalic" value="Montserrat-LightItalic">Montserrat Light
+                                Italic</option>
+                            <option class="font-MontserratMedium" value="Montserrat-Medium">Montserrat Medium</option>
+                            <option class="font-MontserratMediumItalic" value="Montserrat-MediumItalic">Montserrat
+                                Medium Italic</option>
+                            <option class="font-MontserratRegular" value="Montserrat-Regular">Montserrat Regular
+                            </option>
+                            <option class="font-MontserratSemiBold" value="Montserrat-SemiBold">Montserrat SemiBold
+                            </option>
+                            <option class="font-MontserratSemiBoldItalic" value="Montserrat-SemiBoldItalic">Montserrat
+                                SemiBold Italic</option>
+                            <option class="font-MontserratThin" value="Montserrat-Thin">Montserrat Thin</option>
+                            <option class="font-MontserratThinItalic" value="Montserrat-ThinItalic">Montserrat Thin
+                                Italic</option>
+                            <option class="font-SansationBold" value="Sansation-Bold">Sansation Bold</option>
+                            <option class="font-SansationBoldItalic" value="Sansation-BoldItalic">Sansation Bold Italic
+                            </option>
+                            <option class="font-SansationItalic" value="Sansation-Italic">Sansation Italic</option>
+                            <option class="font-SansationLight" value="Sansation-Light">Sansation Light</option>
+                            <option class="font-SansationLightItalic" value="Sansation-LightItalic">Sansation Light
+                                Italic</option>
+                            <option class="font-SansationRegular" value="Sansation-Regular">Sansation Regular</option>
+                            <!-- Extra condensadas... (se conservan todas tus opciones originales) -->
+                            <option class="font-NotoSansCondensedBold" value="NotoSans_Condensed-Bold">Noto Sans
+                                Condensed Bold</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; gap: 15px;">
+                        <div class="control-group" style="flex: 1;">
+                            <label><i class="fas fa-text-height"></i> Tamaño (px):</label>
+                            <input type="number" id="fontSize" min="8" value="24" />
+                        </div>
+                        <div class="control-group" style="flex: 1;">
+                            <label><i class="fas fa-palette"></i> Color:</label>
+                            <input type="color" id="fontColor" value="#000000" />
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 10px;">
+                        <button id="generateBtn" class="btn btn-primary">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Generar PDFs
+                        </button>
+
+                        <a id="downloadLink" class="btn btn-outline" style="display:none; margin-top: 15px;"
+                            download="lote_fusionado.pdf">
+                            <i class="fas fa-download"></i> Descargar Lote PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- Script de lógica -->
+    <script src="fusion_text.js"></script>
+</body>
+
+</html>
