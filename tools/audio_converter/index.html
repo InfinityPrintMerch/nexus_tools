@@ -6,12 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Convertidor de Audio | Eduardo Workspace</title>
 
-    <!-- SCRIPT DE PROTECCIÓN DE ACCESO SILENCIOSO -->
+    <!-- 1. PRE-CARGA INMEDIATA DEL TEMA EN CACHÉ (EVITA DESTELLO BLANCO) -->
     <script>
-        if (!sessionStorage.getItem('secure_app_token')) {
-            document.documentElement.style.display = 'none';
-            window.location.replace("../../index.html");
-        }
+        (function () {
+            try {
+                const cachedTheme = localStorage.getItem('eduardo_workspace_theme') ||
+                    localStorage.getItem('artivo-admin-theme') ||
+                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                if (cachedTheme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) { }
+        })();
     </script>
 
     <!-- Librerías locales (OFFLINE) -->
@@ -27,25 +33,87 @@
         rel="stylesheet">
 
     <style>
-        /* VARIABLES DE AURO STUDIO */
+        @font-face {
+            font-family: 'Akira';
+            src: url('../../assets/fonts/Akira Expanded.otf') format('opentype');
+            font-weight: normal;
+        }
+
+        /* =========================================
+           VARIABLES DE AURO STUDIO (MODO CLARO)
+           ========================================= */
         :root {
             --primary: #6F8A3C;
             --primary-hover: #58702f;
             --primary-light: #f2f5eb;
+            --border-focus: #6F8A3C;
+
             --bg-color: #f4f6f4;
+            --bg-overlay: rgba(244, 246, 244, 0);
             --surface: #ffffff;
+            --toolbar-bg: #fafbfa;
+            --input-bg: #ffffff;
+            --banner-bg: rgba(255, 255, 255, 0.95);
+            --banner-border: rgba(255, 255, 255, 0.6);
+            --card-border: #e2e8f0;
+
+            --mat-bg: #e9ece9;
+            --mat-line: rgba(111, 138, 60, 0.07);
+            --mat-dot: #cbd5e0;
+
             --text-main: #2d3748;
             --text-muted: #718096;
             --border: #e2e8f0;
             --danger: #e53e3e;
             --danger-hover: #c53030;
             --danger-light: #fff5f5;
+
+            --switch-bg: #e2e8f0;
+            --switch-knob: #ffffff;
+
             --radius-xl: 20px;
             --radius-lg: 16px;
             --radius-md: 12px;
+            --radius-sm: 8px;
             --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
+            --transition: all 0.22s ease;
+        }
+
+        /* =========================================
+           VARIABLES MODO OSCURO
+           ========================================= */
+        [data-theme="dark"] {
+            --primary: #84a348;
+            --primary-hover: #96b559;
+            --primary-light: rgba(132, 163, 72, 0.16);
+            --border-focus: #84a348;
+
+            --bg-color: #0f1419;
+            --bg-overlay: rgba(15, 20, 25, 0.88);
+            --surface: #182026;
+            --toolbar-bg: #141b20;
+            --input-bg: #11171c;
+            --banner-bg: rgba(24, 32, 38, 0.92);
+            --banner-border: rgba(255, 255, 255, 0.07);
+            --card-border: #283540;
+
+            --mat-bg: #12181d;
+            --mat-line: rgba(132, 163, 72, 0.07);
+            --mat-dot: #26323d;
+
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #283540;
+            --danger: #fc8181;
+            --danger-hover: #f56565;
+            --danger-light: rgba(229, 62, 62, 0.15);
+
+            --switch-bg: #283540;
+            --switch-knob: #84a348;
+
+            --shadow-sm: 0 4px 10px -1px rgba(0, 0, 0, 0.35);
+            --shadow-md: 0 12px 28px -5px rgba(0, 0, 0, 0.5);
         }
 
         * {
@@ -55,87 +123,284 @@
             font-family: 'Poppins', sans-serif;
         }
 
+        /* BLOQUEO DE SELECCIÓN Y ESTACIÓN DE ALTURA COMPLETA */
         body {
             background-color: var(--bg-color);
             background-image: url('../../assets/auro/bg.png');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+            background-repeat: no-repeat;
             color: var(--text-main);
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            padding: 14px 20px;
+            position: relative;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: var(--bg-overlay);
+            pointer-events: none;
+            z-index: 0;
+            transition: background 0.3s ease;
+        }
+
+        body:not(.auth-verified) .container {
+            display: none !important;
+        }
+
+        .security-check-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 5000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: var(--bg-color);
+            color: var(--text-main);
+            font-size: 0.86rem;
+            font-weight: 600;
+        }
+
+        body.auth-verified .security-check-loader {
+            display: none !important;
+        }
+
+        .security-spinner {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            animation: spinGuard 0.75s linear infinite;
+        }
+
+        @keyframes spinGuard {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        input,
+        select,
+        textarea {
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
+            user-select: auto;
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 8px;
+        }
+
+        [data-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
         }
 
         .container {
             width: 100%;
-            max-width: 1200px;
-            margin: 20px auto;
             flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
         }
 
-        /* BANNER Y NAVEGACIÓN */
-        .back-nav {
-            margin-bottom: 20px;
+        /* =========================================
+           SWITCH DE MODO OSCURO
+           ========================================= */
+        .theme-switch {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            width: 60px;
+            height: 32px;
+            flex-shrink: 0;
+            margin: 0;
         }
 
-        .back-nav a {
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .switch-slider {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: var(--switch-bg);
+            border-radius: 50px;
+            border: 1.5px solid var(--border);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .switch-slider .icon-sun {
+            color: #f59e0b;
+            font-size: 12px;
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        .switch-slider .icon-moon {
+            color: #94a3b8;
+            font-size: 12px;
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        [data-theme="dark"] .switch-slider .icon-moon {
+            color: #ffffff;
+        }
+
+        .switch-knob {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 23px;
+            height: 23px;
+            background-color: var(--switch-knob);
+            border-radius: 50%;
+            transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+        }
+
+        .theme-switch input:checked+.switch-slider .switch-knob {
+            transform: translateX(27px);
+        }
+
+        .theme-switch:hover .switch-slider {
+            border-color: var(--primary);
+        }
+
+        /* =========================================
+           CABECERA SUPERIOR
+           ========================================= */
+        .top-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--banner-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 11px 22px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--banner-border);
+            margin-bottom: 14px;
+            flex-shrink: 0;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-pill-btn {
             color: var(--text-muted);
             text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
+            font-weight: 600;
+            font-size: 0.82rem;
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            padding: 6px 13px;
+            border-radius: var(--radius-sm);
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            cursor: pointer;
             transition: var(--transition);
         }
 
-        .back-nav a:hover {
+        .nav-pill-btn:hover {
             color: var(--primary);
-        }
-
-        .top-banner {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 20px 30px;
-            border-radius: var(--radius-xl);
-            margin-bottom: 24px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            text-align: center;
-        }
-
-        .top-banner h1 {
-            color: var(--primary);
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .top-banner p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        /* TARJETA PRINCIPAL */
-        .card {
-            background: var(--surface);
-            border-radius: var(--radius-xl);
-            padding: 40px;
-            box-shadow: var(--shadow-md);
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* ZONA DE DRAG & DROP */
-        .file-upload {
-            border: 2px dashed var(--border);
             background: var(--primary-light);
-            padding: 50px 20px;
-            border-radius: var(--radius-lg);
+            border-color: var(--primary);
+        }
+
+        .header-title h1 {
+            color: var(--primary);
+            font-size: 1.12rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 0.74rem;
+            margin: 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(111, 138, 60, 0.3);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* =========================================
+           ZONA DE CARGA INICIAL (MASIVA)
+           ========================================= */
+        .file-upload.massive-drop {
+            border: 2px dashed var(--border);
+            background: var(--surface);
+            padding: 80px 20px;
+            border-radius: var(--radius-xl);
             cursor: pointer;
             transition: var(--transition);
             display: flex;
@@ -144,89 +409,190 @@
             justify-content: center;
             gap: 15px;
             text-align: center;
+            box-shadow: var(--shadow-md);
+            margin: auto;
+            max-width: 850px;
+            width: 100%;
         }
 
-        .file-upload.dragover,
-        .file-upload:hover {
+        .file-upload.massive-drop:hover,
+        .file-upload.massive-drop.dragover {
             border-color: var(--primary);
-            background: #e4efe0;
+            background: var(--primary-light);
+            transform: translateY(-2px);
         }
 
-        .file-upload i {
+        .file-upload.massive-drop i {
             color: var(--primary);
-            font-size: 45px;
+            font-size: 60px;
         }
 
-        .file-upload span {
-            font-weight: 500;
+        .file-upload.massive-drop span {
+            font-weight: 600;
             color: var(--text-main);
-            font-size: 1.1rem;
+            font-size: 1.2rem;
         }
 
-        /* CONTENEDOR DE TRABAJO */
-        .converter-container {
+        /* =========================================
+           ESTACIÓN PRINCIPAL (3 COLUMNAS)
+           ========================================= */
+        #converterContainer {
+            flex: 1;
+            min-height: 0;
             display: flex;
             flex-direction: column;
-            gap: 30px;
         }
 
-        @media (min-width: 900px) {
-            .converter-container {
-                flex-direction: row;
-                align-items: flex-start;
-            }
-        }
-
-        /* ZONA DE PREVISUALIZACIONES (Sin bordes oscuros) */
-        .preview-zone {
+        .main-grid {
             flex: 1;
-            background: transparent;
-            border: none;
-            padding: 10px 0;
-            min-height: 300px;
-            max-height: calc(100vh - 260px);
-            overflow-y: auto;
-            padding-right: 12px;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: 320px 1fr 340px;
+            gap: 16px;
+            width: 100%;
         }
 
-        /* Barra de desplazamiento personalizada para la lista de audios */
-        .preview-zone::-webkit-scrollbar {
-            width: 10px;
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
         }
 
-        .preview-zone::-webkit-scrollbar-track {
-            background: var(--primary-light);
-            border-radius: 20px;
+        .col-config {
+            order: 1;
         }
 
-        .preview-zone::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 20px;
-            border: 2px solid var(--primary-light);
+        .col-results {
+            order: 2;
         }
 
-        .preview-zone::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-hover);
+        .col-inputs {
+            order: 3;
         }
 
-        .preview-zone {
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary) var(--primary-light);
+        .panel-header-bar {
+            padding: 11px 18px;
+            border-bottom: 1px solid var(--border);
+            background: var(--toolbar-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            gap: 10px;
         }
 
-        .preview-zone h3 {
-            font-size: 1.05rem;
+        .panel-header-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 15px;
         }
 
+        .panel-header-title i {
+            color: var(--primary);
+        }
+
+        .panel-scroll-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-height: 0;
+        }
+
+        /* FONDO TECNICO ESTILO ASSEMBLER PARA RESULTADOS */
+        .panel-scroll-body.mat-bg {
+            background-color: var(--mat-bg);
+            background-image:
+                linear-gradient(var(--mat-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--mat-line) 1px, transparent 1px),
+                radial-gradient(var(--mat-dot) 1px, transparent 1px);
+            background-size: 100px 100px, 100px 100px, 20px 20px;
+        }
+
+        .config-block {
+            background: var(--toolbar-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 13px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        h2 {
+            font-family: 'Akira', sans-serif;
+            font-size: 0.78rem;
+            font-weight: normal;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* FORMULARIOS Y CONTROLES */
+        .form-group {
+            margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0;
+        }
+
+        select {
+            width: 100%;
+            padding: 9px 12px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text-main);
+            font-size: 0.84rem;
+            font-weight: 500;
+            transition: var(--transition);
+            outline: none;
+            cursor: pointer;
+        }
+
+        select:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(111, 138, 60, 0.16);
+        }
+
+        /* ESTILOS DE AUDIO GRID */
         .audio-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
         }
 
-        /* TARJETA DE AUDIO */
         .audio-item {
             background: var(--surface);
             border-radius: var(--radius-md);
@@ -247,9 +613,9 @@
         }
 
         .audio-cover {
-            width: 60px;
-            height: 60px;
-            border-radius: 14px;
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
             background: var(--bg-color);
             object-fit: cover;
             flex-shrink: 0;
@@ -257,7 +623,7 @@
             align-items: center;
             justify-content: center;
             color: var(--text-muted);
-            font-size: 20px;
+            font-size: 18px;
             border: 1px solid var(--border);
         }
 
@@ -269,8 +635,8 @@
         }
 
         .audio-title {
-            font-weight: 600;
-            font-size: 0.9rem;
+            font-weight: 700;
+            font-size: 0.85rem;
             color: var(--text-main);
             white-space: nowrap;
             overflow: hidden;
@@ -278,7 +644,7 @@
         }
 
         .audio-artist {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: var(--text-muted);
             white-space: nowrap;
             overflow: hidden;
@@ -288,61 +654,38 @@
         .audio-meta {
             font-size: 0.7rem;
             color: var(--primary);
-            font-weight: 500;
-            margin-top: 4px;
-        }
-
-        /* PANEL LATERAL DE CONTROLES */
-        .controls-sidebar {
-            width: 100%;
-            max-width: 320px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .control-group label {
-            font-size: 0.85rem;
             font-weight: 600;
-            color: var(--text-muted);
+            margin-top: 4px;
+            font-family: 'Akira', sans-serif;
+            letter-spacing: 0.5px;
         }
 
-        select {
-            width: 100%;
-            padding: 10px 14px;
+        /* RESUMEN / TARJETA FINAL */
+        .summary-card {
+            background: var(--toolbar-bg);
+            border: 1px solid var(--border);
             border-radius: var(--radius-md);
-            border: 1.5px solid var(--border);
-            background: var(--bg-color);
-            color: var(--text-main);
-            font-size: 0.95rem;
-            outline: none;
-            cursor: pointer;
-            transition: var(--transition);
+            padding: 14px 16px;
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        select:focus {
-            border-color: var(--primary);
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
         }
 
-        /* BOTONES GLOBALES */
         .btn {
             width: 100%;
-            padding: 14px 20px;
+            padding: 11px 18px;
             border-radius: 50px;
             border: none;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.84rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -360,36 +703,34 @@
         .btn-primary {
             background: var(--primary);
             color: white;
-            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.2);
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.24);
         }
 
         .btn-primary:hover:not(:disabled) {
             background: var(--primary-hover);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
 
         .btn-outline {
-            background: var(--primary-light);
+            background: var(--surface);
             color: var(--primary);
-            border: 2px dashed var(--primary);
+            border: 1.5px solid var(--primary);
         }
 
-        .btn-outline:hover {
-            background: var(--primary);
-            color: white;
-            border-style: solid;
+        .btn-outline:hover:not(:disabled) {
+            background: var(--primary-light);
+            transform: translateY(-1px);
         }
 
-        .btn-danger {
-            background: var(--danger-light);
+        .btn-outline-danger {
+            background: var(--surface);
             color: var(--danger);
-            border: 2px dashed var(--danger);
+            border: 1.5px solid var(--danger);
         }
 
-        .btn-danger:hover {
-            background: var(--danger);
-            color: white;
-            border-style: solid;
+        .btn-outline-danger:hover:not(:disabled) {
+            background: var(--danger-light);
+            transform: translateY(-1px);
         }
 
         /* PROGRESO */
@@ -399,7 +740,7 @@
         }
 
         .progress-text {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--primary);
             margin-bottom: 8px;
@@ -423,100 +764,400 @@
 
         .status-text {
             text-align: center;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
-            font-weight: 500;
+            font-weight: 600;
+        }
+
+        /* NAVEGACIÓN MÓVIL (STEPPER) */
+        .mobile-nav {
+            display: none;
+        }
+
+        @media (max-width: 1023px) {
+            body {
+                height: auto;
+                min-height: 100vh;
+                overflow: auto;
+                padding: 10px 12px;
+            }
+
+            .top-banner {
+                padding: 10px 14px;
+                margin-bottom: 12px;
+            }
+
+            .header-badge {
+                display: none;
+            }
+
+            .main-grid {
+                display: block;
+            }
+
+            .card {
+                min-height: 460px;
+            }
+
+            .mobile-nav {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 12px;
+                padding: 10px 14px;
+                background: var(--surface);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-sm);
+                border: 1px solid var(--border);
+            }
+
+            .step-dots {
+                display: flex;
+                gap: 8px;
+            }
+
+            .step-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: var(--border);
+                transition: var(--transition);
+            }
+
+            .step-dot.active {
+                background: var(--primary);
+                transform: scale(1.3);
+            }
         }
     </style>
 </head>
 
 <body>
 
+    <!-- PANTALLA DE VERIFICACIÓN DE SEGURIDAD FIREBASE -->
+    <div class="security-check-loader" id="securityLoader">
+        <div class="security-spinner"></div>
+        <span>Verificando permisos de acceso en Firebase...</span>
+    </div>
+
     <div class="container">
 
-        <div class="back-nav">
-            <a href="../../index.html"><i class="fas fa-arrow-left"></i> Volver al Portal</a>
-        </div>
-
-        <section class="top-banner">
-            <h1>Convertidor de Audio</h1>
-            <p>Convierte formatos de audio conservando metadatos y portadas de forma 100% offline.</p>
-        </section>
-
-        <main class="card">
-
-            <label for="inputAudio" class="file-upload" id="dragDropArea">
-                <i class="fas fa-music"></i>
-                <span>Arrastra y suelta tus audios aquí, o haz clic para seleccionar</span>
-                <input type="file" id="inputAudio" accept="audio/*" multiple style="display:none;" />
-            </label>
-
-            <div class="converter-container" id="converterContainer" style="display: none;">
-
-                <!-- Vista Previa Limpia -->
-                <div class="preview-zone">
-                    <h3>Pistas a Procesar:</h3>
-                    <div id="audioPreviewGrid" class="audio-grid"></div>
-                </div>
-
-                <!-- Controles Laterales -->
-                <div class="controls-sidebar">
-
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-outline" id="addMoreBtn"
-                            style="flex: 1; padding: 14px 10px; font-size: 0.85rem;">
-                            <i class="fas fa-plus"></i> Añadir
-                        </button>
-                        <button class="btn btn-danger" id="clearBtn"
-                            style="flex: 1; padding: 14px 10px; font-size: 0.85rem;">
-                            <i class="fas fa-trash-can"></i> Limpiar
-                        </button>
-                    </div>
-
-                    <div class="control-group">
-                        <label for="formatSelect">Convertir a:</label>
-                        <select id="formatSelect">
-                            <option value="mp3">MP3</option>
-                            <option value="wav">WAV (Sin pérdida)</option>
-                            <option value="flac">FLAC (Alta calidad)</option>
-                            <option value="ogg">OGG Vorbis</option>
-                            <option value="m4a">M4A (AAC)</option>
-                        </select>
-                    </div>
-
-                    <div class="control-group" id="bitrateGroup">
-                        <label for="bitrateSelect">Calidad (Bitrate):</label>
-                        <select id="bitrateSelect">
-                            <option value="128k">128 kbps (Estándar)</option>
-                            <option value="192k">192 kbps (Alta)</option>
-                            <option value="320k" selected>320 kbps (Máxima)</option>
-                        </select>
-                    </div>
-
-                    <div id="progressWrapper" class="progress-wrapper">
-                        <div id="progressText" class="progress-text">Iniciando motor...</div>
-                        <div class="progress-container">
-                            <div id="progressBar" class="progress-bar"></div>
-                        </div>
-                    </div>
-
-                    <button id="convertBtn" class="btn btn-primary">
-                        <i class="fas fa-sync-alt"></i> Convertir
-                    </button>
-
-                    <a id="downloadBtn" class="btn btn-primary" style="display: none;" download>
-                        <i class="fas fa-download"></i> Descargar
-                    </a>
-
-                    <div id="status" class="status-text"></div>
+        <!-- CABECERA AURO -->
+        <header class="top-banner">
+            <div class="header-left">
+                <a href="../../index.html" class="nav-pill-btn"><i class="fas fa-arrow-left"></i> Portal</a>
+                <div class="header-title">
+                    <h1><i class="fa-solid fa-music"></i> <span>Audio Converter Pro</span></h1>
+                    <p>Conversión de alta calidad offline</p>
                 </div>
             </div>
 
-        </main>
+            <div class="header-right">
+                <div class="header-badge"><i class="fas fa-bolt"></i><span>Procesamiento Local</span></div>
+
+                <!-- Switch Modo Oscuro Sincronizado -->
+                <label class="theme-switch" title="Cambiar tema">
+                    <input type="checkbox" class="theme-checkbox" id="themeToggleCheckbox">
+                    <span class="switch-slider">
+                        <i class="fas fa-sun icon-sun"></i>
+                        <i class="fas fa-moon icon-moon"></i>
+                        <span class="switch-knob"></span>
+                    </span>
+                </label>
+            </div>
+        </header>
+
+        <!-- ZONA DE CARGA INICIAL (MASIVA) -->
+        <label for="inputAudio" class="file-upload massive-drop" id="dragDropArea">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>Arrastra y suelta tus audios aquí, o haz clic para seleccionar</span>
+            <input type="file" id="inputAudio" accept="audio/*" multiple style="display:none;" />
+        </label>
+
+        <!-- GRID 3 COLUMNAS AURO (Oculto hasta cargar archivos) -->
+        <div id="converterContainer" style="display: none;">
+            <div class="main-grid">
+
+                <!-- COLUMNA 1: CONFIGURACIÓN -->
+                <div class="card col-config" id="col-config">
+                    <div class="panel-header-bar">
+                        <div class="panel-header-title">
+                            <i class="fa-solid fa-sliders"></i>
+                            <span>Ajustes de Conversión</span>
+                        </div>
+                    </div>
+                    <div class="panel-scroll-body">
+                        <div class="config-block">
+                            <h2><i class="fas fa-cogs"></i> Parámetros de Salida</h2>
+                            <div class="form-group">
+                                <label for="formatSelect">Convertir a:</label>
+                                <select id="formatSelect">
+                                    <option value="mp3">MP3</option>
+                                    <option value="wav">WAV (Sin pérdida)</option>
+                                    <option value="flac">FLAC (Alta calidad)</option>
+                                    <option value="ogg">OGG Vorbis</option>
+                                    <option value="m4a">M4A (AAC)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="bitrateGroup">
+                                <label for="bitrateSelect">Calidad (Bitrate):</label>
+                                <select id="bitrateSelect">
+                                    <option value="128k">128 kbps (Estándar)</option>
+                                    <option value="192k">192 kbps (Alta)</option>
+                                    <option value="320k" selected>320 kbps (Máxima)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="config-block">
+                            <h2><i class="fas fa-folder-open"></i> Gestión de Pistas</h2>
+                            <div class="grid-2">
+                                <button class="btn btn-outline" id="addMoreBtn"><i class="fas fa-plus"></i>
+                                    Añadir</button>
+                                <button class="btn btn-outline-danger" id="clearBtn"><i class="fas fa-trash-can"></i>
+                                    Limpiar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLUMNA 2: PISTAS (RESULTADOS) -->
+                <div class="card col-results" id="col-results">
+                    <div class="panel-header-bar">
+                        <div class="panel-header-title">
+                            <i class="fa-solid fa-list-ul"></i>
+                            <span>Pistas a Procesar</span>
+                        </div>
+                    </div>
+                    <div class="panel-scroll-body mat-bg">
+                        <div id="audioPreviewGrid" class="audio-grid"></div>
+                    </div>
+                </div>
+
+                <!-- COLUMNA 3: ACCIONES Y PROGRESO -->
+                <div class="card col-inputs" id="col-inputs">
+                    <div class="panel-header-bar">
+                        <div class="panel-header-title">
+                            <i class="fa-solid fa-microchip"></i>
+                            <span>Procesamiento</span>
+                        </div>
+                    </div>
+                    <div class="panel-scroll-body" style="justify-content: flex-end;">
+                        <div class="summary-card">
+                            <div id="progressWrapper" class="progress-wrapper">
+                                <div id="progressText" class="progress-text">Iniciando motor...</div>
+                                <div class="progress-container">
+                                    <div id="progressBar" class="progress-bar"></div>
+                                </div>
+                            </div>
+
+                            <div id="status" class="status-text">Listo para iniciar</div>
+
+                            <div class="action-buttons">
+                                <button id="convertBtn" class="btn btn-primary">
+                                    <i class="fas fa-sync-alt"></i> Convertir Ahora
+                                </button>
+                                <a id="downloadBtn" class="btn btn-outline" style="display: none;" download>
+                                    <i class="fas fa-download"></i> Descargar Archivo(s)
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAV INFERIOR MÓVIL -->
+        <div class="mobile-nav" id="mobileNav">
+            <button id="btnPrevMobile" class="btn btn-outline" style="width: auto; padding: 10px 20px;"
+                onclick="changeStep(-1)">Anterior</button>
+            <div class="step-dots">
+                <span class="step-dot active"></span>
+                <span class="step-dot"></span>
+                <span class="step-dot"></span>
+            </div>
+            <button id="btnNextMobile" class="btn btn-primary" style="width: auto; padding: 10px 20px;"
+                onclick="changeStep(1)">Siguiente</button>
+        </div>
+
     </div>
 
-    <!-- Script de Lógica -->
+    <!-- Script de Lógica Interna Original -->
     <script src="audio_converter.js"></script>
+
+    <!-- =========================================================================
+         LÓGICA VISTA MÓVIL STEPPER Y OBSERVER PARA EL CONTENEDOR
+         ========================================================================= -->
+    <script>
+        let currentStep = 0;
+        const columnsOrder = ['col-config', 'col-results', 'col-inputs'];
+
+        window.addEventListener('resize', updateMobileView);
+
+        function changeStep(dir) {
+            currentStep += dir;
+            if (currentStep < 0) currentStep = 0;
+            if (currentStep > 2) currentStep = 2;
+            updateMobileView();
+        }
+
+        function updateMobileView() {
+            const isMobile = window.innerWidth <= 1023;
+            const mobileNav = document.getElementById('mobileNav');
+            const converterContainer = document.getElementById('converterContainer');
+
+            // Solo mostrar stepper en móvil y si el contenedor principal está activo
+            if (isMobile && converterContainer.style.display !== 'none') {
+                mobileNav.style.display = 'flex';
+                columnsOrder.forEach((colId, index) => {
+                    document.getElementById(colId).style.display = (index === currentStep) ? 'flex' : 'none';
+                });
+                document.querySelectorAll('.step-dot').forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentStep);
+                });
+                document.getElementById('btnPrevMobile').style.visibility = currentStep === 0 ? 'hidden' : 'visible';
+                document.getElementById('btnNextMobile').style.visibility = currentStep === columnsOrder.length - 1 ? 'hidden' : 'visible';
+            } else {
+                mobileNav.style.display = 'none';
+                columnsOrder.forEach(colId => {
+                    document.getElementById(colId).style.display = 'flex';
+                });
+            }
+        }
+
+        // Observar cuando audio_converter.js cambia el display de converterContainer
+        const observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.attributeName === "style") {
+                    updateMobileView();
+                }
+            });
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('converterContainer');
+            if (container) {
+                observer.observe(container, { attributes: true });
+            }
+            updateMobileView();
+        });
+    </script>
+
+    <!-- =========================================================================
+         LÓGICA DEL TEMA LOCALSTORAGE
+         ========================================================================= -->
+    <script>
+        const THEME_STORAGE_KEY = "eduardo_workspace_theme";
+        const ADMIN_THEME_KEY = "artivo-admin-theme";
+
+        function getCachedTheme() {
+            try {
+                const stored = localStorage.getItem(THEME_STORAGE_KEY) || localStorage.getItem(ADMIN_THEME_KEY);
+                if (stored === 'dark' || stored === 'light') return stored;
+            } catch (e) { }
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        function applyTheme(theme, saveToCache = true) {
+            const isDark = theme === 'dark';
+            if (isDark) { document.documentElement.setAttribute('data-theme', 'dark'); }
+            else { document.documentElement.removeAttribute('data-theme'); }
+
+            const checkbox = document.getElementById('themeToggleCheckbox');
+            if (checkbox) checkbox.checked = isDark;
+
+            if (saveToCache) {
+                try {
+                    const val = isDark ? 'dark' : 'light';
+                    localStorage.setItem(THEME_STORAGE_KEY, val);
+                    localStorage.setItem(ADMIN_THEME_KEY, val);
+                } catch (e) { }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            applyTheme(getCachedTheme(), true);
+            const checkbox = document.getElementById('themeToggleCheckbox');
+            if (checkbox) {
+                checkbox.addEventListener('change', (e) => { applyTheme(e.target.checked ? 'dark' : 'light', true); });
+            }
+        });
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === THEME_STORAGE_KEY || e.key === ADMIN_THEME_KEY) {
+                if (e.newValue === 'dark' || e.newValue === 'light') { applyTheme(e.newValue, false); }
+            }
+        });
+    </script>
+
+    <!-- =========================================================================
+         GUARDIÁN DE SEGURIDAD DE ALTO GRADO (FIREBASE AUTH + FIRESTORE EN VIVO)
+         ========================================================================= -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, query, limit, getDocs, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        import { FIREBASE_CONFIG } from "../../js/auth-guard.js";
+
+        // Asignamos un ID coherente para esta herramienta
+        const REQUIRED_TOOL_ID = "audio_converter";
+        const LOGIN_URL = "../../index.html";
+
+        function denyAndRedirect() {
+            sessionStorage.removeItem('secure_app_token');
+            sessionStorage.removeItem('artivo_session_user');
+            window.location.replace(LOGIN_URL);
+        }
+
+        function unlockWorkspace() {
+            document.body.classList.add('auth-verified');
+            window.dispatchEvent(new Event('resize'));
+        }
+
+        const todayISO = () => {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        };
+
+        if (!FIREBASE_CONFIG.apiKey || FIREBASE_CONFIG.apiKey.includes("PEGA_AQUI")) {
+            console.error("Falta configurar FIREBASE_CONFIG.");
+            denyAndRedirect();
+        } else {
+            const app = initializeApp(FIREBASE_CONFIG);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+            let unsubDoc = null;
+
+            async function checkIsAdminByRule() {
+                try { await getDocs(query(collection(db, "users"), limit(1))); return true; }
+                catch (e) { return false; }
+            }
+
+            onAuthStateChanged(auth, async (user) => {
+                if (unsubDoc) { unsubDoc(); unsubDoc = null; }
+                if (!user || !user.email) { denyAndRedirect(); return; }
+
+                const email = user.email.toLowerCase();
+                const isAdmin = await checkIsAdminByRule();
+
+                if (isAdmin) { unlockWorkspace(); return; }
+
+                unsubDoc = onSnapshot(doc(db, "users", email), (snap) => {
+                    if (!snap.exists()) { denyAndRedirect(); return; }
+                    const userData = snap.data();
+                    const isExpired = userData.state === 'active' && userData.expiry && userData.expiry < todayISO();
+
+                    // Verificación de permiso para usar esta herramienta específica
+                    const hasToolPermission = Array.isArray(userData.tools) && userData.tools.includes(REQUIRED_TOOL_ID);
+
+                    if (userData.state !== 'active' || isExpired || !hasToolPermission) { denyAndRedirect(); return; }
+                    unlockWorkspace();
+                }, () => { denyAndRedirect(); });
+            });
+        }
+    </script>
 </body>
 
 </html>

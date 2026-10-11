@@ -1,0 +1,3180 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Credential Maker Pro | Eduardo Workspace</title>
+    <link rel="icon" href="data:,">
+
+    <!-- SCRIPT DE PROTECCIÓN DE ACCESO SILENCIOSO -->
+    <!-- NOTA: Comenta temporalmente este bloque si deseas probar el archivo localmente fuera del portal -->
+    <script>
+        if (!sessionStorage.getItem('secure_app_token')) {
+            document.documentElement.style.display = 'none';
+            window.location.replace("../../index.html");
+        }
+    </script>
+
+    <!-- Librerías PDF y ZIP -->
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.worker.min.js';
+    </script>
+
+    <!-- Fuente Poppins e Iconos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        /* VARIABLES DE AURO STUDIO */
+        :root {
+            --primary: #6F8A3C;
+            --primary-hover: #58702f;
+            --primary-light: #f2f5eb;
+            --bg-color: #f4f6f4;
+            --surface: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --accent-blue: #2b6cb0;
+            --accent-blue-light: #ebf8ff;
+            --warning-bg: #fffaf0;
+            --warning-border: #dd6b20;
+            --warning-text: #9c4221;
+            --danger: #e53e3e;
+            --danger-hover: #c53030;
+            --danger-light: #fff5f5;
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            --transition: all 0.22s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: url('../../assets/auro/bg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 12px 18px;
+        }
+
+        /* Scrollbars limpios */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* CABECERA COMPACTA */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            margin-bottom: 12px;
+            flex-shrink: 0;
+            gap: 15px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .back-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.84rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-color);
+            transition: var(--transition);
+        }
+
+        .back-nav a:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .header-title h1 {
+            color: var(--primary);
+            font-size: 1.15rem;
+            font-weight: 700;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .file-pill {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(111, 138, 60, 0.3);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .main-content {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ESTADO 1: PANTALLA INICIAL DE CARGA FLEXIBLE */
+        .upload-screen {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 10px;
+            animation: fadeIn 0.35s ease-out;
+        }
+
+        .upload-card {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            padding: 32px 36px;
+            box-shadow: var(--shadow-md);
+            width: 100%;
+            max-width: 820px;
+            text-align: center;
+        }
+
+        .upload-card h2 {
+            font-size: 1.15rem;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .upload-card>p {
+            font-size: 0.84rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        /* Selector de modo de archivos */
+        .mode-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .mode-option-card {
+            border: 2px solid var(--border);
+            background: var(--bg-color);
+            border-radius: var(--radius-md);
+            padding: 12px 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            text-align: center;
+        }
+
+        .mode-option-card i {
+            font-size: 1.35rem;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .mode-option-card strong {
+            font-size: 0.78rem;
+            color: var(--text-main);
+            line-height: 1.25;
+        }
+
+        .mode-option-card small {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            line-height: 1.2;
+        }
+
+        .mode-option-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .mode-option-card.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.15);
+        }
+
+        .mode-option-card.active i {
+            color: var(--primary);
+        }
+
+        /* Zonas Drag & Drop */
+        .dropzones-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .dropzones-container.two-cols {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .file-upload {
+            border: 2.5px dashed var(--border);
+            background: var(--primary-light);
+            padding: 36px 20px;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .file-upload.dragover,
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: #e4efe0;
+            transform: translateY(-2px);
+        }
+
+        .file-upload.loaded {
+            border-style: solid;
+            border-color: var(--primary);
+            background: #ebf3e4;
+        }
+
+        .file-upload i {
+            color: var(--primary);
+            font-size: 38px;
+        }
+
+        .file-upload span {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        .file-upload small {
+            color: var(--text-muted);
+            font-size: 0.78rem;
+        }
+
+        .secondary-pair-options {
+            display: none;
+            background: var(--bg-color);
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            margin-bottom: 18px;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 0.8rem;
+        }
+
+        .secondary-pair-options select {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 0.8rem;
+            outline: none;
+        }
+
+        /* ESTADO 2: ESTACIÓN DE TRABAJO DIVIDIDA */
+        .workspace-screen {
+            display: none;
+            flex: 1;
+            min-height: 0;
+            grid-template-columns: 1fr 455px;
+            gap: 14px;
+            animation: fadeIn 0.35s ease-out;
+        }
+
+        /* COLUMNA IZQUIERDA: VISOR + MESA DE ORDENAMIENTO DRAG & DROP */
+        .viewer-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .viewer-toolbar {
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #fafbfa;
+            flex-shrink: 0;
+        }
+
+        /* Pestañas del visor izquierdo */
+        .workspace-tabs {
+            display: flex;
+            gap: 6px;
+            background: var(--bg-color);
+            padding: 4px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .ws-tab-btn {
+            border: none;
+            background: transparent;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .ws-tab-btn.active {
+            background: var(--surface);
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mode-badge {
+            font-size: 0.68rem;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .mode-badge.blueprint {
+            background: var(--accent-blue-light);
+            color: var(--accent-blue);
+            border: 1px solid #bee3f8;
+        }
+
+        .mode-badge.real-pdf {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(111, 138, 60, 0.3);
+        }
+
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 3px 6px;
+            border-radius: var(--radius-sm);
+        }
+
+        .zoom-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.76rem;
+            transition: var(--transition);
+        }
+
+        .zoom-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .zoom-level {
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 44px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        /* Vista 1: Lienzo de Pliegos (Frente y Vuelta lado a lado) */
+        .viewer-canvas-Viewport {
+            flex: 1;
+            overflow: auto;
+            background: #e6eae6;
+            background-image: radial-gradient(#cbd5e0 1px, transparent 1px);
+            background-size: 18px 18px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 26px;
+        }
+
+        .sheet-pair-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 22px;
+            width: 100%;
+            padding-bottom: 18px;
+            border-bottom: 1px dashed #cbd5e0;
+        }
+
+        .sheet-pair-row:last-child {
+            border-bottom: none;
+        }
+
+        .sheet-preview-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            max-width: 100%;
+        }
+
+        .sheet-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-main);
+            background: var(--surface);
+            padding: 4px 14px;
+            border-radius: 50px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sheet-label.front-tag i {
+            color: var(--primary);
+        }
+
+        .sheet-label.back-tag i {
+            color: var(--accent-blue);
+        }
+
+        .canvas-scroll-box {
+            max-width: 100%;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            padding: 4px;
+        }
+
+        .viewer-canvas-Viewport svg.vector-sheet,
+        .viewer-canvas-Viewport canvas {
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14);
+            border: 1px solid #cbd5e0;
+            background: #ffffff;
+            display: block;
+            transition: width 0.12s ease, height 0.12s ease;
+        }
+
+        /* Vista 2: Mesa de Luz Drag & Drop para ordenar credenciales */
+        .Credentials-sorter-viewport {
+            flex: 1;
+            overflow-y: auto;
+            background: #f1f4f1;
+            padding: 18px;
+            display: none;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .sorter-header-bar {
+            background: var(--surface);
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 0.8rem;
+        }
+
+        .sorter-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .mini-btn {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+
+        .mini-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 14px;
+        }
+
+        .cred-item-card {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 10px;
+            box-shadow: var(--shadow-sm);
+            cursor: grab;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            user-select: none;
+        }
+
+        .cred-item-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .cred-item-card.dragging {
+            opacity: 0.4;
+            border-style: dashed;
+        }
+
+        .cred-item-card.drag-over {
+            border-color: var(--accent-blue);
+            background: var(--accent-blue-light);
+            transform: scale(1.02);
+        }
+
+        .cred-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 6px;
+        }
+
+        .cred-number {
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .cred-card-tools {
+            display: flex;
+            gap: 4px;
+        }
+
+        .icon-tool-btn {
+            border: none;
+            background: var(--bg-color);
+            color: var(--text-muted);
+            width: 24px;
+            height: 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.72rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .icon-tool-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .icon-tool-btn.delete:hover {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .cred-thumbs-pair {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .thumb-box {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            min-height: 95px;
+            justify-content: center;
+        }
+
+        .thumb-box span {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .thumb-box canvas,
+        .thumb-box img {
+            max-width: 100%;
+            max-height: 80px;
+            object-fit: contain;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        /* COLUMNA DERECHA: PANEL DE CONFIGURACIÓN */
+        .sidebar-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 11px 16px;
+            border-bottom: 1px solid var(--border);
+            background: #fafbfa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header h2 {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-header h2 i {
+            color: var(--primary);
+        }
+
+        .sidebar-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .config-section {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 11px 12px;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--primary);
+            margin-bottom: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .section-title span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .preset-pills {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .preset-pill {
+            font-size: 0.66rem;
+            text-transform: none;
+            color: var(--text-main);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 2px 7px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .preset-pill:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            margin-bottom: 7px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            font-size: 0.73rem;
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px;
+        }
+
+        .input-with-unit {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-with-unit input,
+        .form-group select {
+            width: 100%;
+            height: 34px;
+            padding: 4px 9px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            color: var(--text-main);
+            background: var(--surface);
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .input-with-unit input {
+            padding-right: 34px;
+        }
+
+        .input-with-unit input:focus,
+        .form-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(111, 138, 60, 0.12);
+        }
+
+        .unit-tag {
+            position: absolute;
+            right: 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .bleed-info-pill {
+            background: var(--primary-light);
+            border: 1px solid rgba(111, 138, 60, 0.3);
+            color: var(--primary-hover);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.73rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 4px;
+        }
+
+        /* Selector visual de Volteo (Bandera vs Campana) */
+        .flip-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .flip-option {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .flip-option i {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+
+        .flip-option strong {
+            font-size: 0.75rem;
+            color: var(--text-main);
+        }
+
+        .flip-option small {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        .flip-option.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .flip-option.active i,
+        .flip-option.active strong {
+            color: var(--primary);
+        }
+
+        /* Botones de lados de corte */
+        .sides-selector {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-top: 2px;
+        }
+
+        .side-toggle {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 5px 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            transition: var(--transition);
+            user-select: none;
+        }
+
+        .side-toggle.active {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .color-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 3px 8px;
+            height: 34px;
+        }
+
+        .color-input-wrapper input[type="color"] {
+            border: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 4px;
+            cursor: pointer;
+            background: none;
+        }
+
+        .color-input-wrapper span {
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: monospace;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.74rem;
+            color: var(--text-main);
+            cursor: pointer;
+            user-select: none;
+            margin-top: 5px;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            accent-color: var(--primary);
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+        }
+
+        /* Resumen estadístico */
+        .stats-card {
+            background: var(--surface);
+            border-left: 4px solid var(--primary);
+            border-radius: var(--radius-sm);
+            padding: 9px 12px;
+            box-shadow: var(--shadow-sm);
+            border-top: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stats-card.error {
+            border-left-color: var(--danger);
+            background: var(--danger-light);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-box .lbl {
+            font-size: 0.66rem;
+            color: var(--text-muted);
+        }
+
+        .stat-box .val {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* PIE DE BOTONES ABAJO */
+        .sidebar-footer {
+            padding: 11px 16px;
+            border-top: 1px solid var(--border);
+            background: #fafbfa;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px 16px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.84rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.22);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: #2f855a;
+            color: white;
+            box-shadow: 0 4px 12px rgba(47, 133, 90, 0.25);
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #276749;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger-outline {
+            background: transparent;
+            color: var(--danger);
+            border: 1.5px solid var(--danger);
+            padding: 7px 14px;
+            font-size: 0.78rem;
+        }
+
+        .btn-danger-outline:hover {
+            background: var(--danger-light);
+            color: var(--danger-hover);
+            border-color: var(--danger-hover);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 980px) {
+            body {
+                height: auto;
+                overflow: auto;
+            }
+
+            .workspace-screen {
+                grid-template-columns: 1fr;
+            }
+
+            .viewer-panel {
+                height: 560px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- CABECERA SUPERIOR -->
+    <header class="app-header">
+        <div class="header-left">
+            <div class="back-nav">
+                <a href="../../index.html"><i class="fas fa-arrow-left"></i> Portal</a>
+            </div>
+            <div class="header-title">
+                <h1><i class="fas fa-id-card"></i> Credential Maker Pro</h1>
+                <p>Imposición inteligente de credenciales con espejo automático (Bandera / Campana) y sangrado</p>
+            </div>
+        </div>
+
+        <div class="file-pill" id="activeFilePill">
+            <i class="fas fa-id-badge"></i>
+            <span id="pillSummaryText">0 Credenciales en cola</span>
+        </div>
+    </header>
+
+    <main class="main-content">
+
+        <!-- ESTADO 1: PANTALLA DE CONFIGURACIÓN DE ENTRADA Y SUBIDA -->
+        <section class="upload-screen" id="uploadScreen">
+            <div class="upload-card">
+                <h2>1. ¿Cómo vienen tus archivos PDF de credenciales?</h2>
+                <p>Selecciona la estructura de tu archivo para emparejar automáticamente los Frentes y Vueltas</p>
+
+                <!-- Selector de los 5 modos habituales de imprenta -->
+                <div class="mode-cards-grid" id="inputModeSelector">
+                    <div class="mode-option-card active" data-mode="interleaved">
+                        <i class="fas fa-layer-group"></i>
+                        <strong>1 PDF Intercalado</strong>
+                        <small>Pág 1=Frente 1, Pág 2=Vuelta 1, Pág 3=Frente 2...</small>
+                    </div>
+
+                    <div class="mode-option-card" data-mode="two_pdfs">
+                        <i class="fas fa-copy"></i>
+                        <strong>2 PDFs Separados</strong>
+                        <small>Un PDF con todos los Frentes y otro con las Vueltas</small>
+                    </div>
+
+                    <div class="mode-option-card" data-mode="split_half">
+                        <i class="fas fa-arrows-split-up-and-left"></i>
+                        <strong>1 PDF por Mitades</strong>
+                        <small>Primera mitad son Frentes, segunda mitad Vueltas</small>
+                    </div>
+
+                    <div class="mode-option-card" data-mode="single_sided">
+                        <i class="fas fa-file-invoice"></i>
+                        <strong>Solo Frente (1 Cara)</strong>
+                        <small>No lleva impresión trasera (1 página = 1 credencial)</small>
+                    </div>
+
+                    <div class="mode-option-card" data-mode="same_both_sides">
+                        <i class="fas fa-clone"></i>
+                        <strong>Mismo Diseño Ambos Lados</strong>
+                        <small>Cada credencial lleva su mismo frente en la vuelta</small>
+                    </div>
+                </div>
+
+                <!-- Opciones adicionales cuando se suben 2 PDFs separados -->
+                <div class="secondary-pair-options" id="twoPdfsOptionsBar">
+                    <span><i class="fas fa-gears" style="color: var(--primary);"></i> <strong>Emparejamiento del PDF de
+                            Vueltas:</strong></span>
+                    <select id="backPdfMatchMode">
+                        <option value="normal">Orden directo (Pág 1 Vuelta va con Pág 1 Frente)</option>
+                        <option value="reverse">Orden inverso (Última pág. de Vuelta va con Pág 1 Frente)</option>
+                        <option value="common_first">1 Sola Vuelta Genérica (Usar Pág 1 de Vueltas para TODAS)</option>
+                    </select>
+                </div>
+
+                <!-- Contenedor de Zonas Drag & Drop (1 o 2 según modo) -->
+                <div class="dropzones-container" id="dropzonesContainer">
+                    <!-- Zona Principal / Frentes -->
+                    <label for="inputFrontPDF" class="file-upload" id="frontDropArea">
+                        <i class="fas fa-cloud-arrow-up" id="frontUploadIcon"></i>
+                        <span id="frontUploadTitle">Arrastra aquí tu PDF de Credenciales (o haz clic)</span>
+                        <small id="frontUploadSub">Soporta vectores, textos y alta resolución</small>
+                        <input type="file" id="inputFrontPDF" accept="application/pdf" style="display: none;" />
+                    </label>
+
+                    <!-- Zona Secundaria / Vueltas (Solo visible en modo 2 PDFs) -->
+                    <label for="inputBackPDF" class="file-upload" id="backDropArea" style="display: none;">
+                        <i class="fas fa-file-circle-plus" id="backUploadIcon"></i>
+                        <span id="backUploadTitle">Arrastra aquí el PDF de VUELTAS (Traseras)</span>
+                        <small id="backUploadSub">Se emparejará automáticamente con los frentes</small>
+                        <input type="file" id="inputBackPDF" accept="application/pdf" style="display: none;" />
+                    </label>
+                </div>
+
+                <button type="button" class="btn btn-primary" id="startWorkspaceBtn"
+                    style="display: none; max-width: 340px; margin: 0 auto;">
+                    <i class="fas fa-arrow-right"></i> Continuar a la Mesa de Acomodo
+                </button>
+            </div>
+        </section>
+
+        <!-- ESTADO 2: ESTACIÓN DE TRABAJO -->
+        <section class="workspace-screen" id="workspaceScreen">
+
+            <!-- PANEL IZQUIERDO: VISOR DUAL (PLIEGOS / ORDENADOR DRAG & DROP) -->
+            <div class="viewer-panel">
+                <div class="viewer-toolbar">
+                    <div class="workspace-tabs">
+                        <button type="button" class="ws-tab-btn active" id="tabSheetPreviewBtn">
+                            <i class="fas fa-table-cells"></i> Vista de Pliegos (Frente y Vuelta)
+                        </button>
+                        <button type="button" class="ws-tab-btn" id="tabCardSorterBtn">
+                            <i class="fas fa-up-down-left-right"></i> Ordenar Credenciales (<span
+                                id="tabCardCount">0</span>)
+                        </button>
+                    </div>
+
+                    <div class="toolbar-right" id="zoomToolbarGroup">
+                        <span class="mode-badge blueprint" id="viewerModeBadge">Vectorial HD (SVG)</span>
+                        <div class="zoom-controls">
+                            <button type="button" class="zoom-btn" id="zoomOutBtn" title="Alejar"><i
+                                    class="fas fa-minus"></i></button>
+                            <span class="zoom-level" id="zoomLevelText">100%</span>
+                            <button type="button" class="zoom-btn" id="zoomInBtn" title="Acercar"><i
+                                    class="fas fa-plus"></i></button>
+                            <button type="button" class="zoom-btn" id="zoomResetBtn" title="100%"><i
+                                    class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VISTA A: PREVISUALIZACIÓN DE PLIEGOS -->
+                <div class="viewer-canvas-Viewport" id="previewContainer" aria-live="polite">
+                    <!-- Pliegos Frente y Vuelta generados dinámicamente -->
+                </div>
+
+                <!-- VISTA B: MESA DE LUZ DRAG & DROP PARA ORDENAR CREDENCIALES -->
+                <div class="Credentials-sorter-viewport" id="sorterContainer">
+                    <div class="sorter-header-bar">
+                        <span>
+                            <i class="fas fa-hand-pointer" style="color: var(--primary);"></i>
+                            <strong>Arrastra y suelta</strong> cualquier tarjeta para cambiar su posición en el pliego,
+                            o usa los botones para girar Frente/Vuelta.
+                        </span>
+                        <div class="sorter-actions">
+                            <button type="button" class="mini-btn" id="reverseAllCardsBtn"
+                                title="Invertir el orden de todas las credenciales">
+                                <i class="fas fa-arrow-down-z-a"></i> Invertir Orden
+                            </button>
+                            <button type="button" class="mini-btn" id="swapAllFrontBackBtn"
+                                title="Intercambiar Frente por Vuelta en todas las credenciales">
+                                <i class="fas fa-right-left"></i> Invertir Frentes/Vueltas
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="cards-grid" id="cardsGridContainer">
+                        <!-- Tarjetas arrastrables generadas aquí -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL DERECHO: CONFIGURACIÓN TÉCNICA DE IMPRENTA -->
+            <aside class="sidebar-panel">
+                <div class="sidebar-header">
+                    <h2><i class="fas fa-sliders"></i> Parámetros de Impresión</h2>
+                </div>
+
+                <div class="sidebar-body">
+
+                    <!-- 1. MEDIDA DE CREDENCIAL + MARGEN DE SEGURIDAD (SANGRADO) -->
+                    <div class="config-section">
+                        <div class="section-title">
+                            <span><i class="fas fa-id-card-clip"></i> 1. Credencial y Sangrado</span>
+                            <div class="preset-pills">
+                                <button type="button" class="preset-pill" id="presetHBtn"
+                                    title="Estándar Horizontal 85x55 mm">85×55</button>
+                                <button type="button" class="preset-pill" id="presetVBtn"
+                                    title="Estándar Vertical 55x85 mm">55×85</button>
+                                <button type="button" class="preset-pill" id="presetPdfOrigBtn"
+                                    title="Medida detectada del PDF">PDF</button>
+                            </div>
+                        </div>
+
+                        <div class="grid-3">
+                            <div class="form-group">
+                                <label for="cardCutWidthMm">Ancho Corte</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="cardCutWidthMm" value="55" min="10" step="0.5">
+                                    <span class="unit-tag">mm</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cardCutHeightMm">Alto Corte</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="cardCutHeightMm" value="85" min="10" step="0.5">
+                                    <span class="unit-tag">mm</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cardBleedTotalMm"
+                                    title="Ejemplo: Si pones 5 mm, una credencial de 55x85 se imprimirá de 60x90 mm">+
+                                    Sangrado</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="cardBleedTotalMm" value="5" min="0" step="0.5">
+                                    <span class="unit-tag">mm</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bleed-info-pill" id="bleedSummaryBanner">
+                            <span><i class="fas fa-maximize"></i> Medida Impresa con Sangrado:</span>
+                            <strong id="printedSizeText">60.0 × 90.0 mm</strong>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 8px;">
+                            <label for="artFitMode">Ajuste del PDF al Área Impresa (con Sangrado)</label>
+                            <select id="artFitMode">
+                                <option value="cover" selected>Expandir cubriendo sangrado (Ideal ej. 55×85 → 60×90 mm)
+                                </option>
+                                <option value="contain">Ajustar proporcional sin recortar nada</option>
+                                <option value="stretch">Estirar exactamente al área impresa</option>
+                                <option value="cut_box">Ajustar solo al área de corte (Dejar sangrado en blanco)
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 2. FORMATO DE LIENZO / HOJA Y SEPARACIÓN -->
+                    <div class="config-section">
+                        <div class="section-title">
+                            <span><i class="fas fa-scroll"></i> 2. Tamaño de Pliego / Lienzo</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sheetPresetSelect">Formato de Hoja Estándar</label>
+                            <select id="sheetPresetSelect">
+                                <option value="20x30" selected>20 × 30 cm (200 × 300 mm - Estándar Credenciales)
+                                </option>
+                                <option value="30x20">30 × 20 cm (Horizontal - 300 × 200 mm)</option>
+                                <option value="carta">Carta Vertical (21.59 × 27.94 cm)</option>
+                                <option value="carta_h">Carta Horizontal (27.94 × 21.59 cm)</option>
+                                <option value="a4">A4 Vertical (21.0 × 29.7 cm)</option>
+                                <option value="a4_h">A4 Horizontal (29.7 × 21.0 cm)</option>
+                                <option value="oficio">Oficio / Legal (21.59 × 35.56 cm)</option>
+                                <option value="tabloide">Tabloide / Doble Carta (27.94 × 43.18 cm)</option>
+                                <option value="sra3">SRA3 Impresión Digital (32.0 × 45.0 cm)</option>
+                                <option value="custom">Medida Personalizada...</option>
+                            </select>
+                        </div>
+
+                        <div class="grid-2" id="customSheetSizeGroup" style="display: none; margin-top: 6px;">
+                            <div class="form-group">
+                                <label for="sheetWidthCm">Ancho Lienzo</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="sheetWidthCm" value="20" min="5" step="0.1">
+                                    <span class="unit-tag">cm</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="sheetHeightCm">Alto Lienzo</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="sheetHeightCm" value="30" min="5" step="0.1">
+                                    <span class="unit-tag">cm</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-2" style="margin-top: 6px;">
+                            <div class="form-group">
+                                <label for="cardGapMm">Separación entre Creds.</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="cardGapMm" value="0" min="0" step="0.5">
+                                    <span class="unit-tag">mm</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="sheetMarginMm">Margen Mín. Pliego</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="sheetMarginMm" value="8" min="0" step="0.5">
+                                    <span class="unit-tag">mm</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. TIPO DE VOLTEO DE HOJA (BANDERA VS CAMPANA) -->
+                    <div class="config-section" id="duplexFlipSection">
+                        <div class="section-title">
+                            <span><i class="fas fa-retweet"></i> 3. Tipo de Volteo (Frente / Vuelta)</span>
+                        </div>
+
+                        <div class="flip-selector">
+                            <div class="flip-option active" data-flip="flag" id="flipFlagBtn">
+                                <i class="fas fa-book-open"></i>
+                                <strong>Volteo de Bandera</strong>
+                                <small>Giro Lateral (Izq - Der) Espejo horizontal</small>
+                            </div>
+
+                            <div class="flip-option" data-flip="bell" id="flipBellBtn">
+                                <i class="fas fa-calendar-day"></i>
+                                <strong>Volteo de Campana</strong>
+                                <small>Giro Vertical (Arr - Aba) Espejo vertical</small>
+                            </div>
+                        </div>
+
+                        <label class="checkbox-label" id="bellRotateLabel" style="display: none;">
+                            <input type="checkbox" id="rotateBackOnBell" checked>
+                            Rotar 180° cada credencial trasera (Estándar físico en volteo de campana)
+                        </label>
+                    </div>
+
+                    <!-- 4. MARCAS DE CORTE ULTRA-PERSONALIZABLES -->
+                    <div class="config-section">
+                        <div class="section-title">
+                            <span><i class="fas fa-scissors"></i> 4. Guías y Marcas de Corte</span>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="cutMarkStyle">Estilo de Marca</label>
+                                <select id="cutMarkStyle">
+                                    <option value="crop_outside" selected>Esquineros Exteriores</option>
+                                    <option value="crop_corner">Esquineros en L</option>
+                                    <option value="dashed">Línea Punteada</option>
+                                    <option value="solid">Línea Continua</option>
+                                    <option value="none">Sin Marcas</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="scopeGroup">
+                                <label for="cutMarkScope">Ubicación</label>
+                                <select id="cutMarkScope">
+                                    <option value="outer_grid">Solo Extremos del Bloque</option>
+                                    <option value="all_cards" selected>Todas las Credenciales</option>
+                                    <option value="sheet_corners">4 Esquinas del Bloque</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="cutMarkOptionsGroup" style="margin-top: 6px;">
+                            <div class="form-group">
+                                <label for="markTargetBox">¿Sobre qué medida trazar el corte?</label>
+                                <select id="markTargetBox">
+                                    <option value="cut" selected>Sobre Medida Real de Corte (Ej. 55×85 mm - Recomendado)
+                                    </option>
+                                    <option value="bleed">Sobre Borde Exterior con Sangrado (Ej. 60×90 mm)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Lados Activos</label>
+                                <div class="sides-selector">
+                                    <button type="button" class="side-toggle active" data-side="top">Arriba</button>
+                                    <button type="button" class="side-toggle active" data-side="bottom">Abajo</button>
+                                    <button type="button" class="side-toggle active" data-side="left">Izquierda</button>
+                                    <button type="button" class="side-toggle active" data-side="right">Derecha</button>
+                                </div>
+                            </div>
+
+                            <div class="grid-2" style="margin-top: 6px;">
+                                <div class="form-group">
+                                    <label for="cutLineColor">Color</label>
+                                    <div class="color-input-wrapper">
+                                        <input type="color" id="cutLineColor" value="#000000">
+                                        <span id="colorHexText">#000000</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="cutLineWidth">Grosor</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="cutLineWidth" value="0.75" min="0.1" max="5"
+                                            step="0.1">
+                                        <span class="unit-tag">pt</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid-2" id="cornerMarkExtraGroup" style="margin-top: 6px;">
+                                <div class="form-group">
+                                    <label for="markLengthMm">Largo Esquinero</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="markLengthMm" value="4" min="1" max="20" step="0.5">
+                                        <span class="unit-tag">mm</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="markOffsetMm">Separación al Corte</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="markOffsetMm" value="1.5" min="0" max="15" step="0.5">
+                                        <span class="unit-tag">mm</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="drawMarksOnBack" checked>
+                                Dibujar marcas de corte también en los pliegos de Vuelta
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="drawSheetHeader" checked>
+                                Imprimir etiqueta guía superior (Ej. "Pliego #1 - FRENTE / VUELTA")
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 5. FORMATO DE SALIDA (VECTORIAL VS IMAGEN RÁPIDA) -->
+                    <div class="config-section">
+                        <div class="section-title">
+                            <span><i class="fas fa-file-export"></i> 5. Modo de Descarga y Peso</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exportFormatMode">Formato Final</label>
+                            <select id="exportFormatMode">
+                                <option value="pdf_vector" selected>PDF 100% Vectorial (Máxima calidad original)
+                                </option>
+                                <option value="pdf_raster">PDF Optimizado en Imagen (Reduce peso y agiliza impresión)
+                                </option>
+                                <option value="zip_jpg">Archivo .ZIP con Imágenes JPG de cada pliego</option>
+                                <option value="zip_png">Archivo .ZIP con Imágenes PNG de cada pliego</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="rasterDpiGroup" style="display: none; margin-top: 6px;">
+                            <label for="exportDpiSelect">Resolución de Imagen (DPI)</label>
+                            <select id="exportDpiSelect">
+                                <option value="150">150 DPI (Ultra Ligero y Rápido)</option>
+                                <option value="220">220 DPI (Equilibrio Calidad / Velocidad)</option>
+                                <option value="300" selected>300 DPI (Calidad Fotográfica de Imprenta)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- RESUMEN DE SALIDA -->
+                    <div class="stats-card" id="summaryBox">
+                        <div class="stats-grid" id="summaryStats"></div>
+                    </div>
+
+                </div>
+
+                <!-- BOTONES DE ACCIÓN FIJOS ABAJO -->
+                <div class="sidebar-footer">
+                    <button type="button" class="btn btn-primary" id="procesarBtn">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Generar Pliegos de Impresión
+                    </button>
+
+                    <a id="descargarBtn" class="btn btn-success" style="display: none;" download="">
+                        <i class="fas fa-download"></i> <span id="downloadBtnText">Descargar Archivo</span>
+                    </a>
+
+                    <button type="button" class="btn btn-danger-outline" id="cargarOtroBtn">
+                        <i class="fas fa-trash-can"></i> Descartar y Subir Otros Archivos
+                    </button>
+                </div>
+            </aside>
+
+        </section>
+
+    </main>
+
+    <script>
+        // Constantes de conversión PDF
+        const MM_TO_PT = 72 / 25.4;
+        const PT_TO_MM = 25.4 / 72;
+        const CM_TO_MM = 10;
+
+        // Catálogo de hojas estándar en milímetros
+        const SHEET_PRESETS_MM = {
+            '20x30': { w: 200, h: 300 },
+            '30x20': { w: 300, h: 200 },
+            'carta': { w: 215.9, h: 279.4 },
+            'carta_h': { w: 279.4, h: 215.9 },
+            'a4': { w: 210, h: 297 },
+            'a4_h': { w: 297, h: 210 },
+            'oficio': { w: 215.9, h: 355.6 },
+            'tabloide': { w: 279.4, h: 431.8 },
+            'sra3': { w: 320, h: 450 }
+        };
+
+        // Referencias DOM principales
+        const uploadScreen = document.getElementById('uploadScreen');
+        const workspaceScreen = document.getElementById('workspaceScreen');
+        const activeFilePill = document.getElementById('activeFilePill');
+        const pillSummaryText = document.getElementById('pillSummaryText');
+
+        const modeOptionCards = document.querySelectorAll('.mode-option-card');
+        const twoPdfsOptionsBar = document.getElementById('twoPdfsOptionsBar');
+        const backPdfMatchModeSelect = document.getElementById('backPdfMatchMode');
+        const dropzonesContainer = document.getElementById('dropzonesContainer');
+
+        const inputFrontPDF = document.getElementById('inputFrontPDF');
+        const frontDropArea = document.getElementById('frontDropArea');
+        const frontUploadTitle = document.getElementById('frontUploadTitle');
+        const frontUploadSub = document.getElementById('frontUploadSub');
+
+        const inputBackPDF = document.getElementById('inputBackPDF');
+        const backDropArea = document.getElementById('backDropArea');
+        const backUploadTitle = document.getElementById('backUploadTitle');
+        const backUploadSub = document.getElementById('backUploadSub');
+        const startWorkspaceBtn = document.getElementById('startWorkspaceBtn');
+
+        // Pestañas del visor izquierdo
+        const tabSheetPreviewBtn = document.getElementById('tabSheetPreviewBtn');
+        const tabCardSorterBtn = document.getElementById('tabCardSorterBtn');
+        const tabCardCount = document.getElementById('tabCardCount');
+        const zoomToolbarGroup = document.getElementById('zoomToolbarGroup');
+        const previewContainer = document.getElementById('previewContainer');
+        const sorterContainer = document.getElementById('sorterContainer');
+        const cardsGridContainer = document.getElementById('cardsGridContainer');
+        const reverseAllCardsBtn = document.getElementById('reverseAllCardsBtn');
+        const swapAllFrontBackBtn = document.getElementById('swapAllFrontBackBtn');
+
+        // Controles de Credencial y Sangrado
+        const presetHBtn = document.getElementById('presetHBtn');
+        const presetVBtn = document.getElementById('presetVBtn');
+        const presetPdfOrigBtn = document.getElementById('presetPdfOrigBtn');
+        const cardCutWidthMmInput = document.getElementById('cardCutWidthMm');
+        const cardCutHeightMmInput = document.getElementById('cardCutHeightMm');
+        const cardBleedTotalMmInput = document.getElementById('cardBleedTotalMm');
+        const printedSizeText = document.getElementById('printedSizeText');
+        const artFitModeSelect = document.getElementById('artFitMode');
+
+        // Controles de Pliego
+        const sheetPresetSelect = document.getElementById('sheetPresetSelect');
+        const customSheetSizeGroup = document.getElementById('customSheetSizeGroup');
+        const sheetWidthCmInput = document.getElementById('sheetWidthCm');
+        const sheetHeightCmInput = document.getElementById('sheetHeightCm');
+        const cardGapMmInput = document.getElementById('cardGapMm');
+        const sheetMarginMmInput = document.getElementById('sheetMarginMm');
+
+        // Controles de Volteo
+        const duplexFlipSection = document.getElementById('duplexFlipSection');
+        const flipFlagBtn = document.getElementById('flipFlagBtn');
+        const flipBellBtn = document.getElementById('flipBellBtn');
+        const bellRotateLabel = document.getElementById('bellRotateLabel');
+        const rotateBackOnBellCheckbox = document.getElementById('rotateBackOnBell');
+
+        // Controles de Marcas de Corte
+        const cutMarkStyleSelect = document.getElementById('cutMarkStyle');
+        const cutMarkScopeSelect = document.getElementById('cutMarkScope');
+        const markTargetBoxSelect = document.getElementById('markTargetBox');
+        const cutMarkOptionsGroup = document.getElementById('cutMarkOptionsGroup');
+        const cornerMarkExtraGroup = document.getElementById('cornerMarkExtraGroup');
+        const cutLineColorInput = document.getElementById('cutLineColor');
+        const colorHexText = document.getElementById('colorHexText');
+        const cutLineWidthInput = document.getElementById('cutLineWidth');
+        const markLengthMmInput = document.getElementById('markLengthMm');
+        const markOffsetMmInput = document.getElementById('markOffsetMm');
+        const drawMarksOnBackCheckbox = document.getElementById('drawMarksOnBack');
+        const drawSheetHeaderCheckbox = document.getElementById('drawSheetHeader');
+        const sideToggleButtons = document.querySelectorAll('.side-toggle');
+
+        // Controles de Descarga
+        const exportFormatModeSelect = document.getElementById('exportFormatMode');
+        const rasterDpiGroup = document.getElementById('rasterDpiGroup');
+        const exportDpiSelect = document.getElementById('exportDpiSelect');
+
+        // Resumen, Zoom y Botones
+        const viewerModeBadge = document.getElementById('viewerModeBadge');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomResetBtn = document.getElementById('zoomResetBtn');
+        const zoomLevelText = document.getElementById('zoomLevelText');
+        const summaryBox = document.getElementById('summaryBox');
+        const summaryStats = document.getElementById('summaryStats');
+        const procesarBtn = document.getElementById('procesarBtn');
+        const descargarBtn = document.getElementById('descargarBtn');
+        const downloadBtnText = document.getElementById('downloadBtnText');
+        const cargarOtroBtn = document.getElementById('cargarOtroBtn');
+
+        // ==========================================
+        // ESTADO GLOBAL DE LA APLICACIÓN
+        // ==========================================
+        let inputMode = 'interleaved'; // 'interleaved' | 'two_pdfs' | 'split_half' | 'single_sided' | 'same_both_sides'
+        let flipType = 'flag'; // 'flag' (Bandera) | 'bell' (Campana)
+        let activeSides = { top: true, bottom: true, left: true, right: true };
+
+        let frontFile = null;
+        let backFile = null;
+        let frontPdfBytes = null;
+        let backPdfBytes = null;
+        let frontPagesMeta = []; // [{ widthPt, heightPt, thumbDataUrl }]
+        let backPagesMeta = [];
+
+        // Lista activa de credenciales que se van a imprimir (ordenable mediante Drag & Drop)
+        let credentialsList = [];
+        let detectedOrigCardMm = { w: 55, h: 85 };
+        let currentZoom = 1.0;
+        let currentBlobUrl = null;
+        let draggedCardIndex = null;
+
+        /**
+         * Limpia cualquier cadena de texto para que sea 100% compatible con la codificación
+         * WinAnsi de las fuentes estándar de PDF-Lib (evita errores con flechas Unicode).
+         */
+        function toWinAnsiSafe(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/↔/g, '<->')
+                .replace(/↕/g, 'I')
+                .replace(/—/g, '-')
+                .replace(/–/g, '-')
+                .replace(/[^\x20-\x7E\xA0-\xFF]/g, '');
+        }
+
+        // ==========================================
+        // 1. CONFIGURACIÓN DEL MODO DE ENTRADA Y CARGA
+        // ==========================================
+        modeOptionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                modeOptionCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                inputMode = card.dataset.mode;
+
+                if (inputMode === 'two_pdfs') {
+                    dropzonesContainer.classList.add('two-cols');
+                    backDropArea.style.display = 'flex';
+                    twoPdfsOptionsBar.style.display = 'flex';
+                    frontUploadTitle.textContent = '1. Arrastra el PDF de FRENTES';
+                } else {
+                    dropzonesContainer.classList.remove('two-cols');
+                    backDropArea.style.display = 'none';
+                    twoPdfsOptionsBar.style.display = 'none';
+                    frontUploadTitle.textContent = 'Arrastra aquí tu PDF de Credenciales (o haz clic)';
+                }
+                checkReadyToStart();
+            });
+        });
+
+        backPdfMatchModeSelect.addEventListener('change', () => {
+            if (frontPagesMeta.length > 0 && backPagesMeta.length > 0) {
+                buildInitialCredentialsList();
+            }
+        });
+
+        // Configurar eventos Drag & Drop para ambas zonas
+        function setupFileDropzone(dropArea, fileInput, isBackPdf) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+                dropArea.addEventListener(evt, e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(evt => {
+                dropArea.addEventListener(evt, () => dropArea.classList.add('dragover'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(evt => {
+                dropArea.addEventListener(evt, () => dropArea.classList.remove('dragover'), false);
+            });
+
+            dropArea.addEventListener('drop', e => {
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].type === 'application/pdf') {
+                    fileInput.files = files;
+                    handlePdfUpload(files[0], isBackPdf);
+                } else {
+                    alert('Por favor selecciona un archivo PDF válido.');
+                }
+            });
+
+            fileInput.addEventListener('change', e => {
+                if (e.target.files.length > 0) {
+                    handlePdfUpload(e.target.files[0], isBackPdf);
+                }
+            });
+        }
+
+        setupFileDropzone(frontDropArea, inputFrontPDF, false);
+        setupFileDropzone(backDropArea, inputBackPDF, true);
+
+        async function handlePdfUpload(file, isBack) {
+            try {
+                const titleEl = isBack ? backUploadTitle : frontUploadTitle;
+                const subEl = isBack ? backUploadSub : frontUploadSub;
+                const dropEl = isBack ? backDropArea : frontDropArea;
+
+                titleEl.textContent = 'Analizando páginas y miniaturas...';
+                subEl.textContent = file.name;
+
+                const buffer = await file.arrayBuffer();
+                const meta = await extractPagesMetadataAndThumbs(buffer);
+
+                if (meta.length === 0) {
+                    alert('El archivo PDF no contiene páginas.');
+                    return;
+                }
+
+                if (isBack) {
+                    backFile = file;
+                    backPdfBytes = buffer;
+                    backPagesMeta = meta;
+                    dropEl.classList.add('loaded');
+                    titleEl.textContent = `Listo Vueltas: ${file.name}`;
+                    subEl.textContent = `${meta.length} página(s) cargadas`;
+                } else {
+                    frontFile = file;
+                    frontPdfBytes = buffer;
+                    frontPagesMeta = meta;
+                    dropEl.classList.add('loaded');
+                    titleEl.textContent = `Listo Frentes: ${file.name}`;
+                    subEl.textContent = `${meta.length} página(s) cargadas`;
+
+                    // Detectar orientación y medida de la primera página
+                    const firstW = meta[0].widthPt * PT_TO_MM;
+                    const firstH = meta[0].heightPt * PT_TO_MM;
+                    detectedOrigCardMm = {
+                        w: parseFloat(firstW.toFixed(1)),
+                        h: parseFloat(firstH.toFixed(1))
+                    };
+
+                    if (firstW > firstH) {
+                        cardCutWidthMmInput.value = 85;
+                        cardCutHeightMmInput.value = 55;
+                    } else {
+                        cardCutWidthMmInput.value = 55;
+                        cardCutHeightMmInput.value = 85;
+                    }
+                }
+
+                checkReadyToStart();
+
+                if (inputMode !== 'two_pdfs' && frontPagesMeta.length > 0) {
+                    enterWorkspace();
+                } else if (inputMode === 'two_pdfs' && frontPagesMeta.length > 0 && backPagesMeta.length > 0) {
+                    enterWorkspace();
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert('Error al procesar el PDF. Verifica que no esté protegido con contraseña.');
+            }
+        }
+
+        // Extrae tamaños y genera una miniatura ligera por página para la Mesa Drag & Drop
+        async function extractPagesMetadataAndThumbs(arrayBuffer) {
+            const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+            const pages = pdfDoc.getPages();
+
+            const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer.slice(0) });
+            const pdfJsDoc = await loadingTask.promise;
+
+            const metadata = [];
+            for (let i = 0; i < pages.length; i++) {
+                const p = pages[i];
+                const { width, height } = p.getSize();
+                const rot = p.getRotation().angle % 360;
+                const wPt = (rot === 90 || rot === 270) ? height : width;
+                const hPt = (rot === 90 || rot === 270) ? width : height;
+
+                let thumbDataUrl = '';
+                try {
+                    const jsPage = await pdfJsDoc.getPage(i + 1);
+                    const unscaled = jsPage.getViewport({ scale: 1 });
+                    const scale = Math.min(130 / unscaled.width, 130 / unscaled.height);
+                    const vp = jsPage.getViewport({ scale });
+                    const c = document.createElement('canvas');
+                    c.width = Math.round(vp.width);
+                    c.height = Math.round(vp.height);
+                    await jsPage.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+                    thumbDataUrl = c.toDataURL('image/jpeg', 0.78);
+                } catch (e) {
+                    console.warn('No se pudo crear miniatura para pág ' + (i + 1));
+                }
+
+                metadata.push({ widthPt: wPt, heightPt: hPt, thumbDataUrl });
+            }
+            return metadata;
+        }
+
+        function checkReadyToStart() {
+            if (inputMode === 'two_pdfs') {
+                startWorkspaceBtn.style.display = (frontPagesMeta.length > 0 && backPagesMeta.length > 0) ? 'inline-flex' : 'none';
+            } else {
+                startWorkspaceBtn.style.display = (frontPagesMeta.length > 0) ? 'inline-flex' : 'none';
+            }
+        }
+
+        startWorkspaceBtn.addEventListener('click', enterWorkspace);
+
+        function enterWorkspace() {
+            buildInitialCredentialsList();
+            uploadScreen.style.display = 'none';
+            workspaceScreen.style.display = 'grid';
+            activeFilePill.style.display = 'inline-flex';
+            duplexFlipSection.style.display = (inputMode === 'single_sided') ? 'none' : 'block';
+
+            updateBleedBanner();
+            renderCardSorterGrid();
+            refreshLayoutAndVectorPreview();
+        }
+
+        // Construye la lista emparejada de credenciales según el modo elegido
+        function buildInitialCredentialsList() {
+            credentialsList = [];
+            const totalF = frontPagesMeta.length;
+
+            if (inputMode === 'interleaved') {
+                for (let i = 0; i < totalF; i += 2) {
+                    credentialsList.push({
+                        id: `cred_${Date.now()}_${i}`,
+                        frontSource: 'front',
+                        frontPageIdx: i,
+                        backSource: (i + 1 < totalF) ? 'front' : null,
+                        backPageIdx: (i + 1 < totalF) ? (i + 1) : null
+                    });
+                }
+            } else if (inputMode === 'split_half') {
+                const half = Math.ceil(totalF / 2);
+                for (let i = 0; i < half; i++) {
+                    const backIdx = i + half;
+                    credentialsList.push({
+                        id: `cred_${Date.now()}_${i}`,
+                        frontSource: 'front',
+                        frontPageIdx: i,
+                        backSource: (backIdx < totalF) ? 'front' : null,
+                        backPageIdx: (backIdx < totalF) ? backIdx : null
+                    });
+                }
+            } else if (inputMode === 'single_sided') {
+                for (let i = 0; i < totalF; i++) {
+                    credentialsList.push({
+                        id: `cred_${Date.now()}_${i}`,
+                        frontSource: 'front',
+                        frontPageIdx: i,
+                        backSource: null,
+                        backPageIdx: null
+                    });
+                }
+            } else if (inputMode === 'same_both_sides') {
+                for (let i = 0; i < totalF; i++) {
+                    credentialsList.push({
+                        id: `cred_${Date.now()}_${i}`,
+                        frontSource: 'front',
+                        frontPageIdx: i,
+                        backSource: 'front',
+                        backPageIdx: i
+                    });
+                }
+            } else if (inputMode === 'two_pdfs') {
+                const totalB = backPagesMeta.length;
+                const matchMode = backPdfMatchModeSelect.value;
+
+                for (let i = 0; i < totalF; i++) {
+                    let bIdx = null;
+                    if (totalB > 0) {
+                        if (matchMode === 'common_first') {
+                            bIdx = 0;
+                        } else if (matchMode === 'reverse') {
+                            bIdx = (totalB - 1 - i >= 0) ? (totalB - 1 - i) : null;
+                        } else {
+                            bIdx = (i < totalB) ? i : (totalB === 1 ? 0 : null);
+                        }
+                    }
+                    credentialsList.push({
+                        id: `cred_${Date.now()}_${i}`,
+                        frontSource: 'front',
+                        frontPageIdx: i,
+                        backSource: bIdx !== null ? 'back' : null,
+                        backPageIdx: bIdx
+                    });
+                }
+            }
+
+            updateActiveCountBadges();
+        }
+
+        function updateActiveCountBadges() {
+            tabCardCount.textContent = credentialsList.length;
+            const modeLabel = (inputMode === 'single_sided') ? 'Solo Frente' : 'Frente y Vuelta';
+            pillSummaryText.textContent = `${credentialsList.length} Credenciales (${modeLabel})`;
+        }
+
+        // ==========================================
+        // 2. MESA DE LUZ DRAG & DROP (ORDENAR CREDENCIALES)
+        // ==========================================
+        tabSheetPreviewBtn.addEventListener('click', () => {
+            tabSheetPreviewBtn.classList.add('active');
+            tabCardSorterBtn.classList.remove('active');
+            previewContainer.style.display = 'flex';
+            sorterContainer.style.display = 'none';
+            zoomToolbarGroup.style.display = 'flex';
+        });
+
+        tabCardSorterBtn.addEventListener('click', () => {
+            tabCardSorterBtn.classList.add('active');
+            tabSheetPreviewBtn.classList.remove('active');
+            sorterContainer.style.display = 'flex';
+            previewContainer.style.display = 'none';
+            zoomToolbarGroup.style.display = 'none';
+            renderCardSorterGrid();
+        });
+
+        function getThumbUrl(source, idx) {
+            if (!source || idx === null) return null;
+            const arr = (source === 'front') ? frontPagesMeta : backPagesMeta;
+            return (arr[idx] && arr[idx].thumbDataUrl) ? arr[idx].thumbDataUrl : null;
+        }
+
+        function renderCardSorterGrid() {
+            cardsGridContainer.innerHTML = '';
+            updateActiveCountBadges();
+
+            credentialsList.forEach((cred, index) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'cred-item-card';
+                cardEl.draggable = true;
+                cardEl.dataset.index = index;
+
+                const frontThumb = getThumbUrl(cred.frontSource, cred.frontPageIdx);
+                const backThumb = getThumbUrl(cred.backSource, cred.backPageIdx);
+
+                const frontLabel = `Pág ${cred.frontPageIdx + 1}`;
+                const backLabel = cred.backSource ? `Pág ${cred.backPageIdx + 1}` : 'Sin Vuelta';
+
+                cardEl.innerHTML = `
+                    <div class="cred-card-header">
+                        <span class="cred-number"><i class="fas fa-grip-vertical"></i> Credencial #${index + 1}</span>
+                        <div class="cred-card-tools">
+                            <button type="button" class="icon-tool-btn swap-btn" title="Intercambiar Frente con Vuelta">
+                                <i class="fas fa-right-left"></i>
+                            </button>
+                            <button type="button" class="icon-tool-btn dup-btn" title="Duplicar esta credencial">
+                                <i class="fas fa-clone"></i>
+                            </button>
+                            <button type="button" class="icon-tool-btn delete del-btn" title="Quitar credencial">
+                                <i class="fas fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="cred-thumbs-pair">
+                        <div class="thumb-box">
+                            <span>Frente (${frontLabel})</span>
+                            ${frontThumb ? `<img src="${frontThumb}" alt="Frente">` : `<i class="fas fa-id-card" style="font-size:24px;color:#cbd5e0;"></i>`}
+                        </div>
+                        <div class="thumb-box">
+                            <span>Vuelta (${backLabel})</span>
+                            ${backThumb ? `<img src="${backThumb}" alt="Vuelta">` : `<i class="fas fa-ban" style="font-size:22px;color:#cbd5e0;"></i>`}
+                        </div>
+                    </div>
+                `;
+
+                cardEl.querySelector('.swap-btn').addEventListener('click', e => {
+                    e.stopPropagation();
+                    if (!cred.backSource) return;
+                    const tmpSrc = cred.frontSource;
+                    const tmpIdx = cred.frontPageIdx;
+                    cred.frontSource = cred.backSource;
+                    cred.frontPageIdx = cred.backPageIdx;
+                    cred.backSource = tmpSrc;
+                    cred.backPageIdx = tmpIdx;
+                    renderCardSorterGrid();
+                    onParameterChanged();
+                });
+
+                cardEl.querySelector('.dup-btn').addEventListener('click', e => {
+                    e.stopPropagation();
+                    credentialsList.splice(index + 1, 0, {
+                        ...cred,
+                        id: `cred_${Date.now()}_dup_${Math.random()}`
+                    });
+                    renderCardSorterGrid();
+                    onParameterChanged();
+                });
+
+                cardEl.querySelector('.del-btn').addEventListener('click', e => {
+                    e.stopPropagation();
+                    if (credentialsList.length <= 1) {
+                        alert('Debe quedar al menos 1 credencial en la lista.');
+                        return;
+                    }
+                    credentialsList.splice(index, 1);
+                    renderCardSorterGrid();
+                    onParameterChanged();
+                });
+
+                cardEl.addEventListener('dragstart', e => {
+                    draggedCardIndex = index;
+                    cardEl.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                cardEl.addEventListener('dragend', () => {
+                    cardEl.classList.remove('dragging');
+                    document.querySelectorAll('.cred-item-card').forEach(el => el.classList.remove('drag-over'));
+                });
+
+                cardEl.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    cardEl.classList.add('drag-over');
+                });
+
+                cardEl.addEventListener('dragleave', () => {
+                    cardEl.classList.remove('drag-over');
+                });
+
+                cardEl.addEventListener('drop', e => {
+                    e.preventDefault();
+                    cardEl.classList.remove('drag-over');
+                    const targetIndex = parseInt(cardEl.dataset.index, 10);
+                    if (draggedCardIndex !== null && draggedCardIndex !== targetIndex) {
+                        const movedItem = credentialsList.splice(draggedCardIndex, 1)[0];
+                        credentialsList.splice(targetIndex, 0, movedItem);
+                        draggedCardIndex = null;
+                        renderCardSorterGrid();
+                        onParameterChanged();
+                    }
+                });
+
+                cardsGridContainer.appendChild(cardEl);
+            });
+        }
+
+        reverseAllCardsBtn.addEventListener('click', () => {
+            credentialsList.reverse();
+            renderCardSorterGrid();
+            onParameterChanged();
+        });
+
+        swapAllFrontBackBtn.addEventListener('click', () => {
+            credentialsList.forEach(c => {
+                if (c.backSource) {
+                    const ts = c.frontSource;
+                    const ti = c.frontPageIdx;
+                    c.frontSource = c.backSource;
+                    c.frontPageIdx = c.backPageIdx;
+                    c.backSource = ts;
+                    c.backPageIdx = ti;
+                }
+            });
+            renderCardSorterGrid();
+            onParameterChanged();
+        });
+
+        // ==========================================
+        // 3. EVENTOS DE PARÁMETROS Y CONTROLES
+        // ==========================================
+        presetHBtn.addEventListener('click', () => {
+            cardCutWidthMmInput.value = 85;
+            cardCutHeightMmInput.value = 55;
+            onParameterChanged();
+        });
+
+        presetVBtn.addEventListener('click', () => {
+            cardCutWidthMmInput.value = 55;
+            cardCutHeightMmInput.value = 85;
+            onParameterChanged();
+        });
+
+        presetPdfOrigBtn.addEventListener('click', () => {
+            cardCutWidthMmInput.value = detectedOrigCardMm.w;
+            cardCutHeightMmInput.value = detectedOrigCardMm.h;
+            cardBleedTotalMmInput.value = 0;
+            onParameterChanged();
+        });
+
+        function updateBleedBanner() {
+            const cutW = parseFloat(cardCutWidthMmInput.value) || 0;
+            const cutH = parseFloat(cardCutHeightMmInput.value) || 0;
+            const bleed = Math.max(0, parseFloat(cardBleedTotalMmInput.value) || 0);
+            const printW = (cutW + bleed).toFixed(1);
+            const printH = (cutH + bleed).toFixed(1);
+            printedSizeText.textContent = `${printW} × ${printH} mm`;
+        }
+
+        sheetPresetSelect.addEventListener('change', () => {
+            const val = sheetPresetSelect.value;
+            if (val === 'custom') {
+                customSheetSizeGroup.style.display = 'grid';
+            } else {
+                customSheetSizeGroup.style.display = 'none';
+                const preset = SHEET_PRESETS_MM[val];
+                if (preset) {
+                    sheetWidthCmInput.value = (preset.w / 10).toFixed(2);
+                    sheetHeightCmInput.value = (preset.h / 10).toFixed(2);
+                }
+            }
+            onParameterChanged();
+        });
+
+        // Selector de Volteo: Bandera vs Campana
+        flipFlagBtn.addEventListener('click', () => {
+            flipType = 'flag';
+            flipFlagBtn.classList.add('active');
+            flipBellBtn.classList.remove('active');
+            bellRotateLabel.style.display = 'none';
+            onParameterChanged();
+        });
+
+        flipBellBtn.addEventListener('click', () => {
+            flipType = 'bell';
+            flipBellBtn.classList.add('active');
+            flipFlagBtn.classList.remove('active');
+            bellRotateLabel.style.display = 'flex';
+            onParameterChanged();
+        });
+
+        // Lados activos de marca de corte
+        sideToggleButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const side = btn.dataset.side;
+                activeSides[side] = !activeSides[side];
+                btn.classList.toggle('active', activeSides[side]);
+                onParameterChanged();
+            });
+        });
+
+        cutLineColorInput.addEventListener('input', () => {
+            colorHexText.textContent = cutLineColorInput.value.toUpperCase();
+            onParameterChanged();
+        });
+
+        cutMarkStyleSelect.addEventListener('change', () => {
+            const style = cutMarkStyleSelect.value;
+            cutMarkOptionsGroup.style.display = (style === 'none') ? 'none' : 'block';
+            cornerMarkExtraGroup.style.display = (style === 'crop_outside' || style === 'crop_corner') ? 'grid' : 'none';
+            onParameterChanged();
+        });
+
+        exportFormatModeSelect.addEventListener('change', () => {
+            const mode = exportFormatModeSelect.value;
+            rasterDpiGroup.style.display = (mode === 'pdf_vector') ? 'none' : 'flex';
+            descargarBtn.style.display = 'none';
+        });
+
+        [
+            cardCutWidthMmInput,
+            cardCutHeightMmInput,
+            cardBleedTotalMmInput,
+            artFitModeSelect,
+            sheetWidthCmInput,
+            sheetHeightCmInput,
+            cardGapMmInput,
+            sheetMarginMmInput,
+            rotateBackOnBellCheckbox,
+            cutMarkScopeSelect,
+            markTargetBoxSelect,
+            cutLineWidthInput,
+            markLengthMmInput,
+            markOffsetMmInput,
+            drawMarksOnBackCheckbox,
+            drawSheetHeaderCheckbox
+        ].forEach(el => {
+            el.addEventListener('input', onParameterChanged);
+        });
+
+        function onParameterChanged() {
+            updateBleedBanner();
+            descargarBtn.style.display = 'none';
+            refreshLayoutAndVectorPreview();
+        }
+
+        // Zoom
+        zoomInBtn.addEventListener('click', () => {
+            currentZoom = Math.min(3.5, +(currentZoom + 0.2).toFixed(2));
+            applyZoomToElements();
+        });
+
+        zoomOutBtn.addEventListener('click', () => {
+            currentZoom = Math.max(0.3, +(currentZoom - 0.2).toFixed(2));
+            applyZoomToElements();
+        });
+
+        zoomResetBtn.addEventListener('click', () => {
+            currentZoom = 1.0;
+            applyZoomToElements();
+        });
+
+        function applyZoomToElements() {
+            zoomLevelText.textContent = `${Math.round(currentZoom * 100)}%`;
+            previewContainer.querySelectorAll('.scalable-sheet').forEach(el => {
+                const bw = parseFloat(el.dataset.baseWidth);
+                const bh = parseFloat(el.dataset.baseHeight);
+                if (bw && bh) {
+                    el.style.width = `${bw * currentZoom}px`;
+                    el.style.height = `${bh * currentZoom}px`;
+                }
+            });
+        }
+
+        // ==========================================
+        // 4. MOTOR MATEMÁTICO DE IMPOSICIÓN Y ESPEJO
+        // ==========================================
+        function getActiveSheetSizeMm() {
+            const preset = sheetPresetSelect.value;
+            if (preset !== 'custom' && SHEET_PRESETS_MM[preset]) {
+                return SHEET_PRESETS_MM[preset];
+            }
+            return {
+                w: (parseFloat(sheetWidthCmInput.value) || 20) * CM_TO_MM,
+                h: (parseFloat(sheetHeightCmInput.value) || 30) * CM_TO_MM
+            };
+        }
+
+        function computeCredentialImposition() {
+            if (!credentialsList.length) {
+                return { error: 'No hay credenciales cargadas en la lista.' };
+            }
+
+            const cutWMm = parseFloat(cardCutWidthMmInput.value) || 0;
+            const cutHMm = parseFloat(cardCutHeightMmInput.value) || 0;
+            const bleedTotalMm = Math.max(0, parseFloat(cardBleedTotalMmInput.value) || 0);
+
+            if (cutWMm <= 0 || cutHMm <= 0) {
+                return { error: 'Las medidas de corte de la credencial deben ser mayores a 0 mm.' };
+            }
+
+            const cellWMm = cutWMm + bleedTotalMm;
+            const cellHMm = cutHMm + bleedTotalMm;
+            const halfBleedMm = bleedTotalMm / 2;
+
+            const sheetMm = getActiveSheetSizeMm();
+            const gapMm = Math.max(0, parseFloat(cardGapMmInput.value) || 0);
+            const marginMm = Math.max(0, parseFloat(sheetMarginMmInput.value) || 0);
+
+            const usableWMm = sheetMm.w - (marginMm * 2);
+            const usableHMm = sheetMm.h - (marginMm * 2);
+
+            const cols = Math.floor((usableWMm + gapMm + 0.01) / (cellWMm + gapMm));
+            const rows = Math.floor((usableHMm + gapMm + 0.01) / (cellHMm + gapMm));
+
+            if (cols <= 0 || rows <= 0) {
+                return {
+                    error: `Una credencial con sangrado (${cellWMm}x${cellHMm} mm) no cabe en el área útil del pliego (${usableWMm.toFixed(1)}x${usableHMm.toFixed(1)} mm). Reduce el margen o elige una hoja más grande.`
+                };
+            }
+
+            const cardsPerSheet = cols * rows;
+
+            // Centrar matemáticamente todo el bloque en el pliego para que al voltear en Bandera o Campana coincida al 100%
+            const totalGridWMm = cols * cellWMm + (cols - 1) * gapMm;
+            const totalGridHMm = rows * cellHMm + (rows - 1) * gapMm;
+            const startXMm = (sheetMm.w - totalGridWMm) / 2;
+            const startYMm = (sheetMm.h - totalGridHMm) / 2;
+
+            const sheetWPt = sheetMm.w * MM_TO_PT;
+            const sheetHPt = sheetMm.h * MM_TO_PT;
+            const cellWPt = cellWMm * MM_TO_PT;
+            const cellHPt = cellHMm * MM_TO_PT;
+            const cutWPt = cutWMm * MM_TO_PT;
+            const cutHPt = cutHMm * MM_TO_PT;
+            const halfBleedPt = halfBleedMm * MM_TO_PT;
+            const gapPt = gapMm * MM_TO_PT;
+            const startXPt = startXMm * MM_TO_PT;
+            const startYPt = startYMm * MM_TO_PT;
+
+            const isDuplex = inputMode !== 'single_sided';
+            const batchesCount = Math.ceil(credentialsList.length / cardsPerSheet);
+            const sheets = [];
+
+            for (let b = 0; b < batchesCount; b++) {
+                const batchCards = credentialsList.slice(b * cardsPerSheet, (b + 1) * cardsPerSheet);
+
+                // 1. Construir Pliego FRENTE
+                const frontSlots = [];
+                batchCards.forEach((cred, localIdx) => {
+                    const r = Math.floor(localIdx / cols);
+                    const c = localIdx % cols;
+
+                    const cellX = startXPt + c * (cellWPt + gapPt);
+                    const cellTopY = startYPt + r * (cellHPt + gapPt);
+
+                    frontSlots.push({
+                        credIndex: b * cardsPerSheet + localIdx,
+                        row: r,
+                        col: c,
+                        source: cred.frontSource,
+                        pageIdx: cred.frontPageIdx,
+                        cellX,
+                        cellTopY,
+                        cellW: cellWPt,
+                        cellH: cellHPt,
+                        cutX: cellX + halfBleedPt,
+                        cutTopY: cellTopY + halfBleedPt,
+                        cutW: cutWPt,
+                        cutH: cutHPt,
+                        rotate180: false
+                    });
+                });
+
+                sheets.push({
+                    sheetNumber: sheets.length + 1,
+                    batchNumber: b + 1,
+                    side: 'front',
+                    title: `Pliego #${b + 1} - FRENTE`,
+                    widthPt: sheetWPt,
+                    heightPt: sheetHPt,
+                    cols,
+                    rows,
+                    slots: frontSlots,
+                    gridBoundsPt: {
+                        minX: startXPt,
+                        minY: startYPt,
+                        maxX: startXPt + totalGridWMm * MM_TO_PT,
+                        maxY: startYPt + totalGridHMm * MM_TO_PT
+                    }
+                });
+
+                // 2. Construir Pliego VUELTA con Espejo Exacto (Bandera vs Campana)
+                if (isDuplex) {
+                    const backSlots = [];
+                    batchCards.forEach((cred, localIdx) => {
+                        if (!cred.backSource || cred.backPageIdx === null) return;
+
+                        const origRow = Math.floor(localIdx / cols);
+                        const origCol = localIdx % cols;
+
+                        // Bandera: espejo horizontal (cols - 1 - origCol)
+                        // Campana: espejo vertical (rows - 1 - origRow)
+                        const backCol = (flipType === 'flag') ? (cols - 1 - origCol) : origCol;
+                        const backRow = (flipType === 'bell') ? (rows - 1 - origRow) : origRow;
+
+                        const cellX = startXPt + backCol * (cellWPt + gapPt);
+                        const cellTopY = startYPt + backRow * (cellHPt + gapPt);
+
+                        backSlots.push({
+                            credIndex: b * cardsPerSheet + localIdx,
+                            row: backRow,
+                            col: backCol,
+                            source: cred.backSource,
+                            pageIdx: cred.backPageIdx,
+                            cellX,
+                            cellTopY,
+                            cellW: cellWPt,
+                            cellH: cellHPt,
+                            cutX: cellX + halfBleedPt,
+                            cutTopY: cellTopY + halfBleedPt,
+                            cutW: cutWPt,
+                            cutH: cutHPt,
+                            rotate180: (flipType === 'bell' && rotateBackOnBellCheckbox.checked)
+                        });
+                    });
+
+                    sheets.push({
+                        sheetNumber: sheets.length + 1,
+                        batchNumber: b + 1,
+                        side: 'back',
+                        // Texto limpio compatible con WinAnsi
+                        title: `Pliego #${b + 1} - VUELTA (${flipType === 'flag' ? 'Bandera - Lateral' : 'Campana - Vertical'})`,
+                        widthPt: sheetWPt,
+                        heightPt: sheetHPt,
+                        cols,
+                        rows,
+                        slots: backSlots,
+                        gridBoundsPt: {
+                            minX: startXPt,
+                            minY: startYPt,
+                            maxX: startXPt + totalGridWMm * MM_TO_PT,
+                            maxY: startYPt + totalGridHMm * MM_TO_PT
+                        }
+                    });
+                }
+            }
+
+            return {
+                error: null,
+                sheets,
+                cols,
+                rows,
+                cardsPerSheet,
+                batchesCount,
+                sheetMm,
+                cellWMm,
+                cellHMm,
+                cutWMm,
+                cutHMm
+            };
+        }
+
+        // Genera los segmentos vectoriales de corte para una hoja (en coordenadas Top-Down)
+        function generateSheetCutSegments(sheet) {
+            const style = cutMarkStyleSelect.value;
+            if (style === 'none') return { segments: [], dashed: false };
+            if (sheet.side === 'back' && !drawMarksOnBackCheckbox.checked) {
+                return { segments: [], dashed: false };
+            }
+
+            const scope = cutMarkScopeSelect.value;
+            const targetBox = markTargetBoxSelect.value;
+            const len = (parseFloat(markLengthMmInput.value) || 4) * MM_TO_PT;
+            const off = (parseFloat(markOffsetMmInput.value) || 1.5) * MM_TO_PT;
+
+            const rawSegments = [];
+
+            function addBoxMarks(x, y, w, h, allowedSides) {
+                const sTop = allowedSides.top && activeSides.top;
+                const sBottom = allowedSides.bottom && activeSides.bottom;
+                const sLeft = allowedSides.left && activeSides.left;
+                const sRight = allowedSides.right && activeSides.right;
+
+                if (style === 'solid' || style === 'dashed') {
+                    if (sTop) rawSegments.push({ x1: x, y1: y, x2: x + w, y2: y });
+                    if (sBottom) rawSegments.push({ x1: x, y1: y + h, x2: x + w, y2: y + h });
+                    if (sLeft) rawSegments.push({ x1: x, y1: y, x2: x, y2: y + h });
+                    if (sRight) rawSegments.push({ x1: x + w, y1: y, x2: x + w, y2: y + h });
+                } else if (style === 'crop_corner') {
+                    const cLen = Math.min(len, w * 0.45, h * 0.45);
+                    if (sTop) {
+                        rawSegments.push({ x1: x, y1: y, x2: x + cLen, y2: y });
+                        rawSegments.push({ x1: x + w - cLen, y1: y, x2: x + w, y2: y });
+                    }
+                    if (sBottom) {
+                        rawSegments.push({ x1: x, y1: y + h, x2: x + cLen, y2: y + h });
+                        rawSegments.push({ x1: x + w - cLen, y1: y + h, x2: x + w, y2: y + h });
+                    }
+                    if (sLeft) {
+                        rawSegments.push({ x1: x, y1: y, x2: x, y2: y + cLen });
+                        rawSegments.push({ x1: x, y1: y + h - cLen, x2: x, y2: y + h });
+                    }
+                    if (sRight) {
+                        rawSegments.push({ x1: x + w, y1: y, x2: x + w, y2: y + cLen });
+                        rawSegments.push({ x1: x + w, y1: y + h - cLen, x2: x + w, y2: y + h });
+                    }
+                } else if (style === 'crop_outside') {
+                    if (sTop) {
+                        rawSegments.push({ x1: x, y1: y - off - len, x2: x, y2: y - off });
+                        rawSegments.push({ x1: x + w, y1: y - off - len, x2: x + w, y2: y - off });
+                    }
+                    if (sBottom) {
+                        rawSegments.push({ x1: x, y1: y + h + off, x2: x, y2: y + h + off + len });
+                        rawSegments.push({ x1: x + w, y1: y + h + off, x2: x + w, y2: y + h + off + len });
+                    }
+                    if (sLeft) {
+                        rawSegments.push({ x1: x - off - len, y1: y, x2: x - off, y2: y });
+                        rawSegments.push({ x1: x - off - len, y1: y + h, x2: x - off, y2: y + h });
+                    }
+                    if (sRight) {
+                        rawSegments.push({ x1: x + w + off, y1: y, x2: x + w + off + len, y2: y });
+                        rawSegments.push({ x1: x + w + off, y1: y + h, x2: x + w + off + len, y2: y + h });
+                    }
+                }
+            }
+
+            if (scope === 'sheet_corners') {
+                const gb = sheet.gridBoundsPt;
+                addBoxMarks(gb.minX, gb.minY, gb.maxX - gb.minX, gb.maxY - gb.minY, {
+                    top: true, bottom: true, left: true, right: true
+                });
+            } else {
+                for (const slot of sheet.slots) {
+                    const bx = (targetBox === 'cut') ? slot.cutX : slot.cellX;
+                    const by = (targetBox === 'cut') ? slot.cutTopY : slot.cellTopY;
+                    const bw = (targetBox === 'cut') ? slot.cutW : slot.cellW;
+                    const bh = (targetBox === 'cut') ? slot.cutH : slot.cellH;
+
+                    if (scope === 'outer_grid') {
+                        const gb = sheet.gridBoundsPt;
+                        const isTopEdge = slot.row === 0;
+                        const isBottomEdge = slot.row === sheet.rows - 1;
+                        const isLeftEdge = slot.col === 0;
+                        const isRightEdge = slot.col === sheet.cols - 1;
+
+                        if (style === 'crop_outside') {
+                            if (isTopEdge && activeSides.top) {
+                                rawSegments.push({ x1: bx, y1: gb.minY - off - len, x2: bx, y2: gb.minY - off });
+                                rawSegments.push({ x1: bx + bw, y1: gb.minY - off - len, x2: bx + bw, y2: gb.minY - off });
+                            }
+                            if (isBottomEdge && activeSides.bottom) {
+                                rawSegments.push({ x1: bx, y1: gb.maxY + off, x2: bx, y2: gb.maxY + off + len });
+                                rawSegments.push({ x1: bx + bw, y1: gb.maxY + off, x2: bx + bw, y2: gb.maxY + off + len });
+                            }
+                            if (isLeftEdge && activeSides.left) {
+                                rawSegments.push({ x1: gb.minX - off - len, y1: by, x2: gb.minX - off, y2: by });
+                                rawSegments.push({ x1: gb.minX - off - len, y1: by + bh, x2: gb.minX - off, y2: by + bh });
+                            }
+                            if (isRightEdge && activeSides.right) {
+                                rawSegments.push({ x1: gb.maxX + off, y1: by, x2: gb.maxX + off + len, y2: by });
+                                rawSegments.push({ x1: gb.maxX + off, y1: by + bh, x2: gb.maxX + off + len, y2: by + bh });
+                            }
+                        } else {
+                            addBoxMarks(bx, by, bw, bh, {
+                                top: isTopEdge,
+                                bottom: isBottomEdge,
+                                left: isLeftEdge,
+                                right: isRightEdge
+                            });
+                        }
+                    } else {
+                        addBoxMarks(bx, by, bw, bh, {
+                            top: true, bottom: true, left: true, right: true
+                        });
+                    }
+                }
+            }
+
+            // Desduplicar trazos idénticos
+            const uniqueMap = new Map();
+            rawSegments.forEach(seg => {
+                const x1 = Math.max(0, Math.min(sheet.widthPt, seg.x1));
+                const y1 = Math.max(0, Math.min(sheet.heightPt, seg.y1));
+                const x2 = Math.max(0, Math.min(sheet.widthPt, seg.x2));
+                const y2 = Math.max(0, Math.min(sheet.heightPt, seg.y2));
+                if (Math.hypot(x2 - x1, y2 - y1) < 0.1) return;
+
+                const pA = `${x1.toFixed(1)},${y1.toFixed(1)}`;
+                const pB = `${x2.toFixed(1)},${y2.toFixed(1)}`;
+                const key = pA < pB ? `${pA}-${pB}` : `${pB}-${pA}`;
+                if (!uniqueMap.has(key)) uniqueMap.set(key, { x1, y1, x2, y2 });
+            });
+
+            return {
+                segments: Array.from(uniqueMap.values()),
+                dashed: style === 'dashed'
+            };
+        }
+
+        // ==========================================
+        // 5. PREVISUALIZACIÓN VECTORIAL HD (SVG PURO)
+        // ==========================================
+        function refreshLayoutAndVectorPreview() {
+            if (!credentialsList.length) return;
+
+            const layout = computeCredentialImposition();
+
+            if (layout.error) {
+                summaryBox.classList.add('error');
+                summaryStats.innerHTML = `
+                    <div class="stat-box" style="grid-column: span 2;">
+                        <span class="lbl" style="color: var(--danger);">Atención</span>
+                        <span class="val" style="color: var(--danger); font-weight: 600;">
+                            <i class="fas fa-triangle-exclamation"></i> ${layout.error}
+                        </span>
+                    </div>
+                `;
+                procesarBtn.disabled = true;
+                return;
+            }
+
+            summaryBox.classList.remove('error');
+            procesarBtn.disabled = false;
+
+            summaryStats.innerHTML = `
+                <div class="stat-box">
+                    <span class="lbl">Capacidad por Pliego</span>
+                    <span class="val">${layout.cardsPerSheet} creds. (${layout.cols}×${layout.rows})</span>
+                </div>
+                <div class="stat-box">
+                    <span class="lbl">Pliegos Totales</span>
+                    <span class="val">${layout.sheets.length} páginas PDF</span>
+                </div>
+                <div class="stat-box">
+                    <span class="lbl">Corte vs Impresión</span>
+                    <span class="val">${layout.cutWMm}×${layout.cutHMm} → ${layout.cellWMm}×${layout.cellHMm}mm</span>
+                </div>
+                <div class="stat-box">
+                    <span class="lbl">Tamaño de Pliego</span>
+                    <span class="val" style="color: var(--primary);">${(layout.sheetMm.w / 10).toFixed(1)} × ${(layout.sheetMm.h / 10).toFixed(1)} cm</span>
+                </div>
+            `;
+
+            renderVectorSvgSheets(layout);
+        }
+
+        function renderVectorSvgSheets(layout) {
+            viewerModeBadge.className = 'mode-badge blueprint';
+            viewerModeBadge.textContent = 'Vectorial HD (SVG)';
+            previewContainer.innerHTML = '';
+
+            const strokeColor = cutLineColorInput.value;
+            const lineWidthPt = parseFloat(cutLineWidthInput.value) || 0.75;
+            const isDuplex = inputMode !== 'single_sided';
+
+            const maxBatchesPreview = Math.min(layout.batchesCount, 4);
+            const targetSheetWidthPx = isDuplex
+                ? Math.max(260, Math.min(430, (previewContainer.clientWidth - 90) / 2))
+                : Math.max(320, Math.min(540, previewContainer.clientWidth - 80));
+
+            for (let b = 1; b <= maxBatchesPreview; b++) {
+                const batchSheets = layout.sheets.filter(s => s.batchNumber === b);
+                const pairRow = document.createElement('div');
+                pairRow.className = 'sheet-pair-row';
+
+                batchSheets.forEach(sheet => {
+                    const scale = targetSheetWidthPx / sheet.widthPt;
+                    const baseW = Math.round(sheet.widthPt * scale);
+                    const baseH = Math.round(sheet.heightPt * scale);
+
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'sheet-preview-wrapper';
+
+                    const label = document.createElement('div');
+                    label.className = `sheet-label ${sheet.side === 'front' ? 'front-tag' : 'back-tag'}`;
+                    const icon = sheet.side === 'front' ? 'fa-id-card' : 'fa-retweet';
+                    label.innerHTML = `<i class="fas ${icon}"></i> ${sheet.title}`;
+
+                    const scrollBox = document.createElement('div');
+                    scrollBox.className = 'canvas-scroll-box';
+
+                    const svgNS = 'http://www.w3.org/2000/svg';
+                    const svg = document.createElementNS(svgNS, 'svg');
+                    svg.setAttribute('class', 'vector-sheet scalable-sheet');
+                    svg.setAttribute('viewBox', `0 0 ${sheet.widthPt} ${sheet.heightPt}`);
+                    svg.dataset.baseWidth = baseW;
+                    svg.dataset.baseHeight = baseH;
+                    svg.style.width = `${baseW * currentZoom}px`;
+                    svg.style.height = `${baseH * currentZoom}px`;
+
+                    const parts = [];
+                    parts.push(`<rect x="0" y="0" width="${sheet.widthPt}" height="${sheet.heightPt}" fill="#ffffff"/>`);
+
+                    if (drawSheetHeaderCheckbox.checked) {
+                        parts.push(
+                            `<text x="${sheet.widthPt / 2}" y="14" font-family="Poppins, sans-serif" font-size="7.5" font-weight="600" fill="#718096" text-anchor="middle">${sheet.title} - Medida de Corte: ${layout.cutWMm}x${layout.cutHMm} mm</text>`
+                        );
+                    }
+
+                    for (const slot of sheet.slots) {
+                        const fillCell = sheet.side === 'front' ? '#f2f5eb' : '#ebf8ff';
+                        const strokeCut = sheet.side === 'front' ? '#6F8A3C' : '#2b6cb0';
+
+                        parts.push(
+                            `<rect x="${slot.cellX}" y="${slot.cellTopY}" width="${slot.cellW}" height="${slot.cellH}" fill="${fillCell}" stroke="#cbd5e0" stroke-width="0.4"/>`
+                        );
+
+                        if (slot.cellW !== slot.cutW || slot.cellH !== slot.cutH) {
+                            parts.push(
+                                `<rect x="${slot.cutX}" y="${slot.cutTopY}" width="${slot.cutW}" height="${slot.cutH}" fill="#ffffff" fill-opacity="0.65" stroke="${strokeCut}" stroke-width="0.45" stroke-dasharray="2.5,2.5"/>`
+                            );
+                        }
+
+                        const cx = slot.cellX + slot.cellW / 2;
+                        const cy = slot.cellTopY + slot.cellH / 2;
+                        const rotTransform = slot.rotate180 ? `transform="rotate(180 ${cx} ${cy})"` : '';
+                        const fSize = Math.max(7, Math.min(16, Math.min(slot.cutW, slot.cutH) * 0.16));
+
+                        parts.push(
+                            `<g ${rotTransform}>`,
+                            `<text x="${cx}" y="${cy - fSize * 0.35}" font-family="Poppins, sans-serif" font-weight="700" font-size="${fSize}" fill="${strokeCut}" text-anchor="middle" dominant-baseline="middle">Cred. #${slot.credIndex + 1}</text>`,
+                            `<text x="${cx}" y="${cy + fSize * 0.65}" font-family="Poppins, sans-serif" font-weight="500" font-size="${fSize * 0.62}" fill="#718096" text-anchor="middle" dominant-baseline="middle">${sheet.side === 'front' ? 'FRENTE' : 'VUELTA'} (Pág ${slot.pageIdx + 1})</text>`,
+                            `</g>`
+                        );
+                    }
+
+                    const markData = generateSheetCutSegments(sheet);
+                    if (markData.segments.length > 0) {
+                        const dashAttr = markData.dashed ? 'stroke-dasharray="4,4"' : '';
+                        const pathD = markData.segments
+                            .map(s => `M ${s.x1.toFixed(2)} ${s.y1.toFixed(2)} L ${s.x2.toFixed(2)} ${s.y2.toFixed(2)}`)
+                            .join(' ');
+                        parts.push(
+                            `<path d="${pathD}" stroke="${strokeColor}" stroke-width="${lineWidthPt}" ${dashAttr} fill="none" stroke-linecap="square"/>`
+                        );
+                    }
+
+                    svg.innerHTML = parts.join('');
+                    scrollBox.appendChild(svg);
+                    wrapper.appendChild(label);
+                    wrapper.appendChild(scrollBox);
+                    pairRow.appendChild(wrapper);
+                });
+
+                previewContainer.appendChild(pairRow);
+            }
+        }
+
+        // ==========================================
+        // 6. GENERACIÓN FINAL (VECTORIAL / RASTER / ZIP)
+        // ==========================================
+        function hexToPdfRgb(hex) {
+            const clean = hex.replace('#', '');
+            const r = parseInt(clean.substring(0, 2), 16) / 255;
+            const g = parseInt(clean.substring(2, 4), 16) / 255;
+            const b = parseInt(clean.substring(4, 6), 16) / 255;
+            return PDFLib.rgb(r, g, b);
+        }
+
+        function computePageDrawBox(origWPt, origHPt, slot) {
+            const fitMode = artFitModeSelect.value;
+            const targetX = (fitMode === 'cut_box') ? slot.cutX : slot.cellX;
+            const targetTopY = (fitMode === 'cut_box') ? slot.cutTopY : slot.cellTopY;
+            const targetW = (fitMode === 'cut_box') ? slot.cutW : slot.cellW;
+            const targetH = (fitMode === 'cut_box') ? slot.cutH : slot.cellH;
+
+            if (fitMode === 'stretch') {
+                return { x: targetX, topY: targetTopY, w: targetW, h: targetH };
+            }
+
+            const scale = (fitMode === 'cover')
+                ? Math.max(targetW / origWPt, targetH / origHPt)
+                : Math.min(targetW / origWPt, targetH / origHPt);
+
+            const drawW = origWPt * scale;
+            const drawH = origHPt * scale;
+
+            return {
+                x: targetX + (targetW - drawW) / 2,
+                topY: targetTopY + (targetH - drawH) / 2,
+                w: drawW,
+                h: drawH
+            };
+        }
+
+        procesarBtn.addEventListener('click', async () => {
+            const layout = computeCredentialImposition();
+            if (layout.error) {
+                alert(layout.error);
+                return;
+            }
+
+            try {
+                procesarBtn.disabled = true;
+                procesarBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando Pliegos...';
+                descargarBtn.style.display = 'none';
+
+                tabSheetPreviewBtn.click();
+
+                // 1. Generar primero el documento PDF Vectorial maestro en memoria
+                const vectorPdfBytes = await buildMasterVectorPdf(layout);
+                const exportMode = exportFormatModeSelect.value;
+
+                if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+
+                const baseName = frontFile ? frontFile.name.replace(/\.pdf$/i, '') : 'Credenciales';
+
+                if (exportMode === 'pdf_vector') {
+                    const blob = new Blob([vectorPdfBytes], { type: 'application/pdf' });
+                    currentBlobUrl = URL.createObjectURL(blob);
+                    descargarBtn.href = currentBlobUrl;
+                    descargarBtn.download = `${baseName}_Credenciales_Vectorial.pdf`;
+                    downloadBtnText.textContent = 'Descargar PDF Vectorial';
+                } else {
+                    const dpi = parseInt(exportDpiSelect.value, 10) || 300;
+                    procesarBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Rasterizando a ${dpi} DPI...`;
+
+                    if (exportMode === 'pdf_raster') {
+                        const rasterPdfBytes = await convertVectorPdfToRasterPdf(vectorPdfBytes, dpi);
+                        const blob = new Blob([rasterPdfBytes], { type: 'application/pdf' });
+                        currentBlobUrl = URL.createObjectURL(blob);
+                        descargarBtn.href = currentBlobUrl;
+                        descargarBtn.download = `${baseName}_Credenciales_Ligero_${dpi}DPI.pdf`;
+                        downloadBtnText.textContent = `Descargar PDF Ligero (${dpi} DPI)`;
+                    } else {
+                        const isPng = (exportMode === 'zip_png');
+                        const zipBlob = await convertVectorPdfToImagesZip(vectorPdfBytes, dpi, isPng, layout.sheets);
+                        currentBlobUrl = URL.createObjectURL(zipBlob);
+                        descargarBtn.href = currentBlobUrl;
+                        descargarBtn.download = `${baseName}_Pliegos_${dpi}DPI_${isPng ? 'PNG' : 'JPG'}.zip`;
+                        downloadBtnText.textContent = `Descargar ZIP de Imágenes (${isPng ? 'PNG' : 'JPG'})`;
+                    }
+                }
+
+                descargarBtn.style.display = 'inline-flex';
+
+                // Mostrar vista previa ligera del PDF final generado
+                await renderLightweightPdfPreview(vectorPdfBytes, layout);
+
+            } catch (err) {
+                console.error(err);
+                alert('Ocurrió un error al construir los pliegos finales: ' + (err.message || err));
+            } finally {
+                procesarBtn.disabled = false;
+                procesarBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Actualizar / Regenerar Pliegos';
+            }
+        });
+
+        async function buildMasterVectorPdf(layout) {
+            const outDoc = await PDFLib.PDFDocument.create();
+            const helveticaFont = await outDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
+
+            const frontSrcDoc = await PDFLib.PDFDocument.load(frontPdfBytes);
+            const embeddedFrontPages = await outDoc.embedPages(frontSrcDoc.getPages());
+
+            let embeddedBackPages = [];
+            if (backPdfBytes) {
+                const backSrcDoc = await PDFLib.PDFDocument.load(backPdfBytes);
+                embeddedBackPages = await outDoc.embedPages(backSrcDoc.getPages());
+            }
+
+            const markColor = hexToPdfRgb(cutLineColorInput.value);
+            const thickness = parseFloat(cutLineWidthInput.value) || 0.75;
+
+            for (const sheet of layout.sheets) {
+                const outPage = outDoc.addPage([sheet.widthPt, sheet.heightPt]);
+
+                // Etiqueta superior opcional sanitizada para codificación WinAnsi
+                if (drawSheetHeaderCheckbox.checked) {
+                    const rawHeaderText = `${sheet.title}  |  Corte: ${layout.cutWMm}x${layout.cutHMm}mm  |  Impreso: ${layout.cellWMm}x${layout.cellHMm}mm`;
+                    const headerText = toWinAnsiSafe(rawHeaderText);
+                    const textWidth = helveticaFont.widthOfTextAtSize(headerText, 7);
+                    outPage.drawText(headerText, {
+                        x: (sheet.widthPt - textWidth) / 2,
+                        y: sheet.heightPt - 14,
+                        size: 7,
+                        font: helveticaFont,
+                        color: PDFLib.rgb(0.45, 0.5, 0.55)
+                    });
+                }
+
+                // Dibujar cada credencial
+                for (const slot of sheet.slots) {
+                    const embPage = (slot.source === 'front')
+                        ? embeddedFrontPages[slot.pageIdx]
+                        : embeddedBackPages[slot.pageIdx];
+
+                    const meta = (slot.source === 'front')
+                        ? frontPagesMeta[slot.pageIdx]
+                        : backPagesMeta[slot.pageIdx];
+
+                    if (!embPage || !meta) continue;
+
+                    const box = computePageDrawBox(meta.widthPt, meta.heightPt, slot);
+                    const bottomY = sheet.heightPt - box.topY - box.h;
+
+                    if (slot.rotate180) {
+                        outPage.drawPage(embPage, {
+                            x: box.x + box.w,
+                            y: bottomY + box.h,
+                            width: box.w,
+                            height: box.h,
+                            rotate: PDFLib.degrees(180)
+                        });
+                    } else {
+                        outPage.drawPage(embPage, {
+                            x: box.x,
+                            y: bottomY,
+                            width: box.w,
+                            height: box.h
+                        });
+                    }
+                }
+
+                // Dibujar marcas de corte vectoriales
+                const markData = generateSheetCutSegments(sheet);
+                const dashArray = markData.dashed ? [4, 4] : undefined;
+
+                markData.segments.forEach(seg => {
+                    outPage.drawLine({
+                        start: { x: seg.x1, y: sheet.heightPt - seg.y1 },
+                        end: { x: seg.x2, y: sheet.heightPt - seg.y2 },
+                        color: markColor,
+                        thickness,
+                        dashArray
+                    });
+                });
+            }
+
+            return await outDoc.save();
+        }
+
+        async function convertVectorPdfToRasterPdf(vectorPdfBytes, dpi) {
+            const loadingTask = pdfjsLib.getDocument({ data: vectorPdfBytes.slice(0) });
+            const pdfJsDoc = await loadingTask.promise;
+            const rasterOutDoc = await PDFLib.PDFDocument.create();
+            const scale = dpi / 72;
+
+            for (let p = 1; p <= pdfJsDoc.numPages; p++) {
+                const page = await pdfJsDoc.getPage(p);
+                const origVp = page.getViewport({ scale: 1 });
+                const renderVp = page.getViewport({ scale });
+
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.round(renderVp.width);
+                canvas.height = Math.round(renderVp.height);
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                await page.render({ canvasContext: ctx, viewport: renderVp }).promise;
+
+                const jpgDataUrl = canvas.toDataURL('image/jpeg', 0.88);
+                const embeddedJpg = await rasterOutDoc.embedJpg(jpgDataUrl);
+
+                const outPage = rasterOutDoc.addPage([origVp.width, origVp.height]);
+                outPage.drawImage(embeddedJpg, {
+                    x: 0,
+                    y: 0,
+                    width: origVp.width,
+                    height: origVp.height
+                });
+            }
+
+            return await rasterOutDoc.save();
+        }
+
+        async function convertVectorPdfToImagesZip(vectorPdfBytes, dpi, isPng, sheetsMeta) {
+            const loadingTask = pdfjsLib.getDocument({ data: vectorPdfBytes.slice(0) });
+            const pdfJsDoc = await loadingTask.promise;
+            const zip = new JSZip();
+            const scale = dpi / 72;
+
+            for (let p = 1; p <= pdfJsDoc.numPages; p++) {
+                const page = await pdfJsDoc.getPage(p);
+                const renderVp = page.getViewport({ scale });
+
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.round(renderVp.width);
+                canvas.height = Math.round(renderVp.height);
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                await page.render({ canvasContext: ctx, viewport: renderVp }).promise;
+
+                const mime = isPng ? 'image/png' : 'image/jpeg';
+                const ext = isPng ? 'png' : 'jpg';
+                const dataUrl = canvas.toDataURL(mime, 0.92);
+                const base64Data = dataUrl.split(',')[1];
+
+                const sheetInfo = sheetsMeta[p - 1];
+                const sideName = sheetInfo ? (sheetInfo.side === 'front' ? 'FRENTE' : 'VUELTA') : 'PLIEGO';
+                const batchNum = sheetInfo ? sheetInfo.batchNumber : p;
+
+                zip.file(`Pliego_${String(batchNum).padStart(2, '0')}_${sideName}.${ext}`, base64Data, { base64: true });
+            }
+
+            return await zip.generateAsync({ type: 'blob' });
+        }
+
+        async function renderLightweightPdfPreview(pdfBytes, layout) {
+            viewerModeBadge.className = 'mode-badge real-pdf';
+            viewerModeBadge.textContent = 'Previa Ligera (PDF Listo)';
+            previewContainer.innerHTML = '';
+
+            const loadingTask = pdfjsLib.getDocument({ data: pdfBytes.slice(0) });
+            const pdf = await loadingTask.promise;
+
+            const isDuplex = inputMode !== 'single_sided';
+            const targetSheetWidthPx = isDuplex
+                ? Math.max(260, Math.min(430, (previewContainer.clientWidth - 90) / 2))
+                : Math.max(320, Math.min(540, previewContainer.clientWidth - 80));
+
+            const maxBatchesPreview = Math.min(layout.batchesCount, 4);
+            let pageCounter = 1;
+
+            for (let b = 1; b <= maxBatchesPreview; b++) {
+                const batchSheets = layout.sheets.filter(s => s.batchNumber === b);
+                const pairRow = document.createElement('div');
+                pairRow.className = 'sheet-pair-row';
+
+                for (const sheet of batchSheets) {
+                    if (pageCounter > pdf.numPages) break;
+                    const page = await pdf.getPage(pageCounter++);
+                    const unscaled = page.getViewport({ scale: 1 });
+
+                    const displayScale = targetSheetWidthPx / unscaled.width;
+                    const baseW = Math.round(unscaled.width * displayScale);
+                    const baseH = Math.round(unscaled.height * displayScale);
+
+                    const renderScale = Math.min(950 / unscaled.width, 1350 / unscaled.height);
+                    const renderVp = page.getViewport({ scale: renderScale });
+
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'sheet-preview-wrapper';
+
+                    const label = document.createElement('div');
+                    label.className = `sheet-label ${sheet.side === 'front' ? 'front-tag' : 'back-tag'}`;
+                    label.innerHTML = `<i class="fas fa-check-circle"></i> ${sheet.title} (Listo para Imprimir)`;
+
+                    const scrollBox = document.createElement('div');
+                    scrollBox.className = 'canvas-scroll-box';
+
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'scalable-sheet';
+                    canvas.width = Math.round(renderVp.width);
+                    canvas.height = Math.round(renderVp.height);
+                    canvas.dataset.baseWidth = baseW;
+                    canvas.dataset.baseHeight = baseH;
+                    canvas.style.width = `${baseW * currentZoom}px`;
+                    canvas.style.height = `${baseH * currentZoom}px`;
+
+                    scrollBox.appendChild(canvas);
+                    wrapper.appendChild(label);
+                    wrapper.appendChild(scrollBox);
+                    pairRow.appendChild(wrapper);
+
+                    await page.render({
+                        canvasContext: canvas.getContext('2d'),
+                        viewport: renderVp
+                    }).promise;
+                }
+
+                previewContainer.appendChild(pairRow);
+            }
+        }
+
+        // ==========================================
+        // 7. REINICIAR SISTEMA Y CARGAR OTROS ARCHIVOS
+        // ==========================================
+        cargarOtroBtn.addEventListener('click', () => {
+            inputFrontPDF.value = '';
+            inputBackPDF.value = '';
+            frontFile = null;
+            backFile = null;
+            frontPdfBytes = null;
+            backPdfBytes = null;
+            frontPagesMeta = [];
+            backPagesMeta = [];
+            credentialsList = [];
+
+            if (currentBlobUrl) {
+                URL.revokeObjectURL(currentBlobUrl);
+                currentBlobUrl = null;
+            }
+
+            frontDropArea.classList.remove('loaded');
+            backDropArea.classList.remove('loaded');
+            frontUploadTitle.textContent = (inputMode === 'two_pdfs')
+                ? '1. Arrastra el PDF de FRENTES'
+                : 'Arrastra aquí tu PDF de Credenciales (o haz clic)';
+            frontUploadSub.textContent = 'Soporta vectores, textos y alta resolución';
+            backUploadTitle.textContent = 'Arrastra aquí el PDF de VUELTAS (Traseras)';
+            backUploadSub.textContent = 'Se emparejará automáticamente con los frentes';
+
+            startWorkspaceBtn.style.display = 'none';
+            activeFilePill.style.display = 'none';
+            descargarBtn.style.display = 'none';
+            previewContainer.innerHTML = '';
+            cardsGridContainer.innerHTML = '';
+            procesarBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Generar Pliegos de Impresión';
+
+            workspaceScreen.style.display = 'none';
+            uploadScreen.style.display = 'flex';
+        });
+    </script>
+</body>
+
+</html>

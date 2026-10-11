@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AudioTag | Eduardo Workspace</title>
+    <link rel="icon" href="data:,">
+
+    <!-- PRE-CARGA INMEDIATA DEL TEMA EN CACHÉ -->
+    <script>
+        (function () {
+            try {
+                const cachedTheme = localStorage.getItem('eduardo_workspace_theme') ||
+                    localStorage.getItem('artivo-admin-theme') ||
+                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                if (cachedTheme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) { }
+        })();
+    </script>
+
+    <!-- JSZip para procesado por lotes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* =========================================
+           VARIABLES (MODO CLARO)
+           ========================================= */
+        :root {
+            --primary: #6F8A3C;
+            --primary-hover: #58702f;
+            --primary-light: #f2f5eb;
+            --border-focus: #6F8A3C;
+
+            --bg-color: #f4f6f4;
+            --bg-overlay: rgba(244, 246, 244, 0);
+            --surface: #ffffff;
+            --toolbar-bg: #fafbfa;
+            --input-bg: #ffffff;
+            --banner-bg: rgba(255, 255, 255, 0.95);
+            --banner-border: rgba(255, 255, 255, 0.6);
+            --card-border: #e2e8f0;
+
+            --mat-bg: #e9ece9;
+            --mat-line: rgba(111, 138, 60, 0.07);
+            --mat-dot: #cbd5e0;
+
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --danger: #e53e3e;
+
+            --switch-bg: #e2e8f0;
+            --switch-knob: #ffffff;
+
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        /* =========================================
+           VARIABLES MODO OSCURO
+           ========================================= */
+        [data-theme="dark"] {
+            --primary: #84a348;
+            --primary-hover: #96b559;
+            --primary-light: rgba(132, 163, 72, 0.16);
+            --border-focus: #84a348;
+
+            --bg-color: #0f1419;
+            --bg-overlay: rgba(15, 20, 25, 0.88);
+            --surface: #182026;
+            --toolbar-bg: #141b20;
+            --input-bg: #11171c;
+            --banner-bg: rgba(24, 32, 38, 0.92);
+            --banner-border: rgba(255, 255, 255, 0.07);
+            --card-border: #283540;
+
+            --mat-bg: #12181d;
+            --mat-line: rgba(132, 163, 72, 0.07);
+            --mat-dot: #26323d;
+
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #283540;
+            --danger: #fc8181;
+
+            --switch-bg: #283540;
+            --switch-knob: #84a348;
+
+            --shadow-sm: 0 4px 10px -1px rgba(0, 0, 0, 0.35);
+            --shadow-md: 0 12px 28px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        html,
+        body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            padding: 14px 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 8px;
+        }
+
+        [data-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        /* THEME SWITCH */
+        .theme-switch {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            width: 60px;
+            height: 32px;
+            flex-shrink: 0;
+            margin: 0;
+        }
+
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .switch-slider {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: var(--switch-bg);
+            border-radius: 50px;
+            border: 1.5px solid var(--border);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7px;
+        }
+
+        .switch-slider .icon-sun {
+            color: #f59e0b;
+            font-size: 12px;
+            z-index: 1;
+        }
+
+        .switch-slider .icon-moon {
+            color: #94a3b8;
+            font-size: 12px;
+            z-index: 1;
+        }
+
+        [data-theme="dark"] .switch-slider .icon-moon {
+            color: #ffffff;
+        }
+
+        .switch-knob {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 23px;
+            height: 23px;
+            background-color: var(--switch-knob);
+            border-radius: 50%;
+            transition: transform 0.32s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+        }
+
+        .theme-switch input:checked+.switch-slider .switch-knob {
+            transform: translateX(27px);
+        }
+
+        /* HEADER */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--banner-bg);
+            backdrop-filter: blur(10px);
+            padding: 11px 22px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--banner-border);
+            margin-bottom: 14px;
+            flex-shrink: 0;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-pill-btn {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.82rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 13px;
+            border-radius: var(--radius-sm);
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .nav-pill-btn:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .header-title h1 {
+            color: var(--primary);
+            font-size: 1.16rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-top: 2px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(111, 138, 60, 0.3);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* MAIN WORKSPACE */
+        .pdf-main-workspace {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tool-section {
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 16px;
+        }
+
+        /* VIEWER PANEL (LEFT) */
+        .viewer-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .viewer-toolbar {
+            padding: 11px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: var(--toolbar-bg);
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        }
+
+        .viewer-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .viewer-status i {
+            color: var(--primary);
+        }
+
+        .toolbar-right-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-sm-danger {
+            background: var(--surface);
+            color: var(--danger);
+            border: 1px solid rgba(229, 62, 62, 0.35);
+            padding: 5px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.76rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+
+        .btn-sm-danger:hover {
+            background: var(--danger);
+            color: #ffffff;
+            border-color: var(--danger);
+        }
+
+        .pdf-mat-viewport {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background-color: var(--mat-bg);
+            background-image: linear-gradient(rgba(111, 138, 60, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(111, 138, 60, 0.07) 1px, transparent 1px), radial-gradient(var(--mat-dot) 1px, transparent 1px);
+            background-size: 100px 100px, 100px 100px, 20px 20px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+        }
+
+        .empty-dropzone {
+            margin: auto;
+            max-width: 520px;
+            width: 100%;
+            background: var(--surface);
+            backdrop-filter: blur(8px);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-xl);
+            padding: 42px 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .empty-dropzone.hover,
+        .empty-dropzone:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .dropzone-icon-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 16px auto;
+        }
+
+        .empty-dropzone h3 {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .empty-dropzone p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* AUDIO PREVIEW SECTION & QUEUE */
+        .audio-preview-wrapper {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            gap: 16px;
+            animation: fadeIn 0.4s ease;
+            margin: auto;
+            max-width: 550px;
+        }
+
+        .cover-wrapper {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cover-wrapper .placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: var(--text-muted);
+            background: var(--bg-color);
+        }
+
+        .cover-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .audio-controls {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            text-align: center;
+            background: var(--surface);
+            padding: 15px;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        audio {
+            width: 100%;
+            outline: none;
+            border-radius: 30px;
+            height: 40px;
+            margin-bottom: 2px;
+        }
+
+        .info-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        /* QUEUE BATCH LIST */
+        .queue-container {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .queue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: var(--toolbar-bg);
+            border-bottom: 1px solid var(--border);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .queue-list {
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .queue-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.75rem;
+            color: var(--text-main);
+            border: 1px solid transparent;
+        }
+
+        .queue-item:hover {
+            background: var(--bg-color);
+        }
+
+        .queue-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+            border: 1px solid rgba(111, 138, 60, 0.3);
+        }
+
+        .queue-item i {
+            color: var(--text-muted);
+            width: 14px;
+            text-align: center;
+        }
+
+        .queue-item.active i {
+            color: var(--primary);
+        }
+
+        .text-truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+
+        .queue-badge {
+            font-size: 0.65rem;
+            background: var(--border);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+
+        /* SIDEBAR (RIGHT) */
+        .sidebar-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .sidebar-header {
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            background: var(--toolbar-bg);
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        }
+
+        .sidebar-header h2 {
+            font-size: 0.94rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-header h2 i {
+            color: var(--primary);
+        }
+
+        .sidebar-body {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding: 13px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .config-section {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar-heading {
+            font-size: 0.73rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* BOTONES DE LOTE Y MÁGICOS */
+        .btn-magic {
+            background: linear-gradient(135deg, #6F8A3C, #84a348);
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(111, 138, 60, 0.2);
+        }
+
+        .btn-magic:hover:not(:disabled) {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-magic:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-magic-all {
+            background: linear-gradient(135deg, #2b6cb0, #4299e1);
+            margin-top: 4px;
+        }
+
+        .btn-apply-all {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+            width: 100%;
+            justify-content: center;
+            margin-top: 4px;
+        }
+
+        .btn-apply-all:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        /* INPUT FIELDS */
+        .input-field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-field-group label {
+            font-size: 0.75rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .modern-text-input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px 11px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .modern-text-input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .modern-text-input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .sidebar-tools-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .btn-outline {
+            flex: 1;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .btn-outline:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status-msg {
+            font-size: 0.8rem;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .status-msg.error {
+            color: var(--danger);
+            border-color: rgba(229, 62, 62, 0.4);
+            background: rgba(229, 62, 62, 0.05);
+        }
+
+        .status-msg.ok {
+            color: var(--primary);
+            border-color: rgba(111, 138, 60, 0.4);
+            background: var(--primary-light);
+        }
+
+        .raw-details {
+            margin-top: 5px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .raw-details summary {
+            cursor: pointer;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .raw-details pre {
+            background: var(--input-bg);
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            max-height: 150px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.7rem;
+        }
+
+        .sidebar-footer {
+            padding: 13px 16px;
+            border-top: 1px solid var(--border);
+            background: var(--toolbar-bg);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+            border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 11px 16px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.83rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.24);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: var(--input-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            border-color: var(--text-muted);
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 960px) {
+
+            html,
+            body {
+                height: auto;
+                overflow: auto;
+            }
+
+            .tool-section {
+                grid-template-columns: 1fr;
+            }
+
+            .viewer-panel {
+                min-height: 600px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header class="app-header">
+            <div class="header-left">
+                <a href="../../index.html" class="nav-pill-btn"><i class="fas fa-arrow-left"></i> Portal</a>
+                <div class="header-title">
+                    <h1><i class="fas fa-music"></i> <span>AudioTag</span></h1>
+                    <p>Editor de metadatos con soporte inteligente de lote y renombrado.</p>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <div class="header-badge"><i class="fas fa-bolt"></i><span>Ultra Rendimiento</span></div>
+                <label class="theme-switch" title="Cambiar tema">
+                    <input type="checkbox" class="theme-checkbox" id="themeToggleCheckbox">
+                    <span class="switch-slider">
+                        <i class="fas fa-sun icon-sun"></i>
+                        <i class="fas fa-moon icon-moon"></i>
+                        <span class="switch-knob"></span>
+                    </span>
+                </label>
+            </div>
+        </header>
+
+        <main class="pdf-main-workspace">
+            <section class="tool-section">
+                <!-- PANEL IZQUIERDO -->
+                <div class="viewer-panel">
+                    <div class="viewer-toolbar">
+                        <div class="viewer-status">
+                            <i class="fas fa-headphones"></i>
+                            <span>Visualizador de Audio</span>
+                        </div>
+                        <div class="toolbar-right-actions">
+                            <input type="file" id="inputAudio" accept="audio/*" multiple style="display:none;" />
+                            <label for="inputAudio" class="nav-pill-btn" style="margin:0;">
+                                <i class="fa-solid fa-upload"></i> Subir Archivos
+                            </label>
+                            <button type="button" class="btn-sm-danger" id="btnClearUi" style="display: none;">
+                                <i class="fas fa-trash-can"></i> Limpiar Todo
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="pdf-mat-viewport" id="matViewport">
+                        <label for="inputAudio" class="empty-dropzone" id="dragDropArea">
+                            <div class="dropzone-icon-circle"><i class="fas fa-layer-group"></i></div>
+                            <h3>Arrastra archivos de audio aquí</h3>
+                            <p>Sube uno o varios archivos para edición. Renombrado automático y obtención de datos por
+                                lote disponible.</p>
+                        </label>
+
+                        <div class="audio-preview-wrapper" id="audioPreviewContainer">
+                            <div class="cover-wrapper">
+                                <div id="placeholder" class="placeholder"><i class="fas fa-music"></i></div>
+                                <img id="cover" class="cover-img" alt="Portada del audio" style="display:none;">
+                            </div>
+
+                            <div class="audio-controls">
+                                <p id="fileInfo" class="info-text"
+                                    style="font-weight: 600; font-size: 0.85rem; color: var(--text-main);">Sin archivo
+                                    seleccionado.</p>
+                                <audio id="player" controls></audio>
+                                <p id="coverInfo" class="info-text">La portada original se conserva si no la cambias.
+                                </p>
+                            </div>
+
+                            <div class="queue-container" id="queueContainer">
+                                <div class="queue-header">
+                                    <span>Lista de Archivos (<span id="queueCount">0</span>)</span>
+                                </div>
+                                <div class="queue-list" id="queueList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL DERECHO -->
+                <aside class="sidebar-panel">
+                    <div class="sidebar-header">
+                        <h2><i class="fas fa-sliders"></i> Metadatos</h2>
+                    </div>
+
+                    <div class="sidebar-body">
+
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <button id="btnMagic" class="btn-magic" disabled>
+                                <i class="fas fa-wand-magic-sparkles"></i> Autocompletar esta canción
+                            </button>
+                            <button id="btnMagicAll" class="btn-magic btn-magic-all" style="display: none;" disabled>
+                                <i class="fas fa-bolt"></i> Autocompletar TODO el lote (iTunes)
+                            </button>
+                        </div>
+
+                        <button id="btnApplyAll" class="btn-apply-all">
+                            <i class="fas fa-copy"></i> Aplicar estos datos a todo el lote
+                        </button>
+
+                        <div class="config-section" id="fieldsContainer"></div>
+
+                        <!-- Sección Renombrado Automático -->
+                        <div class="config-section" id="renameSection">
+                            <h3 class="sidebar-heading"><i class="fas fa-file-signature"></i> Renombrar al Guardar</h3>
+                            <select id="renameRule" class="modern-text-input"
+                                style="padding: 6px 10px; cursor: pointer;">
+                                <option value="original">Mantener nombre original</option>
+                                <option value="title">Solo Título (Ej: Cancion.mp3)</option>
+                                <option value="artist-title">Artista - Título (Ej: Queen - Cancion.mp3)</option>
+                                <option value="track-title">Pista. Título (Ej: 01. Cancion.mp3)</option>
+                            </select>
+                            <p
+                                style="font-size: 0.65rem; color: var(--text-muted); margin-top: -3px; line-height: 1.3;">
+                                Añadirá (1), (2) automáticamente si existen duplicados.</p>
+                        </div>
+
+                        <div class="config-section">
+                            <h3 class="sidebar-heading"><i class="fas fa-image"></i> Diseño de Portada</h3>
+                            <div class="sidebar-tools-row">
+                                <input type="file" id="art" accept="image/jpeg,image/png" style="display:none;">
+                                <label for="art" class="btn-outline" id="artLabel"
+                                    style="pointer-events:none; opacity:0.5;"><i class="fas fa-folder-open"></i>
+                                    Cambiar</label>
+                                <button id="undoArt" class="btn-outline" disabled><i class="fas fa-rotate-left"></i>
+                                    Original</button>
+                            </div>
+                        </div>
+
+                        <div id="status" class="status-msg">Selecciona archivos para empezar.</div>
+
+                        <details class="raw-details">
+                            <summary>Ver bloques originales (Avanzado)</summary>
+                            <pre id="raw">Sin datos.</pre>
+                        </details>
+                    </div>
+
+                    <div class="sidebar-footer">
+                        <div style="display: flex; gap: 10px;">
+                            <button id="reset" class="btn-action btn-secondary" style="flex:1;" disabled>
+                                <i class="fas fa-undo"></i> Deshacer
+                            </button>
+                            <button id="save" class="btn-action btn-primary" style="flex:2;" disabled>
+                                <i class="fa-solid fa-floppy-disk"></i> Guardar Uno
+                            </button>
+                        </div>
+                        <button id="saveZip" class="btn-action btn-primary"
+                            style="display: none; background: #2b6cb0; margin-top: 5px;" disabled>
+                            <i class="fa-solid fa-file-zipper"></i> Descargar Todo (ZIP)
+                        </button>
+                    </div>
+                </aside>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        'use strict';
+        // ==========================================
+        // GESTIÓN DEL TEMA OSCURO
+        // ==========================================
+        const THEME_KEY = "eduardo_workspace_theme";
+        function syncThemeUI(theme, persist = true) {
+            const isDark = theme === "dark";
+            if (isDark) document.documentElement.setAttribute("data-theme", "dark");
+            else document.documentElement.removeAttribute("data-theme");
+            const toggle = document.getElementById("themeToggleCheckbox");
+            if (toggle) toggle.checked = isDark;
+            if (persist) try { localStorage.setItem(THEME_KEY, isDark ? "dark" : "light"); } catch (e) { }
+        }
+        document.addEventListener("DOMContentLoaded", () => {
+            const saved = localStorage.getItem(THEME_KEY) || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+            syncThemeUI(saved, false);
+            document.getElementById("themeToggleCheckbox").addEventListener("change", (e) => {
+                syncThemeUI(e.target.checked ? "dark" : "light", true);
+            });
+        });
+
+        function fetchiTunesJSONP(query) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'itunes_cb_' + Math.round(1000000 * Math.random());
+                window[callbackName] = function (data) { delete window[callbackName]; document.body.removeChild(script); resolve(data); };
+                const script = document.createElement('script');
+                script.src = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=1&callback=${callbackName}`;
+                script.onerror = () => { delete window[callbackName]; document.body.removeChild(script); reject(new Error('Network error')); };
+                document.body.appendChild(script);
+            });
+        }
+
+        // ==========================================
+        // MOTOR DE METADATOS AUDIO TAG
+        // ==========================================
+        const $ = id => document.getElementById(id);
+        const specs = [
+            ['title', 'Título', 'TIT2', 'TITLE'],
+            ['artist', 'Artista', 'TPE1', 'ARTIST'],
+            ['album', 'Álbum', 'TALB', 'ALBUM'],
+            ['genre', 'Género', 'TCON', 'GENRE'],
+            ['date', 'Año', 'TDRC', 'DATE'],
+            ['track', 'Pista (ej. 1/12)', 'TRCK', 'TRACKNUMBER'],
+            ['disc', 'Disco (ej. 1/2)', 'TPOS', 'DISCNUMBER'],
+            ['albumartist', 'Artista del álbum', 'TPE2', 'ALBUMARTIST'],
+            ['composer', 'Compositor', 'TCOM', 'COMPOSER'],
+            ['copyright', 'Copyright', 'TCOP', 'COPYRIGHT']
+        ];
+
+        const fieldsContainer = $('fieldsContainer');
+        for (const [key, label] of specs) {
+            const group = document.createElement('div');
+            group.className = 'input-field-group';
+            const lbl = document.createElement('label'); lbl.textContent = label;
+            const input = document.createElement('input'); input.type = 'text'; input.id = key; input.disabled = true; input.className = 'modern-text-input';
+
+            input.addEventListener('input', () => saveCurrentEditsToQueue());
+
+            group.append(lbl, input); fieldsContainer.append(group);
+        }
+
+        const utf8 = new TextEncoder();
+        const str = b => Array.from(b, x => String.fromCharCode(x)).join('');
+        const ascii = s => Uint8Array.from(s, c => c.charCodeAt(0));
+        function join(parts) { let a = new Uint8Array(parts.reduce((n, p) => n + p.length, 0)), o = 0; for (const p of parts) { a.set(p, o); o += p.length } return a }
+        function need(ok, msg = 'Archivo truncado o metadatos no válidos.') { if (!ok) throw new Error(msg) }
+        function be(b, o = 0) { need(o + 4 <= b.length); return new DataView(b.buffer, b.byteOffset + o, 4).getUint32(0) }
+        function le(b, o = 0) { need(o + 4 <= b.length); return new DataView(b.buffer, b.byteOffset + o, 4).getUint32(0, true) }
+        function n32(n, little = false) { const b = new Uint8Array(4); new DataView(b.buffer).setUint32(0, n, little); return b }
+        function syn(b, o = 0) { need(o + 4 <= b.length); need(b.slice(o, o + 4).every(x => x < 128), 'Tamaño ID3 inválido.'); return b[o] * 2097152 + b[o + 1] * 16384 + b[o + 2] * 128 + b[o + 3] }
+        function nsyn(n) { need(n < 268435456, 'Etiqueta demasiado grande.'); return Uint8Array.of((n >>> 21) & 127, (n >>> 14) & 127, (n >>> 7) & 127, n & 127) }
+        function textTag(data) { if (!data.length) return ''; const enc = data[0]; need(enc <= 3, 'Codificación desconocida.'); return new TextDecoder(['windows-1252', 'utf-16', 'utf-16be', 'utf-8'][enc]).decode(data.slice(1)).replace(/\0+$/, '') }
+        function textFrame(id, value, v) { let d; if (v === 4) d = join([Uint8Array.of(3), utf8.encode(value)]); else { const t = new Uint8Array(value.length * 2); for (let i = 0; i < value.length; i++) { t[i * 2] = value.charCodeAt(i) & 255; t[i * 2 + 1] = value.charCodeAt(i) >>> 8 } d = join([Uint8Array.of(1, 255, 254), t]) } return frame(id, d, v) }
+        function frame(id, data, v) { return join([ascii(id), v === 4 ? nsyn(data.length) : n32(data.length), new Uint8Array(2), data]) }
+        function pictureID3(d) { need(d.length > 4); let p = 1; while (p < d.length && d[p]) p++; need(p + 1 < d.length); const mime = str(d.slice(1, p)); const type = d[++p]; p++; if (d[0] === 1 || d[0] === 2) { while (p + 1 < d.length && (d[p] || d[p + 1])) p += 2; p += 2 } else { while (p < d.length && d[p]) p++; p++ } need(p <= d.length); return { mime, type, data: d.slice(p) } }
+
+        function parseMP3(b) {
+            let v = 4, end = 0, frames = [];
+            if (str(b.slice(0, 3)) === 'ID3') {
+                v = b[3]; need(v === 3 || v === 4, 'Solo ID3v2.3 y v2.4.');
+                need(b[4] === 0 && b[5] === 0, 'Variante ID3 requiere editor especializado.');
+                end = 10 + syn(b, 6); need(end <= b.length); let p = 10;
+                while (p < end) {
+                    if (b[p] === 0) { need(b.slice(p, end).every(x => x === 0), 'Padding inválido.'); break }
+                    need(p + 10 <= end); const id = str(b.slice(p, p + 4)); need(/^[A-Z0-9]{4}$/.test(id), 'Marco inválido.');
+                    const len = v === 4 ? syn(b, p + 4) : be(b, p + 4); need(len > 0 && p + 10 + len <= end);
+                    const flags = b.slice(p + 8, p + 10); frames.push({ id, flags, data: b.slice(p + 10, p + 10 + len), raw: b.slice(p, p + 10 + len) }); p += 10 + len
+                }
+            }
+            let found = false;
+            for (let i = end; i + 4 < b.length && i < end + 65536; i++) {
+                const x = b[i + 1], y = b[i + 2];
+                if (b[i] === 255 && (x & 224) === 224 && (x & 24) !== 8 && (x & 6) === 2 && (y >>> 4) > 0 && (y >>> 4) < 15 && (y & 12) !== 12) { found = true; break }
+            }
+            need(found, 'No se detectó audio MP3 válido.');
+            const values = {};
+            for (const [key, , base] of specs) {
+                const ids = key === 'date' ? ['TDRC', 'TYER'] : [base]; const f = frames.find(f => ids.includes(f.id));
+                if (f) { need(f.flags[1] === 0, 'Campo comprimido no admitido.'); values[key] = textTag(f.data) } else values[key] = ''
+            }
+            let pictures = [];
+            for (let i = 0; i < frames.length; i++) { const f = frames[i]; if (f.id === 'APIC' && f.flags[1] === 0) { try { pictures.push({ ...pictureID3(f.data), index: i }) } catch { } } }
+            return { format: 'MP3', v, end, frames, values, pictures, details: frames.map(f => f.id + ' · ' + f.data.length + ' bytes').join('\n') || 'Sin etiqueta ID3v2.' }
+        }
+
+        function vorbis(data) {
+            let p = 0; const read = () => { const n = le(data, p); p += 4; need(p + n <= data.length); const b = data.slice(p, p + n); p += n; return b };
+            const vendor = read(), count = le(data, p); p += 4; need(count <= (data.length - p) / 4); const entries = [];
+            for (let i = 0; i < count; i++) { const raw = read(); const value = new TextDecoder('utf-8', { fatal: true }).decode(raw), eq = value.indexOf('='); need(eq > 0); entries.push({ raw, key: value.slice(0, eq).toUpperCase(), value: value.slice(eq + 1) }) }
+            need(p === data.length); return { vendor, entries }
+        }
+        function pictureFLAC(d) { let p = 0; const num = () => { const n = be(d, p); p += 4; return n }; const type = num(), ml = num(); need(p + ml <= d.length); const mime = str(d.slice(p, p + ml)); p += ml; const dl = num(); need(p + dl <= d.length); p += dl; const width = num(), height = num(), depth = num(); num(); const len = num(); need(p + len === d.length); return { type, mime, width, height, depth, data: d.slice(p) } }
+        function parseFLAC(b) {
+            let p = 4, blocks = [], done = false;
+            while (!done) { need(p + 4 <= b.length); done = !!(b[p] & 128); const type = b[p] & 127, len = b[p + 1] * 65536 + b[p + 2] * 256 + b[p + 3]; need(type < 127 && p + 4 + len <= b.length); blocks.push({ type, data: b.slice(p + 4, p + 4 + len) }); p += 4 + len }
+            need(blocks[0].type === 0 && blocks[0].data.length === 34, 'STREAMINFO FLAC no válido.'); need(blocks.filter(x => x.type === 0).length === 1); need(blocks.filter(x => x.type === 4).length <= 1, 'Varios bloques de comentarios.'); need(p < b.length, 'FLAC sin audio.');
+            const idx = blocks.findIndex(x => x.type === 4), comments = idx < 0 ? { vendor: utf8.encode('AudioTag'), entries: [] } : vorbis(blocks[idx].data), values = {};
+            for (const [key, , , tag] of specs) values[key] = comments.entries.find(e => e.key === tag)?.value ?? '';
+            let pictures = []; blocks.forEach((x, i) => { if (x.type === 6) { try { pictures.push({ ...pictureFLAC(x.data), index: i }) } catch { } } });
+            return { format: 'FLAC', end: p, blocks, comments, commentIndex: idx, values, pictures, details: comments.entries.map(e => e.key + ' = ' + e.value).join('\n') + '\n\nBloques: ' + blocks.map(x => x.type + ' (' + x.data.length + ' bytes)').join(', ') }
+        }
+
+        function parse(b, fileName) {
+            const header = str(b.slice(0, 4));
+            if (header === 'fLaC') return parseFLAC(b);
+            if (header.startsWith('ID3') || (b[0] === 255 && (b[1] & 224) === 224)) return parseMP3(b);
+            const ext = (fileName.split('.').pop() || 'Desconocido').toUpperCase();
+            return { format: ext, unsupported: true, values: {}, pictures: [], details: `El formato ${ext} está cargado para reproducción.\nEdición binaria limitada a MP3 y FLAC.` }
+        }
+
+        function changed(s, values) { return specs.filter(([key]) => values[key] !== s.values[key]) }
+
+        function build(s, b, values, art) {
+            const edits = changed(s, values); if (!edits.length && !art) return b;
+            if (s.format === 'MP3') {
+                const remove = new Set(edits.flatMap(([key, , id]) => key === 'date' ? ['TYER', 'TDRC', 'TDAT', 'TIME'] : [id]));
+                const frontal = s.pictures.find(p => p.type === 3); const parts = s.frames.filter((f, i) => !remove.has(f.id) && !(art && frontal && i === frontal.index)).map(f => f.raw);
+                for (const [key, , id] of edits) if (values[key] !== '') parts.push(textFrame(key === 'date' && s.v === 3 ? 'TYER' : id, values[key], s.v));
+                if (art) parts.push(frame('APIC', join([Uint8Array.of(0), ascii(art.mime), Uint8Array.of(0, 3, 0), art.data]), s.v));
+                const body = join([...parts, new Uint8Array(1024)]); return join([ascii('ID3'), Uint8Array.of(s.v, 0, 0), nsyn(body.length), body, b.slice(s.end)])
+            }
+            let blocks = s.blocks.map(x => ({ type: x.type, data: x.data }));
+            if (edits.length) {
+                const keys = new Set(edits.map(x => x[3])), entries = s.comments.entries.filter(e => !keys.has(e.key)).map(e => e.raw);
+                for (const [key, , , tag] of edits) if (values[key] !== '') entries.push(utf8.encode(tag + '=' + values[key]));
+                const vendor = s.comments.vendor, data = join([n32(vendor.length, true), vendor, n32(entries.length, true), ...entries.flatMap(e => [n32(e.length, true), e])]);
+                if (s.commentIndex < 0) blocks.push({ type: 4, data }); else blocks[s.commentIndex] = { type: 4, data }
+            }
+            if (art) {
+                const frontal = s.pictures.find(p => p.type === 3); const mime = ascii(art.mime), data = join([n32(3), n32(mime.length), mime, n32(0), n32(art.width), n32(art.height), n32(24), n32(0), n32(art.data.length), art.data]);
+                if (frontal) blocks[frontal.index] = { type: 6, data }; else blocks.push({ type: 6, data })
+            }
+            const parts = blocks.map((x, i) => { need(x.data.length < 16777216, 'Bloque FLAC supera límite.'); const n = x.data.length; return join([Uint8Array.of(x.type | (i === blocks.length - 1 ? 128 : 0), n >>> 16, (n >>> 8) & 255, n & 255), x.data]) });
+            return join([ascii('fLaC'), ...parts, b.slice(s.end)])
+        }
+
+        // ==========================================
+        // UI STATE & BATCH LOGIC
+        // ==========================================
+        let queue = [];
+        let activeIndex = -1;
+        let coverURL = null, audioURL = null, busy = false;
+
+        function status(text, kind = '') { $('status').textContent = text; $('status').className = 'status-msg ' + kind; }
+
+        function controls() {
+            const current = activeIndex >= 0 ? queue[activeIndex] : null;
+            const isUnsupported = current && current.meta.unsupported;
+
+            for (const [key] of specs) $(key).disabled = !current || busy || isUnsupported;
+
+            $('save').disabled = !current || busy || isUnsupported;
+            $('reset').disabled = !current || busy || isUnsupported;
+            $('undoArt').disabled = !current || busy || isUnsupported;
+            $('btnMagic').disabled = !current || busy || isUnsupported;
+            $('inputAudio').disabled = busy;
+            $('art').disabled = !current || busy || isUnsupported;
+
+            const artLabel = $('artLabel');
+            if (!current || busy || isUnsupported) {
+                artLabel.style.pointerEvents = 'none'; artLabel.style.opacity = '0.5';
+            } else {
+                artLabel.style.pointerEvents = 'auto'; artLabel.style.opacity = '1';
+            }
+
+            // Visualización Batch
+            const isBatch = queue.length > 1;
+            $('queueContainer').style.display = isBatch ? 'block' : 'none';
+            $('btnApplyAll').style.display = isBatch ? 'inline-flex' : 'none';
+            $('btnMagicAll').style.display = isBatch ? 'inline-flex' : 'none';
+            $('btnMagicAll').disabled = !isBatch || busy;
+            $('saveZip').style.display = isBatch ? 'inline-flex' : 'none';
+            $('saveZip').disabled = !isBatch || busy;
+        }
+
+        function showCover(pic) {
+            if (coverURL) URL.revokeObjectURL(coverURL); coverURL = null;
+            $('cover').removeAttribute('src');
+            if (pic) {
+                $('placeholder').style.display = 'none'; $('cover').style.display = 'block';
+                coverURL = URL.createObjectURL(new Blob([pic.data], { type: pic.mime }));
+                $('cover').src = coverURL;
+            } else {
+                $('placeholder').style.display = 'flex'; $('cover').style.display = 'none';
+            }
+        }
+
+        function renderQueue() {
+            const list = $('queueList'); list.innerHTML = '';
+            $('queueCount').textContent = queue.length;
+            queue.forEach((q, i) => {
+                const div = document.createElement('div');
+                div.className = 'queue-item' + (i === activeIndex ? ' active' : '');
+                const format = q.meta.format.toLowerCase();
+                const icon = q.meta.unsupported ? 'fa-triangle-exclamation' : 'fa-music';
+                div.innerHTML = `<i class="fas ${icon}"></i> <span class="text-truncate">${q.file.name}</span> <span class="queue-badge">${format}</span>`;
+                div.onclick = () => { if (!busy) { saveCurrentEditsToQueue(); setActive(i); } };
+                list.appendChild(div);
+            });
+        }
+
+        function saveCurrentEditsToQueue() {
+            if (activeIndex < 0 || activeIndex >= queue.length) return;
+            const q = queue[activeIndex];
+            if (q.meta.unsupported) return;
+
+            if (!q.editedValues) q.editedValues = {};
+            specs.forEach(([key]) => { q.editedValues[key] = $(key).value; });
+        }
+
+        function setActive(index) {
+            if (index < 0 || index >= queue.length) return;
+            activeIndex = index;
+            const q = queue[activeIndex];
+
+            for (const [key] of specs) {
+                $(key).value = q.editedValues ? (q.editedValues[key] || '') : (q.meta.values[key] || '');
+            }
+
+            let activeCover = null;
+            if (q.editedCover !== undefined && q.editedCover !== null) {
+                activeCover = q.editedCover;
+            } else {
+                activeCover = q.meta.pictures?.find(p => p.type === 3) || q.meta.pictures?.[0];
+            }
+            showCover(activeCover);
+            $('coverInfo').textContent = q.editedCover ? 'Nueva portada pendiente de guardar.' : ((q.meta.pictures?.length || 0) + ' imagen(es) originales.');
+
+            if (audioURL) URL.revokeObjectURL(audioURL);
+            audioURL = URL.createObjectURL(q.file);
+            $('player').src = audioURL;
+
+            $('raw').textContent = q.meta.details;
+            $('fileInfo').textContent = `${q.file.name} · ${q.meta.format} · ${(q.file.size / 1048576).toFixed(2)} MB`;
+
+            renderQueue();
+            controls();
+
+            if (q.meta.unsupported) {
+                status(`Modo lectura. ${q.meta.format} no soporta edición binaria nativa.`, 'error');
+            } else {
+                status(`Editando archivo ${activeIndex + 1} de ${queue.length}.`, 'ok');
+            }
+        }
+
+        function restore() {
+            if (activeIndex < 0 || queue[activeIndex].meta.unsupported) return;
+            const q = queue[activeIndex];
+            q.editedValues = null;
+            q.editedCover = null;
+            setActive(activeIndex);
+            status('Campos restaurados al original.', 'ok');
+        }
+
+        // ==========================================
+        // CARGA ASÍNCRONA
+        // ==========================================
+        async function loadBatch(files) {
+            if (!files.length || busy) return;
+            busy = true; controls();
+            status(`Leyendo e indexando ${files.length} archivo(s)...`);
+
+            $('dragDropArea').style.display = 'none';
+            $('audioPreviewContainer').style.display = 'flex';
+            $('btnClearUi').style.display = 'inline-flex';
+
+            let validAdded = 0;
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.size > 300 * 1024 * 1024) continue;
+                try {
+                    const bytes = new Uint8Array(await file.arrayBuffer());
+                    const meta = parse(bytes, file.name);
+
+                    if (!meta.unsupported) {
+                        let hasData = Object.values(meta.values).some(v => v !== '');
+                        if (!hasData) {
+                            let cleanName = file.name.replace(/\.[^/.]+$/, "");
+                            if (cleanName.includes('-')) {
+                                let parts = cleanName.split('-');
+                                meta.values.artist = parts[0].trim();
+                                meta.values.title = parts.slice(1).join('-').trim();
+                            } else {
+                                meta.values.title = cleanName;
+                            }
+                        }
+                    }
+                    queue.push({ file, meta, editedValues: null, editedCover: null });
+                    validAdded++;
+                } catch (e) {
+                    console.error("Error procesando", file.name, e);
+                }
+            }
+
+            busy = false;
+            if (queue.length > 0) {
+                if (activeIndex === -1) activeIndex = 0;
+                setActive(activeIndex);
+                status(`Carga completada. ${validAdded} archivos listos.`, 'ok');
+            } else {
+                $('btnClearUi').onclick();
+                status('No se pudo cargar ningún archivo válido.', 'error');
+            }
+        }
+
+        // ==========================================
+        // MAGIA INDIVIDUAL Y POR LOTE (ITUNES)
+        // ==========================================
+        $('btnMagic').onclick = async () => {
+            if (activeIndex < 0 || busy || queue[activeIndex].meta.unsupported) return;
+
+            let query = '';
+            if ($('title').value || $('artist').value) { query = `${$('artist').value} ${$('title').value}`.trim(); }
+            else { query = queue[activeIndex].file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, ' '); }
+
+            if (!query) { status('Ingresa al menos el título o artista para buscar.', 'error'); return; }
+
+            busy = true; controls();
+            status('Buscando "' + query + '" en iTunes...', 'ok');
+
+            try {
+                const data = await fetchiTunesJSONP(query);
+                if (data.results && data.results.length > 0) {
+                    const t = data.results[0];
+                    $('title').value = t.trackName || $('title').value;
+                    $('artist').value = t.artistName || $('artist').value;
+                    $('album').value = t.collectionName || $('album').value;
+                    $('genre').value = t.primaryGenreName || $('genre').value;
+                    if (t.releaseDate) $('date').value = t.releaseDate.substring(0, 4);
+                    if (t.trackNumber) $('track').value = t.trackNumber;
+                    if (t.discCount) $('disc').value = `${t.discNumber || 1}/${t.discCount}`;
+                    else if (t.discNumber) $('disc').value = t.discNumber;
+
+                    saveCurrentEditsToQueue();
+
+                    if (t.artworkUrl100) {
+                        const coverUrl = t.artworkUrl100.replace('100x100bb', '600x600bb');
+                        try {
+                            status('Descargando portada...', 'ok');
+                            const proxyUrl = `https://wsrv.nl/?url=${encodeURIComponent(coverUrl)}&output=jpg`;
+                            const imgRes = await fetch(proxyUrl);
+                            const imgBlob = await imgRes.blob();
+                            const dataUint = new Uint8Array(await imgBlob.arrayBuffer());
+                            const u = URL.createObjectURL(imgBlob);
+                            const dimensions = await new Promise((resolve) => {
+                                const i = new Image(); i.onload = () => resolve({ width: i.naturalWidth, height: i.naturalHeight }); i.src = u;
+                            });
+                            URL.revokeObjectURL(u);
+                            queue[activeIndex].editedCover = { data: dataUint, mime: 'image/jpeg', ...dimensions };
+                            showCover(queue[activeIndex].editedCover);
+                        } catch (e) { console.log(e); }
+                    }
+                    status('¡Metadatos y portada actualizados!', 'ok');
+                } else {
+                    status('No se encontró información para esta canción.', 'error');
+                }
+            } catch (e) { status('Error de red al consultar iTunes.', 'error'); }
+            finally { busy = false; controls(); }
+        };
+
+        // NUEVO: Magia por Lote
+        $('btnMagicAll').onclick = async () => {
+            if (queue.length === 0 || busy) return;
+            saveCurrentEditsToQueue();
+            busy = true; controls();
+
+            let successCount = 0;
+
+            for (let i = 0; i < queue.length; i++) {
+                const q = queue[i];
+                if (q.meta.unsupported) continue;
+
+                status(`Buscando ${i + 1}/${queue.length}: ${q.file.name}...`, 'ok');
+                setActive(i);
+
+                let query = '';
+                const vals = q.editedValues || q.meta.values;
+                if (vals.title || vals.artist) { query = `${vals.artist} ${vals.title}`.trim(); }
+                else { query = q.file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, ' '); }
+
+                if (!query) continue;
+
+                try {
+                    const data = await fetchiTunesJSONP(query);
+                    if (data.results && data.results.length > 0) {
+                        const t = data.results[0];
+                        if (!q.editedValues) q.editedValues = Object.assign({}, q.meta.values);
+
+                        q.editedValues.title = t.trackName || q.editedValues.title;
+                        q.editedValues.artist = t.artistName || q.editedValues.artist;
+                        q.editedValues.album = t.collectionName || q.editedValues.album;
+                        q.editedValues.genre = t.primaryGenreName || q.editedValues.genre;
+                        if (t.releaseDate) q.editedValues.date = t.releaseDate.substring(0, 4);
+                        if (t.trackNumber) q.editedValues.track = t.trackNumber;
+                        if (t.discCount) q.editedValues.disc = `${t.discNumber || 1}/${t.discCount}`;
+                        else if (t.discNumber) q.editedValues.disc = t.discNumber;
+
+                        if (t.artworkUrl100) {
+                            const coverUrl = t.artworkUrl100.replace('100x100bb', '600x600bb');
+                            try {
+                                const proxyUrl = `https://wsrv.nl/?url=${encodeURIComponent(coverUrl)}&output=jpg`;
+                                const imgRes = await fetch(proxyUrl);
+                                const imgBlob = await imgRes.blob();
+                                const dataUint = new Uint8Array(await imgBlob.arrayBuffer());
+                                const u = URL.createObjectURL(imgBlob);
+                                const dimensions = await new Promise((resolve) => {
+                                    const img = new Image(); img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight }); img.src = u;
+                                });
+                                URL.revokeObjectURL(u);
+                                q.editedCover = { data: dataUint, mime: 'image/jpeg', ...dimensions };
+                            } catch (e) { }
+                        }
+                        successCount++;
+                        setActive(i); // Refresca UI
+                    }
+                } catch (e) { console.log("Error API", query); }
+
+                // Pausa anti-bloqueo
+                await new Promise(resolve => setTimeout(resolve, 800));
+            }
+
+            status(`Lote completado: ${successCount} archivos encontrados y autocompletados.`, 'ok');
+            busy = false; controls();
+        };
+
+        $('btnApplyAll').onclick = () => {
+            if (queue.length <= 1 || busy) return;
+            saveCurrentEditsToQueue();
+            const ref = queue[activeIndex];
+            if (ref.meta.unsupported || !ref.editedValues) return;
+
+            queue.forEach((q, i) => {
+                if (i !== activeIndex && !q.meta.unsupported) {
+                    if (!q.editedValues) q.editedValues = Object.fromEntries(specs.map(([k]) => [k, q.meta.values[k]]));
+                    specs.forEach(([k]) => {
+                        if (k !== 'title' && k !== 'track') { q.editedValues[k] = ref.editedValues[k]; }
+                    });
+                    q.editedCover = ref.editedCover;
+                }
+            });
+            status('Metadatos (excepto Título/Pista) y Portada aplicados al resto de la lista.', 'ok');
+        };
+
+        // EVENTOS DE DRAG & DROP
+        const matViewport = $('matViewport');
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => { matViewport.addEventListener(eventName, preventDefaults, false); });
+        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+        ['dragenter', 'dragover'].forEach(eventName => { matViewport.addEventListener(eventName, () => $('dragDropArea').classList.add('hover'), false); });
+        ['dragleave', 'drop'].forEach(eventName => { matViewport.addEventListener(eventName, () => $('dragDropArea').classList.remove('hover'), false); });
+        matViewport.addEventListener('drop', (e) => {
+            let dt = e.dataTransfer; if (dt.files.length > 0) loadBatch(dt.files);
+        }, false);
+        $('inputAudio').onchange = e => loadBatch(e.target.files);
+
+        $('btnClearUi').onclick = () => {
+            queue = []; activeIndex = -1;
+            if (audioURL) URL.revokeObjectURL(audioURL);
+            if (coverURL) URL.revokeObjectURL(coverURL);
+            $('player').removeAttribute('src'); $('player').load();
+            showCover(null);
+            $('dragDropArea').style.display = 'block';
+            $('audioPreviewContainer').style.display = 'none';
+            $('btnClearUi').style.display = 'none';
+            $('queueContainer').style.display = 'none';
+            $('btnApplyAll').style.display = 'none';
+            $('btnMagicAll').style.display = 'none';
+            $('saveZip').style.display = 'none';
+            for (const [key] of specs) { $(key).value = ''; $(key).disabled = true; } $('inputAudio').value = ''; $('art').value = ''; $('raw').textContent = 'Sin datos.';
+            status('Selecciona archivos para empezar.'); controls();
+        };
+
+        $('reset').onclick = restore;
+        $('undoArt').onclick = () => {
+            if (activeIndex < 0) return;
+            queue[activeIndex].editedCover = null;
+            showCover(queue[activeIndex].meta.pictures?.find(p => p.type === 3) || queue[activeIndex].meta.pictures?.[0]);
+            $('coverInfo').textContent = 'Se conservarán todas las portadas originales.';
+            status('Portada original restaurada.', 'ok');
+        };
+
+        $('art').onchange = async e => {
+            const f = e.target.files[0];
+            if (activeIndex < 0 || !f || busy || queue[activeIndex].meta.unsupported) return;
+            busy = true; controls();
+            try {
+                need(f.size <= 12 * 1024 * 1024, 'La portada debe pesar como máximo 12 MB.');
+                const data = new Uint8Array(await f.arrayBuffer());
+                const png = data.length >= 24 && str(data.slice(1, 4)) === 'PNG' && data[0] === 137 && data[4] === 13 && data[5] === 10 && data[6] === 26 && data[7] === 10;
+                const jpeg = data[0] === 255 && data[1] === 216;
+                need(png || jpeg, 'Usa una imagen JPEG o PNG.');
+                const mime = png ? 'image/png' : 'image/jpeg';
+                const u = URL.createObjectURL(new Blob([data], { type: mime }));
+                let dimensions;
+                try {
+                    dimensions = await new Promise((resolve, reject) => {
+                        const i = new Image(); i.onload = () => resolve({ width: i.naturalWidth, height: i.naturalHeight }); i.onerror = () => reject(new Error('Mala imagen.')); i.src = u;
+                    });
+                } finally { URL.revokeObjectURL(u) }
+                queue[activeIndex].editedCover = { data, mime, ...dimensions };
+                showCover(queue[activeIndex].editedCover);
+                $('coverInfo').textContent = 'Nueva portada frontal · ' + dimensions.width + ' × ' + dimensions.height;
+                status('Portada local cargada.', 'ok');
+            } catch (err) { status(err.message, 'error') }
+            finally { busy = false; controls(); e.target.value = '' }
+        };
+
+        function equal(a, b) { return a.length === b.length && a.every((x, i) => x === b[i]) }
+        function verify(original, source, output, values, art) {
+            const next = parse(output, "verificacion.mp3");
+            need(equal(source.slice(original.end), output.slice(next.end)), 'El tramo de audio cambió.');
+            for (const [key] of changed(original, values)) need(next.values[key] === values[key], 'No se verificó ' + key);
+            if (art) need(next.pictures.some(p => p.type === 3 && equal(p.data, art.data)), 'Falla en portada nueva.');
+            return next;
+        }
+
+        // ==========================================
+        // MOTOR DE RENOMBRADO INTELIGENTE
+        // ==========================================
+        function sanitizeFilename(name) {
+            return name.replace(/[<>:"/\\|?*\x00-\x1F]/g, '').trim();
+        }
+
+        function getNewFilename(q, rule, usedNames) {
+            const ext = '.' + q.meta.format.toLowerCase();
+            const originalBase = q.file.name.replace(/\.[^/.]+$/, "");
+            const vals = q.editedValues || q.meta.values;
+
+            let baseName = originalBase;
+
+            if (rule === 'title' && vals.title) {
+                baseName = vals.title;
+            } else if (rule === 'artist-title') {
+                if (vals.artist && vals.title) baseName = `${vals.artist} - ${vals.title}`;
+                else if (vals.title) baseName = vals.title;
+            } else if (rule === 'track-title') {
+                if (vals.track && vals.title) {
+                    let trk = vals.track.toString().split('/')[0].padStart(2, '0');
+                    baseName = `${trk}. ${vals.title}`;
+                } else if (vals.title) baseName = vals.title;
+            }
+
+            baseName = sanitizeFilename(baseName) || "Audio_Desconocido";
+
+            // Resolución de duplicados agregando (1), (2), etc.
+            let finalName = baseName + ext;
+            let counter = 1;
+            while (usedNames.has(finalName.toLowerCase())) {
+                finalName = `${baseName} (${counter})${ext}`;
+                counter++;
+            }
+            usedNames.add(finalName.toLowerCase());
+            return finalName;
+        }
+
+        // ==========================================
+        // GUARDADO INDIVIDUAL Y ZIP CON RENOMBRADO
+        // ==========================================
+        $('save').onclick = async () => {
+            if (activeIndex < 0 || busy || queue[activeIndex].meta.unsupported) return;
+            saveCurrentEditsToQueue();
+            busy = true; controls();
+            status('Generando copia y renombrando...');
+            try {
+                const q = queue[activeIndex];
+                await new Promise(r => setTimeout(r, 20));
+
+                const bytes = new Uint8Array(await q.file.arrayBuffer());
+                const vals = q.editedValues || Object.fromEntries(specs.map(([k]) => [k, q.meta.values[k]]));
+                if (q.meta.format === 'MP3' && q.meta.v === 3 && vals.date !== q.meta.values.date && vals.date !== '') need(/^\d{4}$/.test(vals.date), 'El año debe ser de 4 cifras.');
+
+                const output = build(q.meta, bytes, vals, q.editedCover);
+                verify(q.meta, bytes, output, vals, q.editedCover);
+
+                // Aplicar reglas de renombrado
+                const usedNames = new Set();
+                const finalFilename = getNewFilename(q, $('renameRule').value, usedNames);
+
+                const blob = new Blob([output], { type: q.meta.format === 'MP3' ? 'audio/mpeg' : 'audio/flac' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url;
+                a.download = finalFilename;
+                document.body.append(a); a.click(); a.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 60000);
+
+                status(`Guardado correcto como: ${finalFilename}`, 'ok');
+            } catch (e) { status(e.message, 'error'); }
+            finally { busy = false; controls(); }
+        };
+
+        $('saveZip').onclick = async () => {
+            if (queue.length === 0 || busy) return;
+            saveCurrentEditsToQueue();
+            busy = true; controls();
+            status('Generando archivo ZIP por lotes. Esto puede tardar...');
+
+            try {
+                const zip = new JSZip();
+                const usedNames = new Set(); // Historial de nombres para evitar colisiones
+                let added = 0;
+
+                for (let i = 0; i < queue.length; i++) {
+                    const q = queue[i];
+                    if (q.meta.unsupported) continue;
+
+                    status(`Procesando (${i + 1}/${queue.length}): ${q.file.name}...`);
+                    await new Promise(r => setTimeout(r, 10));
+
+                    const bytes = new Uint8Array(await q.file.arrayBuffer());
+                    const vals = q.editedValues || Object.fromEntries(specs.map(([k]) => [k, q.meta.values[k]]));
+
+                    if (q.meta.format === 'MP3' && q.meta.v === 3 && vals.date !== q.meta.values.date && vals.date !== '') {
+                        if (!/^\d{4}$/.test(vals.date)) continue;
+                    }
+
+                    const output = build(q.meta, bytes, vals, q.editedCover);
+                    verify(q.meta, bytes, output, vals, q.editedCover);
+
+                    // Renombrado automático de cada archivo en el lote
+                    const finalFilename = getNewFilename(q, $('renameRule').value, usedNames);
+
+                    zip.file(finalFilename, output);
+                    added++;
+                }
+
+                if (added > 0) {
+                    status('Comprimiendo todos los archivos en un ZIP...', 'ok');
+                    const content = await zip.generateAsync({ type: "blob" });
+                    const url = URL.createObjectURL(content);
+                    const a = document.createElement('a'); a.href = url;
+                    a.download = `AudioTag_Batch_${new Date().getTime()}.zip`;
+                    document.body.appendChild(a); a.click(); a.remove();
+                    setTimeout(() => URL.revokeObjectURL(url), 60000);
+                    status(`ZIP descargado con ${added} archivos correctamente renombrados.`, 'ok');
+                } else {
+                    status('No hay archivos soportados (MP3/FLAC) para guardar.', 'error');
+                }
+            } catch (e) {
+                status('Error al empaquetar ZIP: ' + e.message, 'error');
+            } finally {
+                busy = false; controls();
+            }
+        };
+
+    </script>
+</body>
+
+</html>
