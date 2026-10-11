@@ -1,0 +1,1997 @@
+[
+    {
+        "code": "12-1505 TPG",
+        "name": "Rose Bisque",
+        "hex": "#EDD7D3"
+    },
+    {
+        "code": "13-2009 TPG",
+        "name": "Rosy Touch",
+        "hex": "#EEBCBE"
+    },
+    {
+        "code": "13-1218 TPG",
+        "name": "Peach Adobe",
+        "hex": "#FFCDBA"
+    },
+    {
+        "code": "12-1015 TPG",
+        "name": "Whispering Peach",
+        "hex": "#F1CCBC"
+    },
+    {
+        "code": "12-0730 TPG",
+        "name": "Creamed Corn",
+        "hex": "#F8E2A1"
+    },
+    {
+        "code": "12-0745 TPG",
+        "name": "Snow Pear",
+        "hex": "#E4EEA4"
+    },
+    {
+        "code": "12-0230 TPG",
+        "name": "Scenic Green",
+        "hex": "#C3E5BA"
+    },
+    {
+        "code": "12-5806 TPG",
+        "name": "Greenish",
+        "hex": "#C6E6D4"
+    },
+    {
+        "code": "13-5612 TPG",
+        "name": "Dewdrops",
+        "hex": "#A4E2D4"
+    },
+    {
+        "code": "14-5520 TPG",
+        "name": "Cyan Sea",
+        "hex": "#81CBC6"
+    },
+    {
+        "code": "12-5211 TPG",
+        "name": "Tinted Aqua",
+        "hex": "#C0D8DE"
+    },
+    {
+        "code": "13-4016 TPG",
+        "name": "Blue Finch",
+        "hex": "#BFD0E6"
+    },
+    {
+        "code": "13-4005 TPG",
+        "name": "Lavender Mittens",
+        "hex": "#C4BEC9"
+    },
+    {
+        "code": "14-3610 TPG",
+        "name": "Violet Dusk",
+        "hex": "#CDB6D2"
+    },
+    {
+        "code": "11-4101 TPG",
+        "name": "Stalactite",
+        "hex": "#F1F1EE"
+    },
+    {
+        "code": "12-4001 TPG",
+        "name": "Early Frost",
+        "hex": "#DED9D3"
+    },
+    {
+        "code": "14-3802 TPG",
+        "name": "Steel Wool",
+        "hex": "#BBB4B4"
+    },
+    {
+        "code": "17-3927 TPG",
+        "name": "Storm Cloud",
+        "hex": "#918B91"
+    },
+    {
+        "code": "16-1503 TPG",
+        "name": "Misted Morn",
+        "hex": "#9E9C9D"
+    },
+    {
+        "code": "18-4012 TPG",
+        "name": "Gray Maze",
+        "hex": "#706D71"
+    },
+    {
+        "code": "15-5212 TPG",
+        "name": "Cityscape",
+        "hex": "#9B9CA1"
+    },
+    {
+        "code": "12-2400 TPG",
+        "name": "Pinkish Petals",
+        "hex": "#E9D8D5"
+    },
+    {
+        "code": "13-2016 TPG",
+        "name": "Pink Cherub",
+        "hex": "#FAB5C3"
+    },
+    {
+        "code": "13-1418 TPG",
+        "name": "Dusky Peach",
+        "hex": "#F0BBAC"
+    },
+    {
+        "code": "12-1121 TPG",
+        "name": "Peach Mousse",
+        "hex": "#FDD0B9"
+    },
+    {
+        "code": "12-0640 TPG",
+        "name": "Corn Confection",
+        "hex": "#F5E686"
+    },
+    {
+        "code": "12-0550 TPG",
+        "name": "Minced Quince",
+        "hex": "#E2F082"
+    },
+    {
+        "code": "13-0216 TPG",
+        "name": "Key Lime Pie",
+        "hex": "#B3E1A0"
+    },
+    {
+        "code": "14-5710 TPG",
+        "name": "Serene Green",
+        "hex": "#A7D7C2"
+    },
+    {
+        "code": "13-5512 TPG",
+        "name": "Ocean Air",
+        "hex": "#ABDCD3"
+    },
+    {
+        "code": "14-5320 TPG",
+        "name": "Dusky Aqua",
+        "hex": "#6AC8C4"
+    },
+    {
+        "code": "14-4716 TPG",
+        "name": "Pure Pond",
+        "hex": "#9ED3DC"
+    },
+    {
+        "code": "14-4111 TPG",
+        "name": "Sheer Blue",
+        "hex": "#B3C1D4"
+    },
+    {
+        "code": "13-3905 TPG",
+        "name": "Diaphanous Lilac",
+        "hex": "#C7C3CE"
+    },
+    {
+        "code": "14-3715 TPG",
+        "name": "English Hyacinth",
+        "hex": "#C4B1CF"
+    },
+    {
+        "code": "11-3900 TPG",
+        "name": "Wispy Clouds",
+        "hex": "#EFEFED"
+    },
+    {
+        "code": "14-0207 TPG",
+        "name": "Cumulus Cloud",
+        "hex": "#B4B0AB"
+    },
+    {
+        "code": "14-4109 TPG",
+        "name": "Alabaster Gray",
+        "hex": "#BDB8BB"
+    },
+    {
+        "code": "17-2501 TPG",
+        "name": "Magnetite",
+        "hex": "#857D80"
+    },
+    {
+        "code": "16-1502 TPG",
+        "name": "Gypsum",
+        "hex": "#8D8B8B"
+    },
+    {
+        "code": "18-3914 TPG",
+        "name": "Dark Core",
+        "hex": "#5C5758"
+    },
+    {
+        "code": "16-0005 TPG",
+        "name": "Full Moon",
+        "hex": "#939398"
+    },
+    {
+        "code": "11-1400 TPG",
+        "name": "Raindrops on Roses",
+        "hex": "#EEDBDF"
+    },
+    {
+        "code": "14-1715 TPG",
+        "name": "Poignant Pink",
+        "hex": "#EAA6AF"
+    },
+    {
+        "code": "13-1330 TPG",
+        "name": "Peach Tree",
+        "hex": "#FFC1AC"
+    },
+    {
+        "code": "13-1307 TPG",
+        "name": "Peach Palazzo",
+        "hex": "#F9B8A4"
+    },
+    {
+        "code": "12-0719 TPG",
+        "name": "Yellow Jasper",
+        "hex": "#F5EF72"
+    },
+    {
+        "code": "12-0641 TPG",
+        "name": "Pear Extract",
+        "hex": "#E1EC7B"
+    },
+    {
+        "code": "12-6000 TPG",
+        "name": "Veiled Vista",
+        "hex": "#CAE7CD"
+    },
+    {
+        "code": "13-6010 TPG",
+        "name": "Graciously Green",
+        "hex": "#A8DEC9"
+    },
+    {
+        "code": "13-5320 TPG",
+        "name": "Aqua Frost",
+        "hex": "#A0DED4"
+    },
+    {
+        "code": "14-5125 TPG",
+        "name": "Aqua Wash",
+        "hex": "#48C4BD"
+    },
+    {
+        "code": "14-4714 TPG",
+        "name": "Clear Tides",
+        "hex": "#87D5E2"
+    },
+    {
+        "code": "14-4015 TPG",
+        "name": "Floaty Blue",
+        "hex": "#AEC5E0"
+    },
+    {
+        "code": "14-3915 TPG",
+        "name": "Lilac Clematis",
+        "hex": "#B4B2CB"
+    },
+    {
+        "code": "15-3615 TPG",
+        "name": "Lavender Oil",
+        "hex": "#C6A8D1"
+    },
+    {
+        "code": "12-0508 TPG",
+        "name": "White Down",
+        "hex": "#E8E7DF"
+    },
+    {
+        "code": "15-4401 TPG",
+        "name": "Sweatshirt Gray",
+        "hex": "#B0A9A6"
+    },
+    {
+        "code": "14-4116 TPG",
+        "name": "Gray Morning",
+        "hex": "#AFAAAB"
+    },
+    {
+        "code": "18-3801 TPG",
+        "name": "Pyrite",
+        "hex": "#797274"
+    },
+    {
+        "code": "17-1504 TPG",
+        "name": "Gray Contours",
+        "hex": "#848384"
+    },
+    {
+        "code": "19-0610 TPG",
+        "name": "Catacombs",
+        "hex": "#5A5554"
+    },
+    {
+        "code": "17-4017 TPG",
+        "name": "Abalone Shell",
+        "hex": "#80828A"
+    },
+    {
+        "code": "12-2900 TPG",
+        "name": "Sweet Taffy",
+        "hex": "#E6CED9"
+    },
+    {
+        "code": "14-1816 TPG",
+        "name": "Pink Taffy",
+        "hex": "#EDA1B0"
+    },
+    {
+        "code": "14-1320 TPG",
+        "name": "Peach Smoothie",
+        "hex": "#F8AA9B"
+    },
+    {
+        "code": "14-1440 TPG",
+        "name": "Perfection Peach",
+        "hex": "#FFB194"
+    },
+    {
+        "code": "12-0650 TPG",
+        "name": "Summer Sun",
+        "hex": "#F0E332"
+    },
+    {
+        "code": "12-0430 TPG",
+        "name": "Asian Pear",
+        "hex": "#DDF096"
+    },
+    {
+        "code": "12-0107 TPG",
+        "name": "Tender Stem",
+        "hex": "#BDDEC3"
+    },
+    {
+        "code": "13-5615 TPG",
+        "name": "Clean Green",
+        "hex": "#9EE0C6"
+    },
+    {
+        "code": "14-5618 TPG",
+        "name": "Cool Caribbean",
+        "hex": "#80C8B9"
+    },
+    {
+        "code": "14-4912 TPG",
+        "name": "Rinsing Rivulet",
+        "hex": "#5DCBC8"
+    },
+    {
+        "code": "15-4512 TPG",
+        "name": "Water Sign",
+        "hex": "#6BB7C2"
+    },
+    {
+        "code": "14-4130 TPG",
+        "name": "Blue Frost",
+        "hex": "#A7C5E6"
+    },
+    {
+        "code": "14-3926 TPG",
+        "name": "Lacy Lilac",
+        "hex": "#B5B4D5"
+    },
+    {
+        "code": "14-3512 TPG",
+        "name": "Scented Lavender",
+        "hex": "#D0B7DA"
+    },
+    {
+        "code": "12-0003 TPG",
+        "name": "Snowy Peaks",
+        "hex": "#E6E0D9"
+    },
+    {
+        "code": "13-0005 TPG",
+        "name": "Temple Gray",
+        "hex": "#CAC3C2"
+    },
+    {
+        "code": "16-1523 TPG",
+        "name": "Cloud Cover",
+        "hex": "#9B9697"
+    },
+    {
+        "code": "18-0407 TPG",
+        "name": "Organic Gray",
+        "hex": "#6F6869"
+    },
+    {
+        "code": "18-1611 TPG",
+        "name": "Cliffside Gray",
+        "hex": "#777271"
+    },
+    {
+        "code": "19-3904 TPG",
+        "name": "Carbon Copy",
+        "hex": "#504D50"
+    },
+    {
+        "code": "18-3924 TPG",
+        "name": "Arctic Seal",
+        "hex": "#6B6C78"
+    },
+    {
+        "code": "13-2930 TPG",
+        "name": "Early Hours",
+        "hex": "#DCC6D1"
+    },
+    {
+        "code": "15-2122 TPG",
+        "name": "Thinking Pink",
+        "hex": "#F294AD"
+    },
+    {
+        "code": "14-1430 TPG",
+        "name": "Honeyed Apricot",
+        "hex": "#F3AA99"
+    },
+    {
+        "code": "14-1431 TPG",
+        "name": "Peach Sorbet",
+        "hex": "#FFAA8C"
+    },
+    {
+        "code": "12-0743 TPG",
+        "name": "Buzzing Bees",
+        "hex": "#F3F291"
+    },
+    {
+        "code": "12-0540 TPG",
+        "name": "Grossular Green",
+        "hex": "#DDE8AD"
+    },
+    {
+        "code": "13-6226 TPG",
+        "name": "Frosted Lime",
+        "hex": "#B2DEAF"
+    },
+    {
+        "code": "13-5710 TPG",
+        "name": "Dreamy Green",
+        "hex": "#94DCBE"
+    },
+    {
+        "code": "14-5612 TPG",
+        "name": "Starling Egg",
+        "hex": "#86C8BC"
+    },
+    {
+        "code": "14-5117 TPG",
+        "name": "Aquacade",
+        "hex": "#70B7B7"
+    },
+    {
+        "code": "15-4719 TPG",
+        "name": "Coastal Waters",
+        "hex": "#61AAB6"
+    },
+    {
+        "code": "15-3926 TPG",
+        "name": "Polaris Star",
+        "hex": "#91ADD4"
+    },
+    {
+        "code": "14-3935 TPG",
+        "name": "Lavender Fields",
+        "hex": "#B0B1D6"
+    },
+    {
+        "code": "15-3530 TPG",
+        "name": "Lavender Lily",
+        "hex": "#B8A3BC"
+    },
+    {
+        "code": "12-0705 TPG",
+        "name": "Sea Pearl",
+        "hex": "#E6DDD1"
+    },
+    {
+        "code": "14-3700 TPG",
+        "name": "Gray Daze",
+        "hex": "#BCB2B2"
+    },
+    {
+        "code": "16-3804 TPG",
+        "name": "Absorption",
+        "hex": "#9F9B9E"
+    },
+    {
+        "code": "18-3709 TPG",
+        "name": "Subterranean",
+        "hex": "#625A5B"
+    },
+    {
+        "code": "17-5800 TPG",
+        "name": "Hematite",
+        "hex": "#787471"
+    },
+    {
+        "code": "19-4002 TPG",
+        "name": "Camo Gray",
+        "hex": "#4A484C"
+    },
+    {
+        "code": "18-4021 TPG",
+        "name": "Burnt Ash",
+        "hex": "#4F535C"
+    },
+    {
+        "code": "13-2705 TPG",
+        "name": "Flushing Pink",
+        "hex": "#F9CEDE"
+    },
+    {
+        "code": "14-2216 TPG",
+        "name": "Pink Drink",
+        "hex": "#F89BB7"
+    },
+    {
+        "code": "14-1417 TPG",
+        "name": "Taste of Peach",
+        "hex": "#ECA28E"
+    },
+    {
+        "code": "14-1242 TPG",
+        "name": "Melon Ice",
+        "hex": "#FFAD84"
+    },
+    {
+        "code": "12-0723 TPG",
+        "name": "Corn Kernels",
+        "hex": "#E5DD8A"
+    },
+    {
+        "code": "12-0549 TPG",
+        "name": "Citrus Essence",
+        "hex": "#D6EE7A"
+    },
+    {
+        "code": "14-0225 TPG",
+        "name": "Spring Leaf",
+        "hex": "#9CD199"
+    },
+    {
+        "code": "14-5828 TPG",
+        "name": "Breezy Green",
+        "hex": "#6CD3AA"
+    },
+    {
+        "code": "14-5412 TPG",
+        "name": "Frostbite",
+        "hex": "#8FCBC2"
+    },
+    {
+        "code": "15-5220 TPG",
+        "name": "Aquarium",
+        "hex": "#5DB7B1"
+    },
+    {
+        "code": "13-4520 TPG",
+        "name": "Ocean Current",
+        "hex": "#A0D6ED"
+    },
+    {
+        "code": "15-3931 TPG",
+        "name": "Fairview Blue",
+        "hex": "#8FA6CA"
+    },
+    {
+        "code": "14-3813 TPG",
+        "name": "Queen's Wreath",
+        "hex": "#B1AFC8"
+    },
+    {
+        "code": "16-3610 TPG",
+        "name": "Quiet Violet",
+        "hex": "#A995B0"
+    },
+    {
+        "code": "11-0002 TPG",
+        "name": "Snowfall",
+        "hex": "#E9E1DA"
+    },
+    {
+        "code": "14-0702 TPG",
+        "name": "Inscrutable",
+        "hex": "#B7AEAA"
+    },
+    {
+        "code": "16-2901 TPG",
+        "name": "Dolphin",
+        "hex": "#9B989C"
+    },
+    {
+        "code": "18-3901 TPG",
+        "name": "Tire Tread",
+        "hex": "#575254"
+    },
+    {
+        "code": "18-0307 TPG",
+        "name": "Dark Night",
+        "hex": "#696461"
+    },
+    {
+        "code": "19-3913 TPG",
+        "name": "Black Hole",
+        "hex": "#4B4B51"
+    },
+    {
+        "code": "19-3820 TPG",
+        "name": "Black Cat",
+        "hex": "#40424B"
+    },
+    {
+        "code": "14-2609 TPG",
+        "name": "Full Blooming Pink",
+        "hex": "#E3ACCA"
+    },
+    {
+        "code": "15-1910 TPG",
+        "name": "Rosy Future",
+        "hex": "#F4809E"
+    },
+    {
+        "code": "14-1602 TPG",
+        "name": "Peach Infusion",
+        "hex": "#E59E91"
+    },
+    {
+        "code": "15-1232 TPG",
+        "name": "Persian Melon",
+        "hex": "#FEA870"
+    },
+    {
+        "code": "12-0618 TPG",
+        "name": "Happy Hopes",
+        "hex": "#E3DCA8"
+    },
+    {
+        "code": "14-0440 TPG",
+        "name": "Large Leafed Lime",
+        "hex": "#C7CD5B"
+    },
+    {
+        "code": "14-0120 TPG",
+        "name": "Gremlin Green",
+        "hex": "#8EC898"
+    },
+    {
+        "code": "15-5810 TPG",
+        "name": "Mentholated",
+        "hex": "#62C49D"
+    },
+    {
+        "code": "14-5419 TPG",
+        "name": "Pool Cabana",
+        "hex": "#77C7BA"
+    },
+    {
+        "code": "15-4912 TPG",
+        "name": "Fluidity",
+        "hex": "#65B8BB"
+    },
+    {
+        "code": "14-4509 TPG",
+        "name": "Cooling Vapors",
+        "hex": "#99C9DF"
+    },
+    {
+        "code": "16-4039 TPG",
+        "name": "Mountain Bluebird",
+        "hex": "#7893C4"
+    },
+    {
+        "code": "16-3928 TPG",
+        "name": "Lavender Icing",
+        "hex": "#9A9AB7"
+    },
+    {
+        "code": "16-3615 TPG",
+        "name": "Violetta",
+        "hex": "#AD9DB8"
+    },
+    {
+        "code": "12-1306 TPG",
+        "name": "Nova Scotia",
+        "hex": "#E8DDD0"
+    },
+    {
+        "code": "16-3710 TPG",
+        "name": "Crushed Rock",
+        "hex": "#A29894"
+    },
+    {
+        "code": "17-0400 TPG",
+        "name": "Wisdom Gray",
+        "hex": "#877F80"
+    },
+    {
+        "code": "19-0914 TPG",
+        "name": "Solemnity",
+        "hex": "#453F40"
+    },
+    {
+        "code": "18-1408 TPG",
+        "name": "Andesite",
+        "hex": "#5B5955"
+    },
+    {
+        "code": "19-1011 TPG",
+        "name": "Black Sea",
+        "hex": "#48454A"
+    },
+    {
+        "code": "19-4103 TPG",
+        "name": "Silhouette",
+        "hex": "#3A3F4A"
+    },
+    {
+        "code": "14-4309 TPG",
+        "name": "Secret Spaces",
+        "hex": "#B7BCC2"
+    },
+    {
+        "code": "14-4605 TPG",
+        "name": "Tracing Gray",
+        "hex": "#BCBCB9"
+    },
+    {
+        "code": "16-4803 TPG",
+        "name": "Debonair Gray",
+        "hex": "#888882"
+    },
+    {
+        "code": "18-4007 TPG",
+        "name": "Impenetrable",
+        "hex": "#5B585C"
+    },
+    {
+        "code": "11-4001 TPG",
+        "name": "Brilliant White",
+        "hex": "#EFF0F1"
+    },
+    {
+        "code": "11-0607 TPG",
+        "name": "Sugar Swizzle",
+        "hex": "#F3EFE7"
+    },
+    {
+        "code": "11-0104 TPG",
+        "name": "Vanilla Ice",
+        "hex": "#F1ECDD"
+    },
+    {
+        "code": "11-0105 TPG",
+        "name": "Antique White",
+        "hex": "#EEE7D4"
+    },
+    {
+        "code": "11-0110 TPG",
+        "name": "Buttercream",
+        "hex": "#F0E3CE"
+    },
+    {
+        "code": "13-1104 TPG",
+        "name": "Sheer Bliss",
+        "hex": "#DFCDBC"
+    },
+    {
+        "code": "13-0404 TPG",
+        "name": "Ancient Scroll",
+        "hex": "#D1C7B9"
+    },
+    {
+        "code": "12-0105 TPG",
+        "name": "Bone White",
+        "hex": "#DED7C4"
+    },
+    {
+        "code": "12-4302 TPG",
+        "name": "Vaporous Gray",
+        "hex": "#E1E2DB"
+    },
+    {
+        "code": "12-5201 TPG",
+        "name": "Icicle",
+        "hex": "#DFE1D3"
+    },
+    {
+        "code": "12-5202 TPG",
+        "name": "Turtledove",
+        "hex": "#DED7C7"
+    },
+    {
+        "code": "12-0311 TPG",
+        "name": "Asparagus Green",
+        "hex": "#D7D4B9"
+    },
+    {
+        "code": "13-0513 TPG",
+        "name": "Frozen Dew",
+        "hex": "#DCD4B8"
+    },
+    {
+        "code": "15-1116 TPG",
+        "name": "Safari",
+        "hex": "#C1AE94"
+    },
+    {
+        "code": "14-1108 TPG",
+        "name": "Wood Ash",
+        "hex": "#DECDB1"
+    },
+    {
+        "code": "14-1014 TPG",
+        "name": "Gravel",
+        "hex": "#D0C2A5"
+    },
+    {
+        "code": "14-1110 TPG",
+        "name": "Boulder",
+        "hex": "#D1BE9A"
+    },
+    {
+        "code": "14-4205 TPG",
+        "name": "Cathedral Spire",
+        "hex": "#9EA2A7"
+    },
+    {
+        "code": "14-4216 TPG",
+        "name": "Monsoon Mist",
+        "hex": "#B6B8B8"
+    },
+    {
+        "code": "17-4005 TPG",
+        "name": "Underworld",
+        "hex": "#848480"
+    },
+    {
+        "code": "19-3914 TPG",
+        "name": "Coal Smoke",
+        "hex": "#5A5659"
+    },
+    {
+        "code": "11-0601 TPG",
+        "name": "Bright White",
+        "hex": "#F5F7F6"
+    },
+    {
+        "code": "11-1001 TPG",
+        "name": "White Alyssum",
+        "hex": "#ECE8E4"
+    },
+    {
+        "code": "11-0606 TPG",
+        "name": "Pristine",
+        "hex": "#EEEADB"
+    },
+    {
+        "code": "12-0703 TPG",
+        "name": "Seedpearl",
+        "hex": "#E3DAC2"
+    },
+    {
+        "code": "11-0907 TPG",
+        "name": "Pearled Ivory",
+        "hex": "#EFE1CE"
+    },
+    {
+        "code": "12-1404 TPG",
+        "name": "Pink Tint",
+        "hex": "#DBCBBC"
+    },
+    {
+        "code": "13-0401 TPG",
+        "name": "Oatmeal",
+        "hex": "#CCC4B4"
+    },
+    {
+        "code": "13-0607 TPG",
+        "name": "Fog",
+        "hex": "#D4C9B6"
+    },
+    {
+        "code": "12-4300 TPG",
+        "name": "White Onyx",
+        "hex": "#D9D8D1"
+    },
+    {
+        "code": "12-0404 TPG",
+        "name": "Light Gray",
+        "hex": "#DAD6CB"
+    },
+    {
+        "code": "12-0104 TPG",
+        "name": "White Asparagus",
+        "hex": "#E3DECA"
+    },
+    {
+        "code": "13-1007 TPG",
+        "name": "Oyster White",
+        "hex": "#D6CDB1"
+    },
+    {
+        "code": "13-0711 TPG",
+        "name": "Putty",
+        "hex": "#D4CDB0"
+    },
+    {
+        "code": "16-1010 TPG",
+        "name": "Incense",
+        "hex": "#AB997B"
+    },
+    {
+        "code": "15-1218 TPG",
+        "name": "Semolina",
+        "hex": "#D1BC9D"
+    },
+    {
+        "code": "15-1217 TPG",
+        "name": "Mojave Desert",
+        "hex": "#C7B795"
+    },
+    {
+        "code": "14-1116 TPG",
+        "name": "Almond Buff",
+        "hex": "#D1B894"
+    },
+    {
+        "code": "18-4705 TPG",
+        "name": "Stone Mountain",
+        "hex": "#6C6F73"
+    },
+    {
+        "code": "16-4705 TPG",
+        "name": "Gray Illusions",
+        "hex": "#A0A0A1"
+    },
+    {
+        "code": "18-4331 TPG",
+        "name": "Foghorn",
+        "hex": "#7C7B78"
+    },
+    {
+        "code": "19-5303 TPG",
+        "name": "Clever Crows",
+        "hex": "#484A4C"
+    },
+    {
+        "code": "11-0700 TPG",
+        "name": "Lucent White",
+        "hex": "#F3F4F5"
+    },
+    {
+        "code": "11-0602 TPG",
+        "name": "Snow White",
+        "hex": "#F0EDE7"
+    },
+    {
+        "code": "11-0701 TPG",
+        "name": "Whisper White",
+        "hex": "#EFE8DD"
+    },
+    {
+        "code": "12-0000 TPG",
+        "name": "White Swan",
+        "hex": "#E2D7C6"
+    },
+    {
+        "code": "12-0704 TPG",
+        "name": "White Smoke",
+        "hex": "#ECDDC8"
+    },
+    {
+        "code": "13-1107 TPG",
+        "name": "Whisper Pink",
+        "hex": "#DECDBF"
+    },
+    {
+        "code": "13-0003 TPG",
+        "name": "Oat Milk",
+        "hex": "#D6CCC1"
+    },
+    {
+        "code": "14-1107 TPG",
+        "name": "Oyster Gray",
+        "hex": "#CFC4B1"
+    },
+    {
+        "code": "13-4403 TPG",
+        "name": "Silver Birch",
+        "hex": "#CECDC1"
+    },
+    {
+        "code": "12-6204 TPG",
+        "name": "Silver Green",
+        "hex": "#D6D5C6"
+    },
+    {
+        "code": "12-0110 TPG",
+        "name": "Pistachio Shell",
+        "hex": "#DED6BE"
+    },
+    {
+        "code": "13-0611 TPG",
+        "name": "Moth",
+        "hex": "#D3CEB0"
+    },
+    {
+        "code": "13-1105 TPG",
+        "name": "Brown Rice",
+        "hex": "#C8BCA4"
+    },
+    {
+        "code": "15-1114 TPG",
+        "name": "Travertine",
+        "hex": "#AF9C83"
+    },
+    {
+        "code": "14-1112 TPG",
+        "name": "Pebble",
+        "hex": "#D2BC9D"
+    },
+    {
+        "code": "15-1216 TPG",
+        "name": "Pale Khaki",
+        "hex": "#C4B396"
+    },
+    {
+        "code": "15-1119 TPG",
+        "name": "Taos Taupe",
+        "hex": "#BFAB83"
+    },
+    {
+        "code": "18-4205 TPG",
+        "name": "Gray Shingles",
+        "hex": "#6C757D"
+    },
+    {
+        "code": "17-5103 TPG",
+        "name": "Profile Gray",
+        "hex": "#8B8A8B"
+    },
+    {
+        "code": "18-0205 TPG",
+        "name": "Gray Velvet",
+        "hex": "#64615D"
+    },
+    {
+        "code": "19-4100 TPG",
+        "name": "Printer's Ink",
+        "hex": "#444446"
+    },
+    {
+        "code": "11-4800 TPG",
+        "name": "Blanc de Blanc",
+        "hex": "#E9E9E7"
+    },
+    {
+        "code": "11-4202 TPG",
+        "name": "Star White",
+        "hex": "#ECECE7"
+    },
+    {
+        "code": "12-0601 TPG",
+        "name": "Eggnog",
+        "hex": "#EAE0D2"
+    },
+    {
+        "code": "12-0304 TPG",
+        "name": "Whitecap Gray",
+        "hex": "#E1D7C6"
+    },
+    {
+        "code": "11-0809 TPG",
+        "name": "Ecru",
+        "hex": "#F2E1CD"
+    },
+    {
+        "code": "13-1106 TPG",
+        "name": "Sand Dollar",
+        "hex": "#DECEBB"
+    },
+    {
+        "code": "13-0400 TPG",
+        "name": "French Oak",
+        "hex": "#CCC1B3"
+    },
+    {
+        "code": "14-1106 TPG",
+        "name": "Peyote",
+        "hex": "#C4BCAD"
+    },
+    {
+        "code": "12-4301 TPG",
+        "name": "Almond Milk",
+        "hex": "#D9D0BE"
+    },
+    {
+        "code": "14-6308 TPG",
+        "name": "Alfalfa",
+        "hex": "#B9B9A4"
+    },
+    {
+        "code": "14-0108 TPG",
+        "name": "Castle Wall",
+        "hex": "#CEC4AE"
+    },
+    {
+        "code": "14-0615 TPG",
+        "name": "Green Haze",
+        "hex": "#CCC8A5"
+    },
+    {
+        "code": "16-1119 TPG",
+        "name": "Lemon Pepper",
+        "hex": "#A29780"
+    },
+    {
+        "code": "16-1315 TPG",
+        "name": "Cornstalk",
+        "hex": "#AD987D"
+    },
+    {
+        "code": "14-1208 TPG",
+        "name": "Irish Cream",
+        "hex": "#C2AD92"
+    },
+    {
+        "code": "15-1307 TPG",
+        "name": "White Pepper",
+        "hex": "#BAAA95"
+    },
+    {
+        "code": "16-0924 TPG",
+        "name": "Croissant",
+        "hex": "#CAAD89"
+    },
+    {
+        "code": "18-4319 TPG",
+        "name": "Rocky Rims",
+        "hex": "#676E79"
+    },
+    {
+        "code": "18-4602 TPG",
+        "name": "Gray Matter",
+        "hex": "#6D6F6F"
+    },
+    {
+        "code": "19-0507 TPG",
+        "name": "Lamp Black",
+        "hex": "#4F504E"
+    },
+    {
+        "code": "19-4204 TPG",
+        "name": "Bottomless Pit",
+        "hex": "#3A3E42"
+    },
+    {
+        "code": "11-4201 TPG",
+        "name": "Cloud Dancer",
+        "hex": "#F1F0EC"
+    },
+    {
+        "code": "11-4300 TPG",
+        "name": "Marshmallow",
+        "hex": "#EFEDE3"
+    },
+    {
+        "code": "11-0604 TPG",
+        "name": "Gardenia",
+        "hex": "#F0EAE0"
+    },
+    {
+        "code": "13-0908 TPG",
+        "name": "Parchment",
+        "hex": "#DED1BC"
+    },
+    {
+        "code": "12-0710 TPG",
+        "name": "Shortbread",
+        "hex": "#EFDEC3"
+    },
+    {
+        "code": "13-1308 TPG",
+        "name": "Brazilian Sand",
+        "hex": "#DDCCB7"
+    },
+    {
+        "code": "14-0002 TPG",
+        "name": "Pumice Stone",
+        "hex": "#C4BEB4"
+    },
+    {
+        "code": "15-1305 TPG",
+        "name": "Feather Gray",
+        "hex": "#C0B3A3"
+    },
+    {
+        "code": "14-0105 TPG",
+        "name": "Overcast",
+        "hex": "#C4C0AA"
+    },
+    {
+        "code": "15-6410 TPG",
+        "name": "Moss Gray",
+        "hex": "#AAA994"
+    },
+    {
+        "code": "14-0210 TPG",
+        "name": "Tidal Foam",
+        "hex": "#C4BCA4"
+    },
+    {
+        "code": "15-1115 TPG",
+        "name": "Fields of Rye",
+        "hex": "#B9AC94"
+    },
+    {
+        "code": "17-1108 TPG",
+        "name": "Winter Twig",
+        "hex": "#998F7F"
+    },
+    {
+        "code": "17-1022 TPG",
+        "name": "Kelp",
+        "hex": "#998C6E"
+    },
+    {
+        "code": "16-1213 TPG",
+        "name": "Savannah Tan",
+        "hex": "#A89583"
+    },
+    {
+        "code": "16-1101 TPG",
+        "name": "Trench Coat",
+        "hex": "#AC9F8B"
+    },
+    {
+        "code": "16-0920 TPG",
+        "name": "Curds & Whey",
+        "hex": "#C1A786"
+    },
+    {
+        "code": "19-4209 TPG",
+        "name": "Enigma",
+        "hex": "#60646B"
+    },
+    {
+        "code": "18-5103 TPG",
+        "name": "Iron Oxide",
+        "hex": "#636362"
+    },
+    {
+        "code": "19-0505 TPG",
+        "name": "Elegance",
+        "hex": "#50524E"
+    },
+    {
+        "code": "19-4000 TPG",
+        "name": "Affenpinscher",
+        "hex": "#3A3D40"
+    },
+    {
+        "code": "11-0608 TPG",
+        "name": "Coconut Milk",
+        "hex": "#F0EDE5"
+    },
+    {
+        "code": "11-4302 TPG",
+        "name": "Cannoli Cream",
+        "hex": "#F2F0E3"
+    },
+    {
+        "code": "11-0605 TPG",
+        "name": "Jet Stream",
+        "hex": "#EAE3DB"
+    },
+    {
+        "code": "13-1006 TPG",
+        "name": "Crème Brûlée",
+        "hex": "#DACBB2"
+    },
+    {
+        "code": "12-0605 TPG",
+        "name": "Angora",
+        "hex": "#DED3BB"
+    },
+    {
+        "code": "12-1403 TPG",
+        "name": "Tapioca",
+        "hex": "#DDCEBA"
+    },
+    {
+        "code": "13-5304 TPG",
+        "name": "Rainy Day",
+        "hex": "#D4CBBF"
+    },
+    {
+        "code": "15-1306 TPG",
+        "name": "Oxford Tan",
+        "hex": "#BDAD9E"
+    },
+    {
+        "code": "14-6305 TPG",
+        "name": "Pelican",
+        "hex": "#C6C0B1"
+    },
+    {
+        "code": "15-6307 TPG",
+        "name": "Agate Gray",
+        "hex": "#B4B3A5"
+    },
+    {
+        "code": "15-0513 TPG",
+        "name": "Eucalyptus",
+        "hex": "#ADA890"
+    },
+    {
+        "code": "17-1107 TPG",
+        "name": "Seneca Rock",
+        "hex": "#948E7C"
+    },
+    {
+        "code": "17-1113 TPG",
+        "name": "Coriander",
+        "hex": "#998D7A"
+    },
+    {
+        "code": "17-1115 TPG",
+        "name": "Petrified Oak",
+        "hex": "#8F7C64"
+    },
+    {
+        "code": "17-1112 TPG",
+        "name": "Weathered Teak",
+        "hex": "#9F9283"
+    },
+    {
+        "code": "16-1104 TPG",
+        "name": "Crockery",
+        "hex": "#AB9E8D"
+    },
+    {
+        "code": "16-1120 TPG",
+        "name": "Starfish",
+        "hex": "#B39D7B"
+    },
+    {
+        "code": "19-4310 TPG",
+        "name": "Gray Whale",
+        "hex": "#575C62"
+    },
+    {
+        "code": "19-0503 TPG",
+        "name": "Bitumen",
+        "hex": "#494848"
+    },
+    {
+        "code": "19-4001 TPG",
+        "name": "Deep Caverns",
+        "hex": "#3F4140"
+    },
+    {
+        "code": "19-4206 TPG",
+        "name": "Black Robe",
+        "hex": "#3F4144"
+    },
+    {
+        "code": "11-4801 TPG",
+        "name": "Tofu",
+        "hex": "#EAE6DA"
+    },
+    {
+        "code": "11-0103 TPG",
+        "name": "Egret",
+        "hex": "#EFEDE1"
+    },
+    {
+        "code": "13-0905 TPG",
+        "name": "Birch",
+        "hex": "#DED5C6"
+    },
+    {
+        "code": "12-0709 TPG",
+        "name": "Macadamia",
+        "hex": "#E7D2BA"
+    },
+    {
+        "code": "13-1008 TPG",
+        "name": "Bleached Sand",
+        "hex": "#E0D1B7"
+    },
+    {
+        "code": "13-0907 TPG",
+        "name": "Sandshell",
+        "hex": "#DACEBA"
+    },
+    {
+        "code": "13-0000 TPG",
+        "name": "Moonbeam",
+        "hex": "#D6CFC7"
+    },
+    {
+        "code": "15-1304 TPG",
+        "name": "Humus",
+        "hex": "#B7A897"
+    },
+    {
+        "code": "16-1105 TPG",
+        "name": "Plaza Taupe",
+        "hex": "#B3A898"
+    },
+    {
+        "code": "14-6408 TPG",
+        "name": "Abbey Stone",
+        "hex": "#A5A696"
+    },
+    {
+        "code": "15-0309 TPG",
+        "name": "Spray Green",
+        "hex": "#B2AA97"
+    },
+    {
+        "code": "17-0510 TPG",
+        "name": "Silver Sage",
+        "hex": "#979280"
+    },
+    {
+        "code": "17-1118 TPG",
+        "name": "Lead Gray",
+        "hex": "#857860"
+    },
+    {
+        "code": "17-1314 TPG",
+        "name": "Sepia Tint",
+        "hex": "#8E7A66"
+    },
+    {
+        "code": "17-1312 TPG",
+        "name": "Silver Mink",
+        "hex": "#A59382"
+    },
+    {
+        "code": "17-1109 TPG",
+        "name": "Chinchilla",
+        "hex": "#9B927B"
+    },
+    {
+        "code": "16-1324 TPG",
+        "name": "Lark",
+        "hex": "#BFA077"
+    },
+    {
+        "code": "13-1009 TPG",
+        "name": "Biscotti",
+        "hex": "#DCCAA9"
+    },
+    {
+        "code": "12-0811 TPG",
+        "name": "Dawn",
+        "hex": "#F1D7BA"
+    },
+    {
+        "code": "12-1009 TPG",
+        "name": "Vanilla Cream",
+        "hex": "#F9DDCA"
+    },
+    {
+        "code": "12-1007 TPG",
+        "name": "Pastel Rose Tan",
+        "hex": "#E8D0BB"
+    },
+    {
+        "code": "14-1209 TPG",
+        "name": "Smoke Gray",
+        "hex": "#CBB7A2"
+    },
+    {
+        "code": "15-1309 TPG",
+        "name": "Moonlight",
+        "hex": "#C2AE9D"
+    },
+    {
+        "code": "16-1412 TPG",
+        "name": "Stucco",
+        "hex": "#AA9185"
+    },
+    {
+        "code": "13-0403 TPG",
+        "name": "Gray Morn",
+        "hex": "#CFC2B9"
+    },
+    {
+        "code": "12-1406 TPG",
+        "name": "Almond Peach",
+        "hex": "#DBCABF"
+    },
+    {
+        "code": "15-4504 TPG",
+        "name": "Nacreous Clouds",
+        "hex": "#BBB1AB"
+    },
+    {
+        "code": "16-1102 TPG",
+        "name": "Island Fossil",
+        "hex": "#B3AB9E"
+    },
+    {
+        "code": "16-1407 TPG",
+        "name": "Cobblestone",
+        "hex": "#AC9F94"
+    },
+    {
+        "code": "16-0906 TPG",
+        "name": "Simply Taupe",
+        "hex": "#ABA093"
+    },
+    {
+        "code": "16-1103 TPG",
+        "name": "Pure Cashmere",
+        "hex": "#B1A699"
+    },
+    {
+        "code": "14-4500 TPG",
+        "name": "Moonstruck",
+        "hex": "#C3C1B9"
+    },
+    {
+        "code": "13-0002 TPG",
+        "name": "White Sand",
+        "hex": "#DCD6D1"
+    },
+    {
+        "code": "15-0000 TPG",
+        "name": "Dove",
+        "hex": "#B7B1AA"
+    },
+    {
+        "code": "14-4203 TPG",
+        "name": "Vapor Blue",
+        "hex": "#C6C4C3"
+    },
+    {
+        "code": "12-4306 TPG",
+        "name": "Barely Blue",
+        "hex": "#DCE0DC"
+    },
+    {
+        "code": "12-4705 TPG",
+        "name": "Blue Blush",
+        "hex": "#D5DED9"
+    },
+    {
+        "code": "11-4601 TPG",
+        "name": "Bit of Blue",
+        "hex": "#E4E9E9"
+    },
+    {
+        "code": "13-1016 TPG",
+        "name": "Wheat",
+        "hex": "#E2C6A5"
+    },
+    {
+        "code": "13-1010 TPG",
+        "name": "Gray Sand",
+        "hex": "#ECD4B6"
+    },
+    {
+        "code": "12-1006 TPG",
+        "name": "Mother of Pearl",
+        "hex": "#EBD9C6"
+    },
+    {
+        "code": "12-0807 TPG",
+        "name": "Sun Kiss",
+        "hex": "#ECD3BC"
+    },
+    {
+        "code": "14-0708 TPG",
+        "name": "Cement",
+        "hex": "#C7B8A7"
+    },
+    {
+        "code": "16-1210 TPG",
+        "name": "Light Taupe",
+        "hex": "#B7A293"
+    },
+    {
+        "code": "16-1415 TPG",
+        "name": "Almondine",
+        "hex": "#AC907F"
+    },
+    {
+        "code": "14-1305 TPG",
+        "name": "Mushroom",
+        "hex": "#BBA99F"
+    },
+    {
+        "code": "13-3801 TPG",
+        "name": "Crystal Gray",
+        "hex": "#DACDC5"
+    },
+    {
+        "code": "16-1406 TPG",
+        "name": "Atmosphere",
+        "hex": "#AB9F98"
+    },
+    {
+        "code": "16-1106 TPG",
+        "name": "Tuffet",
+        "hex": "#A99A8B"
+    },
+    {
+        "code": "16-1109 TPG",
+        "name": "Greige",
+        "hex": "#96887A"
+    },
+    {
+        "code": "17-1105 TPG",
+        "name": "Roasted Cashew",
+        "hex": "#978C7F"
+    },
+    {
+        "code": "16-0205 TPG",
+        "name": "Vintage Khaki",
+        "hex": "#9C9387"
+    },
+    {
+        "code": "15-4502 TPG",
+        "name": "Silver Cloud",
+        "hex": "#C5BDB5"
+    },
+    {
+        "code": "14-4002 TPG",
+        "name": "Wind Chime",
+        "hex": "#CAC6C4"
+    },
+    {
+        "code": "16-5803 TPG",
+        "name": "Flint Gray",
+        "hex": "#9E9D98"
+    },
+    {
+        "code": "16-4703 TPG",
+        "name": "Ghost Gray",
+        "hex": "#999A98"
+    },
+    {
+        "code": "13-4303 TPG",
+        "name": "Dawn Blue",
+        "hex": "#C8CCCA"
+    },
+    {
+        "code": "13-4305 TPG",
+        "name": "Foggy Dew",
+        "hex": "#D0D4CD"
+    },
+    {
+        "code": "13-4201 TPG",
+        "name": "Oyster Mushroom",
+        "hex": "#C8CACB"
+    },
+    {
+        "code": "13-1011 TPG",
+        "name": "Ivory Cream",
+        "hex": "#DFC5AC"
+    },
+    {
+        "code": "14-1120 TPG",
+        "name": "Apricot Illusion",
+        "hex": "#E9C7A4"
+    },
+    {
+        "code": "12-1008 TPG",
+        "name": "Linen",
+        "hex": "#EFD6C0"
+    },
+    {
+        "code": "12-1005 TPG",
+        "name": "Novelle Peach",
+        "hex": "#E7D2BB"
+    },
+    {
+        "code": "14-1212 TPG",
+        "name": "Frappé",
+        "hex": "#D2B8A1"
+    },
+    {
+        "code": "15-1308 TPG",
+        "name": "Doeskin",
+        "hex": "#BDAD9A"
+    },
+    {
+        "code": "16-1414 TPG",
+        "name": "Chanterelle",
+        "hex": "#A38C79"
+    },
+    {
+        "code": "16-0806 TPG",
+        "name": "Goat",
+        "hex": "#AD9E95"
+    },
+    {
+        "code": "16-1211 TPG",
+        "name": "Mocha Meringue",
+        "hex": "#9F8E84"
+    },
+    {
+        "code": "16-3800 TPG",
+        "name": "Satellite",
+        "hex": "#99908D"
+    },
+    {
+        "code": "17-1009 TPG",
+        "name": "Dune",
+        "hex": "#9E8D7C"
+    },
+    {
+        "code": "17-0909 TPG",
+        "name": "Fossil",
+        "hex": "#807366"
+    },
+    {
+        "code": "17-1310 TPG",
+        "name": "Timber Wolf",
+        "hex": "#8B8170"
+    },
+    {
+        "code": "18-1110 TPG",
+        "name": "Brindle",
+        "hex": "#887E74"
+    },
+    {
+        "code": "14-4501 TPG",
+        "name": "Silver Lining",
+        "hex": "#C0BAAD"
+    },
+    {
+        "code": "15-0703 TPG",
+        "name": "Ashes of Roses",
+        "hex": "#B2ABAC"
+    },
+    {
+        "code": "17-0000 TPG",
+        "name": "Frost Gray",
+        "hex": "#848587"
+    },
+    {
+        "code": "16-4402 TPG",
+        "name": "Drizzle",
+        "hex": "#A4A29F"
+    },
+    {
+        "code": "15-4703 TPG",
+        "name": "Mirage Gray",
+        "hex": "#AEB3B1"
+    },
+    {
+        "code": "14-4804 TPG",
+        "name": "Blue Fox",
+        "hex": "#B5BEB8"
+    },
+    {
+        "code": "15-4101 TPG",
+        "name": "High-rise",
+        "hex": "#A9B1B3"
+    },
+    {
+        "code": "14-1118 TPG",
+        "name": "Beige",
+        "hex": "#D4B996"
+    },
+    {
+        "code": "13-1013 TPG",
+        "name": "Appleblossom",
+        "hex": "#E3C3A5"
+    },
+    {
+        "code": "12-0912 TPG",
+        "name": "Tender Peach",
+        "hex": "#F8D4B4"
+    },
+    {
+        "code": "14-1210 TPG",
+        "name": "Shifting Sand",
+        "hex": "#D8C4AC"
+    },
+    {
+        "code": "15-1215 TPG",
+        "name": "Sesame",
+        "hex": "#BFA68F"
+    },
+    {
+        "code": "16-1310 TPG",
+        "name": "Natural",
+        "hex": "#AD957F"
+    },
+    {
+        "code": "17-1418 TPG",
+        "name": "Ginger Snap",
+        "hex": "#968072"
+    },
+    {
+        "code": "15-1506 TPG",
+        "name": "Etherea",
+        "hex": "#A89791"
+    },
+    {
+        "code": "17-0808 TPG",
+        "name": "Taupe Gray",
+        "hex": "#938176"
+    },
+    {
+        "code": "17-1210 TPG",
+        "name": "Moon Rock",
+        "hex": "#968F85"
+    },
+    {
+        "code": "17-1311 TPG",
+        "name": "Desert Taupe",
+        "hex": "#918679"
+    },
+    {
+        "code": "18-1016 TPG",
+        "name": "Cub",
+        "hex": "#6C6051"
+    },
+    {
+        "code": "18-0513 TPG",
+        "name": "Bungee Cord",
+        "hex": "#716A61"
+    },
+    {
+        "code": "18-1108 TPG",
+        "name": "Fallen Rock",
+        "hex": "#867E74"
+    },
+    {
+        "code": "14-0000 TPG",
+        "name": "Silver Gray",
+        "hex": "#C5BEB6"
+    },
+    {
+        "code": "15-3800 TPG",
+        "name": "Porpoise",
+        "hex": "#ACA4A2"
+    },
+    {
+        "code": "17-1502 TPG",
+        "name": "Cloudburst",
+        "hex": "#868485"
+    },
+    {
+        "code": "16-4400 TPG",
+        "name": "Mourning Dove",
+        "hex": "#9B9591"
+    },
+    {
+        "code": "16-4702 TPG",
+        "name": "Limestone",
+        "hex": "#9C9F9C"
+    },
+    {
+        "code": "15-4003 TPG",
+        "name": "Storm Gray",
+        "hex": "#B0B8B4"
+    },
+    {
+        "code": "15-4305 TPG",
+        "name": "Quarry",
+        "hex": "#9AA4A9"
+    },
+    {
+        "code": "15-1214 TPG",
+        "name": "Warm Sand",
+        "hex": "#CBB395"
+    },
+    {
+        "code": "14-1119 TPG",
+        "name": "Winter Wheat",
+        "hex": "#E4C49D"
+    },
+    {
+        "code": "12-0911 TPG",
+        "name": "Peach Taffy",
+        "hex": "#F3D3B7"
+    },
+    {
+        "code": "14-1217 TPG",
+        "name": "Amberlight",
+        "hex": "#DEB99C"
+    },
+    {
+        "code": "16-1212 TPG",
+        "name": "Nomad",
+        "hex": "#BAA48F"
+    },
+    {
+        "code": "16-1318 TPG",
+        "name": "Warm Taupe",
+        "hex": "#B19886"
+    },
+    {
+        "code": "17-1321 TPG",
+        "name": "Woodsmoke",
+        "hex": "#927968"
+    },
+    {
+        "code": "17-0807 TPG",
+        "name": "Mountain Trail",
+        "hex": "#8D7C70"
+    },
+    {
+        "code": "17-1506 TPG",
+        "name": "Cinder",
+        "hex": "#8E837D"
+    },
+    {
+        "code": "18-1210 TPG",
+        "name": "Driftwood",
+        "hex": "#877F7A"
+    },
+    {
+        "code": "18-1017 TPG",
+        "name": "Caribou",
+        "hex": "#887568"
+    },
+    {
+        "code": "19-0809 TPG",
+        "name": "Chocolate Chip",
+        "hex": "#6A6054"
+    },
+    {
+        "code": "19-0822 TPG",
+        "name": "Tarmac",
+        "hex": "#5A564E"
+    },
+    {
+        "code": "19-0820 TPG",
+        "name": "Canteen",
+        "hex": "#61594E"
+    },
+    {
+        "code": "15-4503 TPG",
+        "name": "Chateau Gray",
+        "hex": "#BDB3AB"
+    },
+    {
+        "code": "16-3801 TPG",
+        "name": "Opal Gray",
+        "hex": "#A39D9D"
+    },
+    {
+        "code": "17-1500 TPG",
+        "name": "Steeple Gray",
+        "hex": "#82807D"
+    },
+    {
+        "code": "17-0207 TPG",
+        "name": "Rock Ridge",
+        "hex": "#938E87"
+    },
+    {
+        "code": "18-4105 TPG",
+        "name": "Moon Mist",
+        "hex": "#858683"
+    },
+    {
+        "code": "17-4402 TPG",
+        "name": "Neutral Gray",
+        "hex": "#898F8D"
+    },
+    {
+        "code": "17-4405 TPG",
+        "name": "Monument",
+        "hex": "#7E868A"
+    }
+]

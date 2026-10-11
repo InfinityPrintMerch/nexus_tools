@@ -1,0 +1,2984 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Generador de Paletas | Eduardo Workspace</title>
+    <link rel="icon" href="data:,">
+
+    <!-- SCRIPT DE PROTECCIÓN DE ACCESO SILENCIOSO -->
+    <!-- NOTA: Comenta temporalmente este bloque si deseas probar el archivo localmente fuera del portal -->
+    <script>
+        if (!sessionStorage.getItem('secure_app_token')) {
+            document.documentElement.style.display = 'none';
+            window.location.replace("../../index.html");
+        }
+    </script>
+
+    <!-- Fuente Poppins e Iconos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        /* VARIABLES DE AURO STUDIO */
+        :root {
+            --primary: #6F8A3C;
+            --primary-hover: #58702f;
+            --primary-light: #f2f5eb;
+            --bg-color: #f4f6f4;
+            --surface: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --danger: #e53e3e;
+            --danger-light: #fff5f5;
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            --transition: all 0.22s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: url('../../assets/auro/bg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 14px 20px;
+        }
+
+        /* Scrollbars personalizados */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* =========================================
+           CABECERA SUPERIOR COMPACTA
+           ========================================= */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 11px 22px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            margin-bottom: 14px;
+            flex-shrink: 0;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-pill-btn {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.82rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 13px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-pill-btn:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .header-title h1 {
+            color: var(--primary);
+            font-size: 1.16rem;
+            font-weight: 700;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* Navegación por Pestañas */
+        .tool-tabs {
+            display: inline-flex;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(111, 138, 60, 0.25);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(111, 138, 60, 0.3);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* =========================================
+           CONTENEDOR PRINCIPAL Y SECCIONES
+           ========================================= */
+        .palette-main-workspace {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tool-section {
+            flex: 1;
+            min-height: 0;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            padding: 22px 26px;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: fadeIn 0.28s ease;
+        }
+
+        .tool-section.active {
+            display: flex;
+        }
+
+        #extractor-section.tool-section {
+            background: transparent;
+            backdrop-filter: none;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+        }
+
+        #extractor-section.tool-section.active {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 16px;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .toolbar-info h2 {
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toolbar-info h2 i {
+            color: var(--primary);
+        }
+
+        .toolbar-info p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* =========================================
+           CONTROLES, BOTONES E INPUTS
+           ========================================= */
+        .modern-input-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: 50px;
+            padding: 6px 14px;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .modern-input-group:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(111, 138, 60, 0.12);
+        }
+
+        .modern-input-group label {
+            font-size: 0.8rem;
+            color: var(--text-main);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .modern-input-group label i {
+            color: var(--primary);
+        }
+
+        .modern-input {
+            background: transparent;
+            border: none;
+            color: var(--primary-hover);
+            font-size: 0.92rem;
+            font-weight: 700;
+            width: 46px;
+            text-align: center;
+            outline: none;
+        }
+
+        .modern-input::-webkit-inner-spin-button,
+        .modern-input::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .btn-action {
+            padding: 8px 18px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.24);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: var(--surface);
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        /* =========================================
+           SECCIÓN 1: GENERADOR DE PALETAS
+           ========================================= */
+        .palette-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .palette-container {
+            display: flex;
+            flex: 1;
+            width: 100%;
+            height: 100%;
+        }
+
+        .color-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 2.2rem;
+            transition: flex 0.35s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+            position: relative;
+        }
+
+        .color-col:hover {
+            flex: 1.15;
+        }
+
+        .color-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transform: translateY(12px);
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(6px);
+            padding: 14px 14px;
+            border-radius: var(--radius-md);
+        }
+
+        .color-col:hover .color-controls,
+        .color-col.is-locked .color-controls {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hex-text {
+            background: transparent;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: monospace;
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: transform 0.2s;
+        }
+
+        .hex-text:hover {
+            transform: scale(1.08);
+        }
+
+        .action-icon {
+            background: transparent;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            opacity: 0.85;
+        }
+
+        .action-icon:hover {
+            transform: scale(1.2);
+            opacity: 1;
+        }
+
+        /* =========================================
+           SECCIÓN 2: EXTRACTOR DE IMAGEN (2 COLUMNAS)
+           ========================================= */
+        .viewer-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .viewer-toolbar {
+            padding: 11px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #fafbfa;
+            flex-shrink: 0;
+        }
+
+        .viewer-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .viewer-status i {
+            color: var(--primary);
+        }
+
+        .dimensions-pill {
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+            background: var(--primary-light);
+            color: var(--primary-hover);
+            border: 1px solid rgba(111, 138, 60, 0.25);
+        }
+
+        .cutting-mat-viewport {
+            flex: 1;
+            overflow: auto;
+            background-color: #e9ece9;
+            background-image:
+                linear-gradient(rgba(111, 138, 60, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(111, 138, 60, 0.08) 1px, transparent 1px),
+                radial-gradient(#cbd5e0 1px, transparent 1px);
+            background-size: 100px 100px, 100px 100px, 20px 20px;
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 0;
+            position: relative;
+        }
+
+        .placeholder-text {
+            text-align: center;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 36px 42px;
+            border-radius: var(--radius-lg);
+            border: 1.5px dashed var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .placeholder-text:hover {
+            border-color: var(--primary);
+            background: var(--surface);
+            transform: translateY(-2px);
+        }
+
+        .placeholder-text i {
+            font-size: 2.8rem;
+            color: var(--primary);
+            opacity: 0.75;
+        }
+
+        .interactive-image-wrapper {
+            position: relative;
+            display: inline-block;
+            touch-action: none;
+            overflow: visible !important;
+        }
+
+        #imageCanvas {
+            display: block;
+            max-width: 100%;
+            max-height: 62vh;
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            cursor: crosshair;
+        }
+
+        /* Marcadores y Lupa */
+        .color-marker {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 3px solid #FFFFFF;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3), 0 5px 15px rgba(0, 0, 0, 0.45);
+            transform: translate(-50%, -50%);
+            cursor: grab;
+            z-index: 10;
+            transition: width 0.15s ease, height 0.15s ease, box-shadow 0.15s ease;
+            overflow: hidden;
+        }
+
+        .locked-marker {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px #ffffff, 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .loupe-canvas {
+            display: none;
+            width: 100%;
+            height: 100%;
+            image-rendering: pixelated;
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            border-radius: 50%;
+        }
+
+        .color-marker::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 0, 0, 0.8);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+
+        .color-marker:active,
+        .color-marker.dragging {
+            cursor: grabbing;
+            width: 92px;
+            height: 92px;
+            border-width: 4px;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.95), 0 15px 35px rgba(0, 0, 0, 0.65);
+            z-index: 50;
+        }
+
+        .color-marker.dragging .loupe-canvas {
+            display: block;
+        }
+
+        .color-marker.dragging::after {
+            opacity: 1;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(111, 138, 60, 0.8);
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(111, 138, 60, 0);
+                transform: translate(-50%, -50%) scale(1.4);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(111, 138, 60, 0);
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+        }
+
+        .color-marker.pulsing-highlight {
+            animation: pulse-ring 1.5s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+            border-color: var(--primary);
+            z-index: 100;
+        }
+
+        /* Sidebar derecha del Extractor */
+        .sidebar-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            background: #fafbfa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header h2 {
+            font-size: 0.94rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-header h2 i {
+            color: var(--primary);
+        }
+
+        .sidebar-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .config-section {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 13px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar-heading {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .extracted-palette-wrapper {
+            height: 215px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .extracted-palette-wrapper .color-col {
+            justify-content: space-between;
+            padding: 10px 0;
+            cursor: pointer;
+        }
+
+        .extractor-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 5;
+            opacity: 0;
+            transform: translateY(-6px);
+            transition: var(--transition);
+        }
+
+        .extracted-palette-wrapper .color-col:hover .extractor-controls,
+        .extracted-palette-wrapper .color-col.hover-highlight .extractor-controls {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .extractor-controls .action-icon {
+            width: 26px;
+            height: 26px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.22);
+            font-size: 0.85rem;
+        }
+
+        .hex-text-rotated {
+            transform: rotate(-90deg);
+            font-family: monospace;
+            font-weight: 700;
+            font-size: 0.82rem;
+            white-space: nowrap;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            pointer-events: none;
+            margin-bottom: 22px;
+        }
+
+        .sidebar-footer {
+            padding: 14px 16px;
+            border-top: 1px solid var(--border);
+            background: #fafbfa;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .action-buttons-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        /* =========================================
+           FILTROS, BUSCADOR Y DROPDOWNS CUSTOM
+           ========================================= */
+        .explore-filters {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .search-box input {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 14px 8px 36px;
+            border-radius: 50px;
+            width: 250px;
+            font-size: 0.82rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(111, 138, 60, 0.12);
+        }
+
+        select.modern-select {
+            display: none !important;
+        }
+
+        .custom-select-wrapper {
+            position: relative;
+            min-width: 210px;
+            user-select: none;
+        }
+
+        .custom-select-trigger {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .custom-select-trigger:hover,
+        .custom-select-wrapper.open .custom-select-trigger {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(111, 138, 60, 0.12);
+        }
+
+        .custom-select-trigger i {
+            transition: transform 0.25s ease;
+            font-size: 0.78rem;
+            color: var(--primary);
+        }
+
+        .custom-select-wrapper.open .custom-select-trigger i {
+            transform: rotate(180deg);
+        }
+
+        .custom-select-options {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(-8px);
+            transition: var(--transition);
+            z-index: 1000;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+
+        .custom-select-wrapper.open .custom-select-options {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+            transform: translateY(0);
+        }
+
+        .custom-option {
+            padding: 9px 14px;
+            font-size: 0.82rem;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 1px solid var(--bg-color);
+        }
+
+        .custom-option:last-child {
+            border-bottom: none;
+        }
+
+        .custom-option:hover,
+        .custom-option.selected {
+            background: var(--primary-light);
+            color: var(--primary-hover);
+            font-weight: 600;
+            padding-left: 18px;
+        }
+
+        /* =========================================
+           GRIDS DE CATÁLOGO CORREGIDOS (SIN COLAPSO)
+           ========================================= */
+        .explore-grid {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-auto-rows: max-content;
+            /* Evita que las filas se aplasten */
+            gap: 18px;
+            padding: 4px 8px 20px 2px;
+            align-content: start;
+        }
+
+        #pantoneGrid,
+        #colorsGrid {
+            grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+        }
+
+        /* 1. TARJETAS DE PALETAS (EXPLORAR) */
+        .palette-card {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 14px;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            height: max-content;
+        }
+
+        .palette-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-colors {
+            display: flex;
+            height: 110px;
+            flex-shrink: 0;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .card-color-preview {
+            flex: 1;
+            transition: flex 0.25s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 8px;
+            position: relative;
+        }
+
+        .card-color-preview span {
+            font-size: 0.68rem;
+            font-family: monospace;
+            font-weight: 700;
+            opacity: 0;
+            transform: translateY(4px);
+            transition: var(--transition);
+            background: rgba(0, 0, 0, 0.55);
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .card-color-preview:hover {
+            flex: 1.65;
+        }
+
+        .card-color-preview:hover span {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .card-info h4 {
+            font-size: 0.94rem;
+            font-weight: 700;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-actions-group {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .card-actions-group button {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.82rem;
+        }
+
+        .card-actions-group button:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .tag {
+            background: var(--primary-light);
+            color: var(--primary-hover);
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-size: 0.71rem;
+            font-weight: 600;
+        }
+
+        /* Filtros de familia de color */
+        .color-family-filters {
+            display: flex;
+            gap: 7px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
+        }
+
+        .family-btn {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            transition: var(--transition);
+        }
+
+        .family-btn:hover,
+        .family-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        /* 2. TARJETAS DE DICCIONARIO DE COLORES */
+        .single-color-card {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            padding: 10px;
+            height: max-content;
+        }
+
+        .single-color-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .scc-color {
+            height: 135px;
+            width: 100%;
+            flex-shrink: 0;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .scc-color::after,
+        .pt-color::after {
+            content: '\f065';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: #ffffff;
+            font-size: 1.35rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+            background: rgba(0, 0, 0, 0.35);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(3px);
+        }
+
+        .scc-color:hover::after,
+        .pt-color:hover::after {
+            opacity: 1;
+        }
+
+        .scc-info {
+            padding: 12px 4px 4px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .scc-details {
+            min-width: 0;
+        }
+
+        .scc-details h4 {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .scc-details p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-family: monospace;
+            font-weight: 700;
+            background: var(--bg-color);
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 5px;
+            border: 1px solid var(--border);
+        }
+
+        /* 3. TARJETAS PANTONE (DISEÑO SWATCH AUTÉNTICO) */
+        .pantone-card {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            height: max-content;
+        }
+
+        .pantone-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .pt-color {
+            height: 145px;
+            width: 100%;
+            flex-shrink: 0;
+            border-radius: var(--radius-sm) var(--radius-sm) 4px 4px;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .pt-info {
+            padding: 12px 4px 4px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .pt-details {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .pt-brand-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            color: var(--primary);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 1px;
+        }
+
+        .pt-details h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.25;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pt-details p {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            font-family: monospace;
+            font-weight: 700;
+            background: var(--bg-color);
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 5px;
+            border: 1px solid var(--border);
+        }
+
+        .pt-action {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .pt-action:hover {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            transform: scale(1.06);
+        }
+
+        /* =========================================
+           MODAL PANTALLA COMPLETA Y TOAST
+           ========================================= */
+        .fs-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .fs-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .fs-close-btn {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .fs-close-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .fs-content {
+            text-align: center;
+        }
+
+        .fs-content h1 {
+            font-size: clamp(2rem, 4vw, 3.6rem);
+            margin-bottom: 0.6rem;
+            font-weight: 700;
+        }
+
+        .fs-content p {
+            font-size: clamp(1.2rem, 2vw, 2rem);
+            font-family: monospace;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .fs-hint {
+            font-size: 0.85rem;
+            opacity: 0.75;
+        }
+
+        .global-toast {
+            position: fixed;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: #ffffff;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(111, 138, 60, 0.35);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: bottom 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .global-toast.show {
+            bottom: 24px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 960px) {
+            body {
+                height: auto;
+                overflow: auto;
+            }
+
+            #extractor-section.tool-section.active {
+                grid-template-columns: 1fr;
+            }
+
+            .viewer-panel {
+                height: 440px;
+            }
+
+            .palette-wrapper {
+                min-height: 460px;
+            }
+
+            .palette-container {
+                flex-direction: column;
+            }
+
+            .color-col {
+                flex-direction: row;
+                justify-content: space-between;
+                padding: 0 20px;
+            }
+
+            .color-controls {
+                flex-direction: row;
+                opacity: 1;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- CABECERA SUPERIOR COMPACTA -->
+    <header class="app-header">
+        <div class="header-left">
+            <a href="../../index.html" class="nav-pill-btn" id="portalBackLink">
+                <i class="fas fa-arrow-left"></i> Portal
+            </a>
+
+            <div class="header-title">
+                <h1><i class="fas fa-palette"></i> <span id="headerMainTitle">Generador de Paletas</span></h1>
+                <p id="headerSubtitle">Armonía cromática, extracción pixel-perfect y catálogos Pantone</p>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <nav class="tool-tabs">
+                <button type="button" class="tab-btn active" data-tab="generator-section">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generador
+                </button>
+                <button type="button" class="tab-btn" data-tab="extractor-section">
+                    <i class="fa-solid fa-eye-dropper"></i> Extraer
+                </button>
+                <button type="button" class="tab-btn" data-tab="explore-section">
+                    <i class="fa-solid fa-compass"></i> Explorar
+                </button>
+                <button type="button" class="tab-btn" data-tab="colors-section">
+                    <i class="fa-solid fa-droplet"></i> Colores
+                </button>
+                <button type="button" class="tab-btn" data-tab="pantone-section">
+                    <i class="fa-solid fa-swatchbook"></i> Pantone
+                </button>
+            </nav>
+
+            <div class="header-badge">
+                <i class="fas fa-certificate"></i>
+                <span>Color sRGB 1:1</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="palette-main-workspace">
+
+        <!-- VISTA 1: GENERADOR DE PALETAS -->
+        <section id="generator-section" class="tool-section active">
+            <div class="toolbar">
+                <div class="toolbar-info">
+                    <h2><i class="fa-solid fa-wand-magic-sparkles"></i> Diseña tu Paleta</h2>
+                    <p>Presiona la barra <strong>Espaciadora</strong> para generar combinaciones armónicas respetando
+                        tus colores bloqueados.</p>
+                </div>
+                <div class="toolbar-actions">
+                    <div class="modern-input-group">
+                        <label for="colorCount"><i class="fa-solid fa-layer-group"></i> Colores:</label>
+                        <input type="number" id="colorCount" class="modern-input" min="3" max="10" value="5">
+                    </div>
+                    <button type="button" class="btn-action btn-outline" id="exportGenBtn">
+                        <i class="fa-solid fa-download"></i> Exportar PNG
+                    </button>
+                    <button type="button" class="btn-action btn-primary" id="generateBtn">
+                        <i class="fa-solid fa-arrows-rotate"></i> Generar Paleta
+                    </button>
+                </div>
+            </div>
+
+            <div class="palette-wrapper">
+                <div class="palette-container" id="paletteContainer"></div>
+            </div>
+        </section>
+
+        <!-- VISTA 2: EXTRACTOR DE IMAGEN (ESTACIÓN DE 2 COLUMNAS) -->
+        <section id="extractor-section" class="tool-section">
+            <!-- PANEL IZQUIERDO: VISOR DE IMAGEN Y LUPA -->
+            <div class="viewer-panel">
+                <div class="viewer-toolbar">
+                    <div class="viewer-status">
+                        <i class="fas fa-crosshairs"></i>
+                        <span>Mesa de Muestreo Pixel-Perfect</span>
+                        <span class="dimensions-pill" id="imageSizePill">Sin imagen</span>
+                    </div>
+                    <button type="button" class="nav-pill-btn" id="uploadBtnTop">
+                        <i class="fa-solid fa-upload"></i> Cambiar Imagen
+                    </button>
+                </div>
+
+                <div class="cutting-mat-viewport" id="imagePreviewContainer">
+                    <div class="placeholder-text" id="previewPlaceholder">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <strong>Subir Imagen para Extraer Paleta</strong>
+                        <span>Haz clic aquí o usa el panel lateral para inspeccionar píxeles en tiempo real</span>
+                    </div>
+                    <div class="interactive-image-wrapper" id="interactiveWrapper" style="display: none;">
+                        <canvas id="imageCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL DERECHO: CONTROLES Y PALETA EXTRAÍDA -->
+            <aside class="sidebar-panel">
+                <div class="sidebar-header">
+                    <h2><i class="fas fa-sliders"></i> Control de Extracción</h2>
+                </div>
+
+                <div class="sidebar-body">
+                    <div class="config-section">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-gear"></i> Configuración</h3>
+                        <div class="modern-input-group" style="border-radius: var(--radius-sm);">
+                            <label for="extractColorCount"><i class="fa-solid fa-swatchbook"></i> Cantidad de
+                                Muestras:</label>
+                            <input type="number" id="extractColorCount" class="modern-input" min="3" max="10" value="5">
+                        </div>
+
+                        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                        <button type="button" class="btn-action btn-outline" id="uploadBtn" style="width: 100%;">
+                            <i class="fa-solid fa-image"></i> Seleccionar Archivo
+                        </button>
+                    </div>
+
+                    <div class="config-section" id="extractorActions" style="display: none;">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-droplet"></i> Paleta Extraída</h3>
+                        <div class="extracted-palette-wrapper" id="extractedPaletteWrapper">
+                            <div class="palette-container" id="extractedPaletteContainer"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-footer">
+                    <div class="action-buttons-row">
+                        <button type="button" class="btn-action btn-outline" id="refreshExtractedBtn"
+                            title="Buscar otra combinación">
+                            <i class="fa-solid fa-shuffle"></i> Refrescar
+                        </button>
+                        <button type="button" class="btn-action btn-outline" id="exportExtractedBtn"
+                            title="Descargar PNG">
+                            <i class="fa-solid fa-download"></i> PNG
+                        </button>
+                    </div>
+                    <button type="button" class="btn-action btn-primary" id="sendToGenBtn">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Llevar al Generador
+                    </button>
+                </div>
+            </aside>
+        </section>
+
+        <!-- VISTA 3: EXPLORAR PALETAS -->
+        <section id="explore-section" class="tool-section">
+            <div class="toolbar">
+                <div class="toolbar-info">
+                    <h2><i class="fa-solid fa-compass"></i> Librería de Inspiración</h2>
+                    <p>Explora paletas curadas por estilo, temática o número de tonos.</p>
+                </div>
+                <div class="explore-filters">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="exploreSearch" placeholder="Buscar estilo, nombre o tag...">
+                    </div>
+                    <div class="modern-select-wrapper">
+                        <select id="sizeFilter" class="modern-select">
+                            <option value="all">Todos los Tamaños</option>
+                            <option value="3">3 Colores</option>
+                            <option value="4">4 Colores</option>
+                            <option value="5">5 Colores</option>
+                            <option value="7">7 Colores</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="explore-grid" id="exploreGrid"></div>
+        </section>
+
+        <!-- VISTA 4: DICCIONARIO DE COLORES -->
+        <section id="colors-section" class="tool-section">
+            <div class="toolbar" style="margin-bottom: 10px;">
+                <div class="toolbar-info">
+                    <h2><i class="fa-solid fa-droplet"></i> Catálogo de Colores</h2>
+                    <p>Colección de <strong id="colorsCount">...</strong> tonos clasificados por familia cromática.</p>
+                </div>
+                <div class="explore-filters">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="colorsSearch" placeholder="Buscar por nombre o HEX...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="color-family-filters" id="familyFiltersContainer">
+                <button type="button" class="family-btn active" data-family="all">Todos</button>
+                <button type="button" class="family-btn" data-family="Red"><span class="color-dot"
+                        style="background:#FF0000;"></span> Red</button>
+                <button type="button" class="family-btn" data-family="Orange"><span class="color-dot"
+                        style="background:#FFA500;"></span> Orange</button>
+                <button type="button" class="family-btn" data-family="Brown"><span class="color-dot"
+                        style="background:#8B4513;"></span> Brown</button>
+                <button type="button" class="family-btn" data-family="Yellow"><span class="color-dot"
+                        style="background:#FFD700;"></span> Yellow</button>
+                <button type="button" class="family-btn" data-family="Green"><span class="color-dot"
+                        style="background:#008000;"></span> Green</button>
+                <button type="button" class="family-btn" data-family="Turquoise"><span class="color-dot"
+                        style="background:#40E0D0;"></span> Turquoise</button>
+                <button type="button" class="family-btn" data-family="Blue"><span class="color-dot"
+                        style="background:#0000FF;"></span> Blue</button>
+                <button type="button" class="family-btn" data-family="Violet"><span class="color-dot"
+                        style="background:#8A2BE2;"></span> Violet</button>
+                <button type="button" class="family-btn" data-family="Pink"><span class="color-dot"
+                        style="background:#FF69B4;"></span> Pink</button>
+                <button type="button" class="family-btn" data-family="White"><span class="color-dot"
+                        style="background:#FFFFFF; border:1px solid #ccc;"></span> White</button>
+                <button type="button" class="family-btn" data-family="Gray"><span class="color-dot"
+                        style="background:#808080;"></span> Gray</button>
+                <button type="button" class="family-btn" data-family="Black"><span class="color-dot"
+                        style="background:#000000;"></span> Black</button>
+            </div>
+
+            <div class="explore-grid" id="colorsGrid"></div>
+        </section>
+
+        <!-- VISTA 5: CATÁLOGO PANTONE -->
+        <section id="pantone-section" class="tool-section">
+            <div class="toolbar">
+                <div class="toolbar-info">
+                    <h2><i class="fa-solid fa-swatchbook"></i> Sistema Pantone</h2>
+                    <p>Muestrario estandarizado con <strong id="pantoneCount">...</strong> referencias para impresión.
+                    </p>
+                </div>
+                <div class="explore-filters">
+                    <div class="modern-select-wrapper">
+                        <select id="pantoneBookFilter" class="modern-select">
+                            <option value="Solid Coated-V5.json">Solid Coated V5</option>
+                            <option value="Solid Uncoated-V5.json">Solid Uncoated V5</option>
+                            <option value="pantone.json">Pantone Base (150 C)</option>
+                        </select>
+                    </div>
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="pantoneSearch" placeholder="Buscar código o HEX...">
+                    </div>
+                </div>
+            </div>
+            <div class="explore-grid" id="pantoneGrid"></div>
+        </section>
+
+    </main>
+
+    <!-- VISOR PANTALLA COMPLETA -->
+    <div id="fullscreenOverlay" class="fs-overlay">
+        <button type="button" class="fs-close-btn" id="fsCloseBtn"><i class="fa-solid fa-xmark"></i></button>
+        <div class="fs-content" id="fsContent">
+            <h1 id="fsName">Color Name</h1>
+            <p id="fsHex">#HEXCODE</p>
+            <div class="fs-hint">Presiona ESC para salir</div>
+        </div>
+    </div>
+
+    <!-- TOAST DE NOTIFICACIÓN -->
+    <div id="globalToast" class="global-toast">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toastMsg">Copiado</span>
+    </div>
+
+    <!-- CATÁLOGOS INTEGRADOS COMPLETOS Y LÓGICA -->
+    <script>
+        // =========================================
+        // 1. CATÁLOGO DE PALETAS INTEGRADO COMPLETO
+        // =========================================
+        const EMBEDDED_PALETTES = [
+            { "name": "Noche Estrellada", "colors": ["#0F172A", "#1E293B", "#334155"], "tags": ["oscuro", "frio", "minimal"] },
+            { "name": "Atardecer Neón", "colors": ["#FF007F", "#7F00FF", "#00FFFF", "#FFD700", "#FF4500"], "tags": ["vibrante", "neon", "retro"] },
+            { "name": "Brisa de Mar", "colors": ["#E0F2FE", "#7DD3FC", "#0EA5E9"], "tags": ["pastel", "frio", "suave"] },
+            { "name": "Bosque Profundo", "colors": ["#166534", "#15803D", "#16A34A", "#4ADE80", "#A7F3D0"], "tags": ["naturaleza", "verde", "frio"] },
+            { "name": "Vibra Vintage", "colors": ["#C04000", "#D97706", "#FBBF24", "#FDE68A", "#FFFBEB"], "tags": ["retro", "calido", "suave"] },
+            { "name": "Desierto Rojo", "colors": ["#7F1D1D", "#B91C1C", "#EF4444"], "tags": ["calido", "oscuro", "rojo"] },
+            { "name": "Helado de Menta", "colors": ["#A7F3D0", "#6EE7B7", "#34D399", "#10B981", "#059669"], "tags": ["pastel", "verde", "suave"] },
+            { "name": "Minimalismo Monocromo", "colors": ["#111111", "#CCCCCC", "#FFFFFF"], "tags": ["minimal", "oscuro", "frio"] },
+            { "name": "Fuego y Hielo", "colors": ["#FF4500", "#FFD700", "#FFFFFF", "#00BFFF", "#000080"], "tags": ["vibrante", "contraste"] },
+            { "name": "Tierra Mojada", "colors": ["#44403C", "#78716C", "#A8A29E"], "tags": ["naturaleza", "gris", "suave"] },
+            { "name": "Caramelo de Fresa", "colors": ["#FECDD3", "#FDA4AF", "#F43F5E", "#E11D48", "#BE123C"], "tags": ["pastel", "rojo", "vibrante"] },
+            { "name": "Cielo Urbano", "colors": ["#475569", "#94A3B8", "#CBD5E1"], "tags": ["gris", "frio", "minimal"] },
+            { "name": "Café Matutino", "colors": ["#292524", "#57534E", "#78716C", "#A8A29E", "#D6D3D1"], "tags": ["naturaleza", "calido", "suave"] },
+            { "name": "Aurora Boreal", "colors": ["#1E3A8A", "#065F46", "#047857", "#10B981", "#A7F3D0"], "tags": ["frio", "naturaleza", "vibrante"] },
+            { "name": "Cyberpunk City", "colors": ["#FCEE09", "#00F0FF", "#FF003C", "#0D0208", "#711C91"], "tags": ["cyberpunk", "neon", "vibrante", "oscuro"] },
+            { "name": "Neon Tokyo", "colors": ["#091833", "#133E7C", "#EA00D9", "#0ABDC6", "#711C91"], "tags": ["cyberpunk", "neon", "frio"] },
+            { "name": "Hacker Terminal", "colors": ["#0D0208", "#00FF41", "#008F11"], "tags": ["cyberpunk", "oscuro", "verde", "minimal"] },
+            { "name": "Synthwave Sunset", "colors": ["#2D1B2E", "#B43E8F", "#EA6227", "#F2A65A", "#77C9D4"], "tags": ["retro", "synthwave", "vibrante", "calido"] },
+            { "name": "Vaporwave Dream", "colors": ["#FF6AD5", "#C774E8", "#AD8CFF", "#8795E8", "#94D0FF"], "tags": ["vaporwave", "retro", "pastel", "neon"] },
+            { "name": "80s Arcade", "colors": ["#2B2B2B", "#FF0055", "#00FF66", "#00CCFF", "#FFD700"], "tags": ["retro", "arcade", "vibrante"] },
+            { "name": "90s Memphis", "colors": ["#FF5722", "#FFEB3B", "#00BCD4", "#E91E63", "#212121"], "tags": ["retro", "vibrante", "contraste"] },
+            { "name": "70s Nostalgia", "colors": ["#264653", "#2A9D8F", "#E9C46A", "#F4A261", "#E76F51"], "tags": ["retro", "calido", "vintage", "suave"] },
+            { "name": "Bosque Ghibli", "colors": ["#2D4221", "#4A6E32", "#7E9C57", "#C4D6B0", "#F0F4E8"], "tags": ["anime", "naturaleza", "verde", "suave"] },
+            { "name": "Cielo Anime", "colors": ["#1A4A76", "#3B81B6", "#87BEEB", "#DDEEFF", "#FFFFFF"], "tags": ["anime", "frio", "pastel", "cielo"] },
+            { "name": "Mecha Unit-01", "colors": ["#761C91", "#52D135", "#FF7200", "#151515", "#EBEBEB"], "tags": ["anime", "cyberpunk", "contraste", "vibrante"] },
+            { "name": "Magical Girl", "colors": ["#FFB7B2", "#FF9EBB", "#FF7EB3", "#D291BC", "#E0BBE4"], "tags": ["anime", "pastel", "rosa", "suave"] },
+            { "name": "Shonen Energy", "colors": ["#E63946", "#F4A261", "#E9C46A", "#2A9D8F", "#264653"], "tags": ["anime", "vibrante", "contraste", "accion"] },
+            { "name": "Dark Academia", "colors": ["#2C221E", "#423629", "#5C4D3C", "#7A6752", "#1C2D23"], "tags": ["aesthetic", "oscuro", "vintage", "calido"] },
+            { "name": "Cottagecore", "colors": ["#E2D4B7", "#D1C2A3", "#A8B69A", "#7A8A6B", "#4A5D44"], "tags": ["aesthetic", "naturaleza", "suave", "pastel"] },
+            { "name": "Y2K Cyber", "colors": ["#D4D4D4", "#A3A3A3", "#737373", "#FF00FF", "#00FFFF"], "tags": ["y2k", "retro", "cyberpunk", "vibrante"] },
+            { "name": "Pastel Goth", "colors": ["#2B2B2B", "#5C5C5C", "#CBAACB", "#FFB6B9", "#82C1B4"], "tags": ["aesthetic", "pastel", "oscuro", "contraste"] },
+            { "name": "Fairycore", "colors": ["#FFF0F5", "#FFE4E1", "#FFDAB9", "#E6E6FA", "#D8BFD8"], "tags": ["aesthetic", "pastel", "suave", "rosa"] },
+            { "name": "Deep Space", "colors": ["#0B0C10", "#1F2833", "#C5C6C7", "#45A29E", "#66FCF1"], "tags": ["sci-fi", "cyberpunk", "oscuro", "frio"] },
+            { "name": "Mars Colony", "colors": ["#451A03", "#78350F", "#B45309", "#D97706", "#FDE68A"], "tags": ["sci-fi", "calido", "espacio", "rojo"] },
+            { "name": "Matrix Code", "colors": ["#000000", "#003B00", "#008F11"], "tags": ["sci-fi", "cyberpunk", "verde", "oscuro"] },
+            { "name": "Hielo Alienígena", "colors": ["#001B2E", "#014F86", "#2A6F97"], "tags": ["sci-fi", "frio", "espacio"] },
+            { "name": "Otoño Dorado", "colors": ["#3C1518", "#69140E", "#A44200", "#D58936", "#F2F3AE"], "tags": ["naturaleza", "calido", "otoño", "vibrante"] },
+            { "name": "Abismo Oceánico", "colors": ["#00112A", "#002A54", "#00477D", "#006BA6", "#0093D0"], "tags": ["naturaleza", "frio", "agua", "oscuro"] },
+            { "name": "Volcán", "colors": ["#141414", "#300A0A", "#731102", "#C9360A", "#FF7F11"], "tags": ["naturaleza", "calido", "fuego", "oscuro"] },
+            { "name": "Flores de Cerezo", "colors": ["#FFB7B2", "#FFDAC1", "#E2F0CB"], "tags": ["naturaleza", "primavera", "pastel", "anime"] },
+            { "name": "Matcha Latte", "colors": ["#DDF1E5", "#B3E2C4", "#6BA77F", "#3B694B", "#1C3625"], "tags": ["comida", "verde", "pastel", "suave"] },
+            { "name": "Blueberry Pie", "colors": ["#1A1423", "#372549", "#774C60", "#B75D69", "#EACDC2"], "tags": ["comida", "oscuro", "calido", "contraste"] },
+            { "name": "Citrus Splash", "colors": ["#FF9F1C", "#FFBF69", "#FFFFFF", "#CBF3F0", "#2EC4B6"], "tags": ["comida", "vibrante", "verano", "frio"] },
+            { "name": "Café Moca", "colors": ["#3E2723", "#4E342E", "#5D4037"], "tags": ["comida", "calido", "minimal", "oscuro"] },
+            { "name": "Drácula", "colors": ["#000000", "#1A1A1A", "#8B0000", "#FF0000", "#FFFFFF"], "tags": ["oscuro", "rojo", "contraste", "gótico"] },
+            { "name": "Midnight Jazz", "colors": ["#050517", "#1E1E40", "#D9A05B", "#F2E2C4", "#A64B2A"], "tags": ["retro", "oscuro", "elegante", "calido"] },
+            { "name": "Realeza", "colors": ["#1A0B2E", "#3A1078", "#FFD700"], "tags": ["elegante", "oscuro", "contraste"] },
+            { "name": "Minimal Dark UI", "colors": ["#121212", "#1E1E1E", "#BB86FC", "#03DAC6", "#CF6679"], "tags": ["ui", "cyberpunk", "minimal", "oscuro"] },
+            { "name": "Clean Light UI", "colors": ["#F8F9FA", "#E9ECEF", "#DEE2E6"], "tags": ["ui", "minimal", "claro", "frio"] },
+            { "name": "Tóxico", "colors": ["#1A1A1D", "#4E4E50", "#6F2232", "#950740", "#C3073F"], "tags": ["cyberpunk", "oscuro", "rojo", "vibrante"] },
+            { "name": "Cinematic Teal & Orange", "colors": ["#0D1B2A", "#1B263B", "#415A77", "#E09F3E", "#9E2A2B"], "tags": ["cine", "contraste", "moderno"] },
+            { "name": "Grand Budapest", "colors": ["#F2BAC9", "#F2E2CE", "#D98E73", "#8C6A5D", "#5B7065"], "tags": ["cine", "pastel", "retro"] },
+            { "name": "Sci-Fi Dystopia", "colors": ["#000000", "#141414", "#FF2A2A", "#FF7B00", "#00F0FF"], "tags": ["cyberpunk", "cine", "oscuro"] },
+            { "name": "Frutiger Aero", "colors": ["#00B4D8", "#90E0EF", "#48CAE4", "#0077B6", "#A7C957"], "tags": ["y2k", "tech", "claro", "azul"] },
+            { "name": "Art Deco", "colors": ["#111111", "#D4AF37", "#F3E5AB", "#0A2229", "#1D3B36"], "tags": ["elegante", "vintage", "oro"] },
+            { "name": "Pop Art Comic", "colors": ["#FF0000", "#FFFF00", "#0000FF", "#000000", "#FFFFFF"], "tags": ["retro", "vibrante", "arte"] },
+            { "name": "Renacimiento Óleo", "colors": ["#3B2F2F", "#5C4033", "#8B5A2B", "#CD853F", "#DEB887"], "tags": ["arte", "calido", "vintage"] },
+            { "name": "Invierno Ártico", "colors": ["#E0FBFC", "#C2DFE3", "#9DB4C0", "#5C6B73", "#253237"], "tags": ["frio", "naturaleza", "invierno"] },
+            { "name": "Selva Tropical", "colors": ["#004B23", "#007200", "#38B000", "#CCFF33", "#FFD000"], "tags": ["naturaleza", "verde", "vibrante"] },
+            { "name": "Desierto de Sonora", "colors": ["#D8A47F", "#F07167", "#0081A7", "#00AFB9", "#FDFCDC"], "tags": ["calido", "contraste", "naturaleza"] },
+            { "name": "Vino y Queso", "colors": ["#2B0918", "#4A051C", "#7A1631", "#B32847", "#F5E6CC"], "tags": ["comida", "oscuro", "elegante"] },
+            { "name": "Sushi Bar", "colors": ["#F46036", "#2E294E", "#1B998B", "#E71D36", "#C5D86D"], "tags": ["comida", "contraste", "asiatico"] },
+            { "name": "Panadería Artesanal", "colors": ["#D4A373", "#FAEDCD", "#FEFAE0", "#E9EDC9", "#CCD5AE"], "tags": ["comida", "calido", "suave"] },
+            { "name": "Macarons Franceses", "colors": ["#FFADAD", "#FFD6A5", "#FDFFB6", "#CAFFBF", "#9BF6FF"], "tags": ["pastel", "comida", "arcoiris"] },
+            { "name": "Dashboard Finanzas", "colors": ["#0F172A", "#1E293B", "#10B981", "#EF4444", "#3B82F6"], "tags": ["ui", "finanzas", "contraste"] },
+            { "name": "Lo-Fi Beats", "colors": ["#2A2D34", "#483A58", "#A69CAC", "#F1E0C5", "#E4B363"], "tags": ["aesthetic", "suave", "oscuro", "musica"] },
+            { "name": "Escala de Azules", "colors": ["#03045E", "#023E8A", "#0077B6", "#0096C7", "#00B4D8", "#48CAE4", "#90E0EF"], "tags": ["monocromo", "azul", "frio", "gradiente"] },
+            { "name": "Escala de Rojos", "colors": ["#450A0A", "#7F1D1D", "#B91C1C", "#DC2626", "#EF4444", "#F87171", "#FCA5A5"], "tags": ["monocromo", "rojo", "calido", "peligro"] },
+            { "name": "Escala de Verdes", "colors": ["#064E3B", "#065F46", "#047857", "#059669", "#10B981", "#34D399", "#6EE7B7"], "tags": ["monocromo", "verde", "naturaleza", "exito"] },
+            { "name": "Escala de Morados", "colors": ["#2E1065", "#4C1D95", "#5B21B6", "#6D28D9", "#7C3AED", "#8B5CF6", "#A78BFA"], "tags": ["monocromo", "morado", "magia", "profundo"] },
+            { "name": "Escala de Grises", "colors": ["#111827", "#1F2937", "#374151", "#4B5563", "#6B7280", "#9CA3AF", "#D1D5DB"], "tags": ["monocromo", "gris", "minimal", "ui"] },
+            { "name": "Matcha Ceremonial", "colors": ["#1C261D", "#2D4030", "#446146", "#618A62", "#87B387", "#B3D9B2", "#E0F2DF"], "tags": ["monocromo", "verde", "suave", "pastel"] },
+            { "name": "Arcoíris Pastel", "colors": ["#FFADAD", "#FFD6A5", "#FDFFB6", "#CAFFBF", "#9BF6FF", "#A0C4FF", "#BDB2FF"], "tags": ["pastel", "arcoiris", "vibrante", "suave"] },
+            { "name": "Synthwave 7-Track", "colors": ["#0D0221", "#261447", "#540D6E", "#EE4266", "#FFD23F", "#3BCEAC", "#0EAD69"], "tags": ["retro", "synthwave", "vibrante", "neon"] }
+        ];
+
+        // =========================================
+        // 2. DICCIONARIO DE COLORES INTEGRADO COMPLETO (312 COLORES)
+        // =========================================
+        const EMBEDDED_COLORS = [
+            { "name": "Flame Orange", "hex": "#F04A00", "family": "Orange" }, { "name": "Burnt Caramel", "hex": "#C66D1B", "family": "Brown" },
+            { "name": "Amber Gold", "hex": "#FFC000", "family": "Yellow" }, { "name": "Peach Fuzz", "hex": "#FFBE98", "family": "Orange" },
+            { "name": "Crimson Red", "hex": "#DC143C", "family": "Red" }, { "name": "Cherry Tomato", "hex": "#EB3C27", "family": "Red" },
+            { "name": "Burgundy", "hex": "#800020", "family": "Red" }, { "name": "Tangerine", "hex": "#F28500", "family": "Orange" },
+            { "name": "Rust", "hex": "#B7410E", "family": "Orange" }, { "name": "Lemon Yellow", "hex": "#FFF44F", "family": "Yellow" },
+            { "name": "Mustard", "hex": "#FFDB58", "family": "Yellow" }, { "name": "Forest Green", "hex": "#228B22", "family": "Green" },
+            { "name": "Mint", "hex": "#3EB489", "family": "Green" }, { "name": "Olive Drab", "hex": "#6B8E23", "family": "Green" },
+            { "name": "Teal", "hex": "#008080", "family": "Turquoise" }, { "name": "Aqua", "hex": "#00FFFF", "family": "Turquoise" },
+            { "name": "Cyan", "hex": "#00B7EB", "family": "Turquoise" }, { "name": "Royal Blue", "hex": "#4169E1", "family": "Blue" },
+            { "name": "Navy", "hex": "#000080", "family": "Blue" }, { "name": "Sky Blue", "hex": "#87CEEB", "family": "Blue" },
+            { "name": "Lavender", "hex": "#E6E6FA", "family": "Violet" }, { "name": "Plum", "hex": "#DDA0DD", "family": "Violet" },
+            { "name": "Deep Purple", "hex": "#36013F", "family": "Violet" }, { "name": "Hot Pink", "hex": "#FF69B4", "family": "Pink" },
+            { "name": "Salmon", "hex": "#FA8072", "family": "Pink" }, { "name": "Magenta", "hex": "#FF00FF", "family": "Pink" },
+            { "name": "Chocolate", "hex": "#D2691E", "family": "Brown" }, { "name": "Mahogany", "hex": "#C04000", "family": "Brown" },
+            { "name": "Ivory", "hex": "#FFFFF0", "family": "White" }, { "name": "Snow", "hex": "#FFFAFA", "family": "White" },
+            { "name": "Silver", "hex": "#C0C0C0", "family": "Gray" }, { "name": "Charcoal", "hex": "#36454F", "family": "Gray" },
+            { "name": "Slate", "hex": "#708090", "family": "Gray" }, { "name": "Ebony", "hex": "#555D50", "family": "Black" },
+            { "name": "Jet Black", "hex": "#343434", "family": "Black" }, { "name": "Onyx", "hex": "#353839", "family": "Black" },
+            { "name": "Ruby Red", "hex": "#9B111E", "family": "Red" }, { "name": "Blood Red", "hex": "#660000", "family": "Red" },
+            { "name": "Carmine", "hex": "#960018", "family": "Red" }, { "name": "Maroon", "hex": "#800000", "family": "Red" },
+            { "name": "Scarlet", "hex": "#FF2400", "family": "Red" }, { "name": "Brick Red", "hex": "#CB4154", "family": "Red" },
+            { "name": "Firebrick", "hex": "#B22222", "family": "Red" }, { "name": "Tomato", "hex": "#FF6347", "family": "Red" },
+            { "name": "Indian Red", "hex": "#CD5C5C", "family": "Red" }, { "name": "Venetian Red", "hex": "#C80815", "family": "Red" },
+            { "name": "Rosewood", "hex": "#65000B", "family": "Red" }, { "name": "Wine", "hex": "#722F37", "family": "Red" },
+            { "name": "Coral", "hex": "#FF7F50", "family": "Orange" }, { "name": "Dark Orange", "hex": "#FF8C00", "family": "Orange" },
+            { "name": "Sunset Orange", "hex": "#FD5E53", "family": "Orange" }, { "name": "Papaya Whip", "hex": "#FFEFD5", "family": "Orange" },
+            { "name": "Pumpkin", "hex": "#FF7518", "family": "Orange" }, { "name": "Safety Orange", "hex": "#FF7900", "family": "Orange" },
+            { "name": "Tiger", "hex": "#FD6A02", "family": "Orange" }, { "name": "Cantaloupe", "hex": "#FDA172", "family": "Orange" },
+            { "name": "Apricot", "hex": "#FBCEB1", "family": "Orange" }, { "name": "Carrot", "hex": "#ED9121", "family": "Orange" },
+            { "name": "Gold", "hex": "#FFD700", "family": "Yellow" }, { "name": "Light Yellow", "hex": "#FFFFE0", "family": "Yellow" },
+            { "name": "Khaki", "hex": "#F0E68C", "family": "Yellow" }, { "name": "Banana", "hex": "#FFE135", "family": "Yellow" },
+            { "name": "Corn", "hex": "#FBEC5D", "family": "Yellow" }, { "name": "Sunflower", "hex": "#FFDA03", "family": "Yellow" },
+            { "name": "Vanilla", "hex": "#F3E5AB", "family": "Yellow" }, { "name": "Flax", "hex": "#EEDC82", "family": "Yellow" },
+            { "name": "Cream", "hex": "#FFFDD0", "family": "Yellow" }, { "name": "Saffron", "hex": "#F4C430", "family": "Yellow" },
+            { "name": "Canary", "hex": "#FFFF99", "family": "Yellow" }, { "name": "Lime", "hex": "#00FF00", "family": "Green" },
+            { "name": "Sea Green", "hex": "#2E8B57", "family": "Green" }, { "name": "Emerald", "hex": "#50C878", "family": "Green" },
+            { "name": "Chartreuse", "hex": "#7FFF00", "family": "Green" }, { "name": "Spring Green", "hex": "#00FF7F", "family": "Green" },
+            { "name": "Jungle Green", "hex": "#29AB87", "family": "Green" }, { "name": "Jade", "hex": "#00A86B", "family": "Green" },
+            { "name": "Pistachio", "hex": "#93C572", "family": "Green" }, { "name": "Pine", "hex": "#01796F", "family": "Green" },
+            { "name": "Malachite", "hex": "#0BDA51", "family": "Green" }, { "name": "Sage", "hex": "#9DC183", "family": "Green" },
+            { "name": "Hunter Green", "hex": "#355E3B", "family": "Green" }, { "name": "Matcha", "hex": "#C5E1A5", "family": "Green" },
+            { "name": "Light Sea Green", "hex": "#20B2AA", "family": "Turquoise" }, { "name": "Medium Turquoise", "hex": "#48D1CC", "family": "Turquoise" },
+            { "name": "Dark Cyan", "hex": "#008B8B", "family": "Turquoise" }, { "name": "Aquamarine", "hex": "#7FFFD4", "family": "Turquoise" },
+            { "name": "Tiffany Blue", "hex": "#0ABAB5", "family": "Turquoise" }, { "name": "Turquoise Blue", "hex": "#00FFEF", "family": "Turquoise" },
+            { "name": "Robin Egg Blue", "hex": "#00CCCC", "family": "Turquoise" }, { "name": "Steel Blue", "hex": "#4682B4", "family": "Blue" },
+            { "name": "Dodger Blue", "hex": "#1E90FF", "family": "Blue" }, { "name": "Deep Sky Blue", "hex": "#00BFFF", "family": "Blue" },
+            { "name": "Midnight Blue", "hex": "#191970", "family": "Blue" }, { "name": "Cobalt", "hex": "#0047AB", "family": "Blue" },
+            { "name": "Sapphire", "hex": "#0F52BA", "family": "Blue" }, { "name": "Azure", "hex": "#007FFF", "family": "Blue" },
+            { "name": "Cerulean", "hex": "#007BA7", "family": "Blue" }, { "name": "Lapis Lazuli", "hex": "#26619C", "family": "Blue" },
+            { "name": "Indigo", "hex": "#4B0082", "family": "Blue" }, { "name": "Denim", "hex": "#1560BD", "family": "Blue" },
+            { "name": "Baby Blue", "hex": "#89CFF0", "family": "Blue" }, { "name": "Cornflower Blue", "hex": "#6495ED", "family": "Blue" },
+            { "name": "Prussian Blue", "hex": "#003153", "family": "Blue" }, { "name": "Orchid", "hex": "#DA70D6", "family": "Violet" },
+            { "name": "Thistle", "hex": "#D8BFD8", "family": "Violet" }, { "name": "Amethyst", "hex": "#9966CC", "family": "Violet" },
+            { "name": "Fuchsia", "hex": "#FF00FF", "family": "Violet" }, { "name": "Grape", "hex": "#6F2DA8", "family": "Violet" },
+            { "name": "Lilac", "hex": "#C8A2C8", "family": "Violet" }, { "name": "Mauve", "hex": "#E0B0FF", "family": "Violet" },
+            { "name": "Violet Blue", "hex": "#324AB2", "family": "Violet" }, { "name": "Eggplant", "hex": "#614051", "family": "Violet" },
+            { "name": "Mulberry", "hex": "#C54B8C", "family": "Violet" }, { "name": "Light Pink", "hex": "#FFB6C1", "family": "Pink" },
+            { "name": "Deep Pink", "hex": "#FF1493", "family": "Pink" }, { "name": "Pale Violet Red", "hex": "#DB7093", "family": "Pink" },
+            { "name": "Bubblegum", "hex": "#FFC1CC", "family": "Pink" }, { "name": "Rose", "hex": "#FF007F", "family": "Pink" },
+            { "name": "Flamingo", "hex": "#FC8EAC", "family": "Pink" }, { "name": "Coral Pink", "hex": "#F88379", "family": "Pink" },
+            { "name": "Cotton Candy", "hex": "#FFBCD9", "family": "Pink" }, { "name": "Fandango", "hex": "#B53389", "family": "Pink" },
+            { "name": "Blush", "hex": "#DE5D83", "family": "Pink" }, { "name": "Sienna", "hex": "#A0522D", "family": "Brown" },
+            { "name": "Saddle Brown", "hex": "#8B4513", "family": "Brown" }, { "name": "Sandy Brown", "hex": "#F4A460", "family": "Brown" },
+            { "name": "Peru", "hex": "#CD853F", "family": "Brown" }, { "name": "Rosy Brown", "hex": "#BC8F8F", "family": "Brown" },
+            { "name": "Mocha", "hex": "#A38068", "family": "Brown" }, { "name": "Pecan", "hex": "#48260D", "family": "Brown" },
+            { "name": "Walnut", "hex": "#773F1A", "family": "Brown" }, { "name": "Chestnut", "hex": "#954535", "family": "Brown" },
+            { "name": "Copper", "hex": "#B87333", "family": "Brown" }, { "name": "Coffee", "hex": "#6F4E37", "family": "Brown" },
+            { "name": "Sepia", "hex": "#704214", "family": "Brown" }, { "name": "Ghost White", "hex": "#F8F8FF", "family": "White" },
+            { "name": "Floral White", "hex": "#FFFAF0", "family": "White" }, { "name": "Alice Blue", "hex": "#F0F8FF", "family": "White" },
+            { "name": "Mint Cream", "hex": "#F5FFFA", "family": "White" }, { "name": "Seashell", "hex": "#FFF5EE", "family": "White" },
+            { "name": "Honeydew", "hex": "#F0FFF0", "family": "White" }, { "name": "Alabaster", "hex": "#EDEAE0", "family": "White" },
+            { "name": "Pearl", "hex": "#EAE0C8", "family": "White" }, { "name": "Lace", "hex": "#FDF5E6", "family": "White" },
+            { "name": "Light Gray", "hex": "#D3D3D3", "family": "Gray" }, { "name": "Dim Gray", "hex": "#696969", "family": "Gray" },
+            { "name": "Gainsboro", "hex": "#DCDCDC", "family": "Gray" }, { "name": "Ash", "hex": "#B2BEB5", "family": "Gray" },
+            { "name": "Platinum", "hex": "#E5E4E2", "family": "Gray" }, { "name": "Lead", "hex": "#50545B", "family": "Gray" },
+            { "name": "Steel Gray", "hex": "#71797E", "family": "Gray" }, { "name": "Pewter", "hex": "#E9EAEC", "family": "Gray" },
+            { "name": "Battleship Gray", "hex": "#848482", "family": "Gray" }, { "name": "Midnight Black", "hex": "#1C1C1C", "family": "Black" },
+            { "name": "Obsidian", "hex": "#0B1215", "family": "Black" }, { "name": "Coal", "hex": "#303030", "family": "Black" },
+            { "name": "Pitch", "hex": "#000000", "family": "Black" }, { "name": "Raven", "hex": "#050301", "family": "Black" },
+            { "name": "Licorice", "hex": "#1A1110", "family": "Black" }, { "name": "Vantablack", "hex": "#010101", "family": "Black" },
+            { "name": "Eerie Black", "hex": "#1B1B1B", "family": "Black" }, { "name": "Rose Gold", "hex": "#B76E79", "family": "Pink" }
+        ];
+
+        // =========================================
+        // 3. CATÁLOGO PANTONE INTEGRADO COMPLETO (150 SWATCHES)
+        // =========================================
+        const EMBEDDED_PANTONE = [
+            { "name": "PANTONE 100 C", "hex": "#F6EB61" }, { "name": "PANTONE 101 C", "hex": "#F7EA5B" }, { "name": "PANTONE 102 C", "hex": "#FCE300" },
+            { "name": "PANTONE 103 C", "hex": "#CFA100" }, { "name": "PANTONE 104 C", "hex": "#AF8A00" }, { "name": "PANTONE 105 C", "hex": "#765C13" },
+            { "name": "PANTONE 106 C", "hex": "#F8E04C" }, { "name": "PANTONE 107 C", "hex": "#FDE021" }, { "name": "PANTONE 108 C", "hex": "#FEDB00" },
+            { "name": "PANTONE 109 C", "hex": "#FFD100" }, { "name": "PANTONE 110 C", "hex": "#DAA900" }, { "name": "PANTONE 111 C", "hex": "#A27700" },
+            { "name": "PANTONE 112 C", "hex": "#7F5A00" }, { "name": "PANTONE 113 C", "hex": "#FCE354" }, { "name": "PANTONE 114 C", "hex": "#FBDF45" },
+            { "name": "PANTONE 115 C", "hex": "#FDDA24" }, { "name": "PANTONE 116 C", "hex": "#FFCD00" }, { "name": "PANTONE 117 C", "hex": "#C99700" },
+            { "name": "PANTONE 118 C", "hex": "#AC7700" }, { "name": "PANTONE 119 C", "hex": "#754C00" }, { "name": "PANTONE 120 C", "hex": "#FBDF7A" },
+            { "name": "PANTONE 121 C", "hex": "#FBD872" }, { "name": "PANTONE 122 C", "hex": "#FED141" }, { "name": "PANTONE 123 C", "hex": "#FFC72C" },
+            { "name": "PANTONE 124 C", "hex": "#EAAA00" }, { "name": "PANTONE 125 C", "hex": "#B57B00" }, { "name": "PANTONE 126 C", "hex": "#7E5400" },
+            { "name": "PANTONE 127 C", "hex": "#F4D068" }, { "name": "PANTONE 128 C", "hex": "#F3CC64" }, { "name": "PANTONE 129 C", "hex": "#F3C300" },
+            { "name": "PANTONE 130 C", "hex": "#F2A900" }, { "name": "PANTONE 131 C", "hex": "#CC8A00" }, { "name": "PANTONE 132 C", "hex": "#9D6400" },
+            { "name": "PANTONE 133 C", "hex": "#724700" }, { "name": "PANTONE 134 C", "hex": "#FFD37F" }, { "name": "PANTONE 135 C", "hex": "#FFC86E" },
+            { "name": "PANTONE 136 C", "hex": "#FFBF3F" }, { "name": "PANTONE 137 C", "hex": "#FFA400" }, { "name": "PANTONE 138 C", "hex": "#DF7300" },
+            { "name": "PANTONE 139 C", "hex": "#AF5700" }, { "name": "PANTONE 140 C", "hex": "#7B3F00" }, { "name": "PANTONE 141 C", "hex": "#F2C777" },
+            { "name": "PANTONE 142 C", "hex": "#F1BE61" }, { "name": "PANTONE 143 C", "hex": "#F1B434" }, { "name": "PANTONE 144 C", "hex": "#ED8B00" },
+            { "name": "PANTONE 145 C", "hex": "#CC6600" }, { "name": "PANTONE 146 C", "hex": "#9D4800" }, { "name": "PANTONE 147 C", "hex": "#703500" },
+            { "name": "PANTONE 148 C", "hex": "#FFC58C" }, { "name": "PANTONE 149 C", "hex": "#FFB878" }, { "name": "PANTONE 150 C", "hex": "#FFAA4D" },
+            { "name": "PANTONE 151 C", "hex": "#FF8200" }, { "name": "PANTONE 152 C", "hex": "#E57200" }, { "name": "PANTONE 153 C", "hex": "#B85500" },
+            { "name": "PANTONE 154 C", "hex": "#8C3800" }, { "name": "PANTONE 155 C", "hex": "#EBC89B" }, { "name": "PANTONE 156 C", "hex": "#EFC087" },
+            { "name": "PANTONE 157 C", "hex": "#EEA756" }, { "name": "PANTONE 158 C", "hex": "#E87722" }, { "name": "PANTONE 159 C", "hex": "#CB6015" },
+            { "name": "PANTONE 160 C", "hex": "#9B4715" }, { "name": "PANTONE 161 C", "hex": "#633118" }, { "name": "PANTONE 162 C", "hex": "#FFBE9F" },
+            { "name": "PANTONE 163 C", "hex": "#FFAB85" }, { "name": "PANTONE 164 C", "hex": "#FF8F5E" }, { "name": "PANTONE 165 C", "hex": "#FF671F" },
+            { "name": "PANTONE 166 C", "hex": "#E35205" }, { "name": "PANTONE 167 C", "hex": "#BE4D00" }, { "name": "PANTONE 168 C", "hex": "#7A3500" },
+            { "name": "PANTONE 169 C", "hex": "#FFB3A7" }, { "name": "PANTONE 170 C", "hex": "#FFA393" }, { "name": "PANTONE 171 C", "hex": "#FF7D65" },
+            { "name": "PANTONE 172 C", "hex": "#FA4616" }, { "name": "PANTONE 173 C", "hex": "#D53B21" }, { "name": "PANTONE 174 C", "hex": "#9E381C" },
+            { "name": "PANTONE 175 C", "hex": "#6A2616" }, { "name": "PANTONE 176 C", "hex": "#FFA8A9" }, { "name": "PANTONE 177 C", "hex": "#FF9194" },
+            { "name": "PANTONE 178 C", "hex": "#FF595A" }, { "name": "PANTONE 179 C", "hex": "#E03C31" }, { "name": "PANTONE 180 C", "hex": "#BD3039" },
+            { "name": "PANTONE 181 C", "hex": "#872728" }, { "name": "PANTONE 182 C", "hex": "#FFB7B4" }, { "name": "PANTONE 183 C", "hex": "#FFAAA5" },
+            { "name": "PANTONE 184 C", "hex": "#FF7582" }, { "name": "PANTONE 185 C", "hex": "#E4002B" }, { "name": "PANTONE 186 C", "hex": "#C8102E" },
+            { "name": "PANTONE 187 C", "hex": "#A6192E" }, { "name": "PANTONE 188 C", "hex": "#76232F" }, { "name": "PANTONE 189 C", "hex": "#F9A8B6" },
+            { "name": "PANTONE 190 C", "hex": "#F793AA" }, { "name": "PANTONE 191 C", "hex": "#F26987" }, { "name": "PANTONE 192 C", "hex": "#E40046" },
+            { "name": "PANTONE 193 C", "hex": "#BF0D3E" }, { "name": "PANTONE 194 C", "hex": "#9B1A40" }, { "name": "PANTONE 195 C", "hex": "#781D40" },
+            { "name": "PANTONE 196 C", "hex": "#ECA7B8" }, { "name": "PANTONE 197 C", "hex": "#E992A8" }, { "name": "PANTONE 198 C", "hex": "#E35A7E" },
+            { "name": "PANTONE 199 C", "hex": "#D50032" }, { "name": "PANTONE 200 C", "hex": "#BA0C2F" }, { "name": "PANTONE 201 C", "hex": "#9D2235" },
+            { "name": "PANTONE 202 C", "hex": "#862633" }, { "name": "PANTONE 203 C", "hex": "#E7A8BB" }, { "name": "PANTONE 204 C", "hex": "#E48FA8" },
+            { "name": "PANTONE 205 C", "hex": "#E05587" }, { "name": "PANTONE 206 C", "hex": "#CE0058" }, { "name": "PANTONE 207 C", "hex": "#AB0033" },
+            { "name": "PANTONE 208 C", "hex": "#861F41" }, { "name": "PANTONE 209 C", "hex": "#6D203D" }, { "name": "PANTONE 210 C", "hex": "#F1A7C4" },
+            { "name": "PANTONE 211 C", "hex": "#F08DB0" }, { "name": "PANTONE 212 C", "hex": "#F0568B" }, { "name": "PANTONE 213 C", "hex": "#E31C79" },
+            { "name": "PANTONE 214 C", "hex": "#CE1141" }, { "name": "PANTONE 215 C", "hex": "#A71930" }, { "name": "PANTONE 216 C", "hex": "#7F2746" },
+            { "name": "PANTONE 217 C", "hex": "#ECC2D0" }, { "name": "PANTONE 218 C", "hex": "#E69CBA" }, { "name": "PANTONE 219 C", "hex": "#DA1884" },
+            { "name": "PANTONE 220 C", "hex": "#C41230" }, { "name": "PANTONE 221 C", "hex": "#9A1B4F" }, { "name": "PANTONE 222 C", "hex": "#712046" },
+            { "name": "PANTONE 223 C", "hex": "#E2AAC1" }, { "name": "PANTONE 224 C", "hex": "#E083AE" }, { "name": "PANTONE 225 C", "hex": "#DF1995" },
+            { "name": "PANTONE 226 C", "hex": "#D71868" }, { "name": "PANTONE 227 C", "hex": "#A6195D" }, { "name": "PANTONE 228 C", "hex": "#811E68" },
+            { "name": "PANTONE 229 C", "hex": "#672146" }, { "name": "PANTONE 230 C", "hex": "#EDAED0" }, { "name": "PANTONE 231 C", "hex": "#EA92BD" },
+            { "name": "PANTONE 232 C", "hex": "#E6529C" }, { "name": "PANTONE 233 C", "hex": "#C80F86" }, { "name": "PANTONE 234 C", "hex": "#A20067" },
+            { "name": "PANTONE 235 C", "hex": "#840050" }, { "name": "PANTONE 236 C", "hex": "#EBA7D4" }, { "name": "PANTONE 237 C", "hex": "#E389CA" },
+            { "name": "PANTONE 238 C", "hex": "#DA63C0" }, { "name": "PANTONE 239 C", "hex": "#D12DBA" }, { "name": "PANTONE 240 C", "hex": "#BB13A1" },
+            { "name": "PANTONE 241 C", "hex": "#A1008A" }, { "name": "PANTONE 242 C", "hex": "#7B0061" }, { "name": "PANTONE 243 C", "hex": "#E2AED6" },
+            { "name": "PANTONE 244 C", "hex": "#D993CD" }, { "name": "PANTONE 245 C", "hex": "#CD6CC2" }, { "name": "PANTONE 246 C", "hex": "#BE2BB5" },
+            { "name": "PANTONE 247 C", "hex": "#A400A9" }, { "name": "PANTONE 248 C", "hex": "#85008F" }, { "name": "PANTONE 249 C", "hex": "#660066" }
+        ];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // =========================================
+            // VARIABLES DE ESTADO Y GLOBALES
+            // =========================================
+            let currentPalette = [];
+            let extractedData = [];
+            let currentExtractedImage = null;
+            let activeMarker = null;
+            let colorPool = [];
+
+            let offscreenCanvas = document.createElement('canvas');
+            let offscreenCtx = offscreenCanvas.getContext('2d', { willReadFrequently: true, colorSpace: 'srgb' });
+
+            let allPalettesData = [];
+            let exploreLoaded = false;
+            let allColorsData = [];
+            let colorsLoaded = false;
+            let currentColorFamily = 'all';
+            let allPantoneData = [];
+            let pantoneLoaded = false;
+
+            const colorCountInput = document.getElementById('colorCount');
+            let numColors = parseInt(colorCountInput.value) || 5;
+
+            const fsOverlay = document.getElementById('fullscreenOverlay');
+            const fsContent = document.getElementById('fsContent');
+            const fsName = document.getElementById('fsName');
+            const fsHex = document.getElementById('fsHex');
+            const fsCloseBtn = document.getElementById('fsCloseBtn');
+            const globalToast = document.getElementById('globalToast');
+
+            const imageCanvas = document.getElementById('imageCanvas');
+            const imageCtx = imageCanvas.getContext('2d', { willReadFrequently: true, colorSpace: 'srgb' });
+            const interactiveWrapper = document.getElementById('interactiveWrapper');
+            const extractedPaletteContainer = document.getElementById('extractedPaletteContainer');
+            const extractColorCountInput = document.getElementById('extractColorCount');
+            const extractorActions = document.getElementById('extractorActions');
+            const imageSizePill = document.getElementById('imageSizePill');
+
+            function showToast(message) {
+                document.getElementById('toastMsg').innerText = message;
+                globalToast.classList.add('show');
+                setTimeout(() => globalToast.classList.remove('show'), 2600);
+            }
+
+            const getContrastColor = (hex) => {
+                const cleanHex = hex.replace('#', '');
+                const r = parseInt(cleanHex.substr(0, 2), 16) || 0;
+                const g = parseInt(cleanHex.substr(2, 2), 16) || 0;
+                const b = parseInt(cleanHex.substr(4, 2), 16) || 0;
+                const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+                return (yiq >= 128) ? '#000000' : '#FFFFFF';
+            };
+
+            function rgbToHex(r, g, b) {
+                return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+            }
+
+            function openFullscreen(name, hex) {
+                fsOverlay.style.backgroundColor = hex;
+                fsName.innerText = name;
+                fsHex.innerText = hex;
+                const textColor = getContrastColor(hex);
+                fsContent.style.color = textColor;
+                fsCloseBtn.style.color = textColor;
+                fsCloseBtn.style.backgroundColor = textColor === '#000000' ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.2)';
+                fsOverlay.classList.add('active');
+            }
+
+            function closeFullscreen() {
+                fsOverlay.classList.remove('active');
+            }
+
+            fsCloseBtn.addEventListener('click', closeFullscreen);
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Escape' && fsOverlay.classList.contains('active')) {
+                    closeFullscreen();
+                }
+            });
+
+            // =========================================
+            // EXPORTAR A PNG (sRGB)
+            // =========================================
+            function exportPaletteToPNG(colorsArray, filename = "Paleta_Auro") {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d', { colorSpace: 'srgb' });
+                const colWidth = 200;
+                const canvasHeight = 350;
+
+                canvas.width = colorsArray.length * colWidth;
+                canvas.height = canvasHeight;
+
+                colorsArray.forEach((hex, i) => {
+                    ctx.fillStyle = hex;
+                    ctx.fillRect(i * colWidth, 0, colWidth, canvasHeight);
+                    const textColor = getContrastColor(hex);
+                    ctx.fillStyle = textColor;
+                    ctx.font = 'bold 24px "Poppins", sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(hex.toUpperCase(), (i * colWidth) + (colWidth / 2), canvasHeight - 40);
+                    ctx.font = '13px "Poppins", sans-serif';
+                    ctx.globalAlpha = 0.55;
+                    ctx.fillText("Eduardo Workspace", (i * colWidth) + (colWidth / 2), canvasHeight - 15);
+                    ctx.globalAlpha = 1.0;
+                });
+
+                const link = document.createElement('a');
+                link.download = `${filename.replace(/\s+/g, '_')}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showToast("Paleta exportada como PNG");
+            }
+
+            // =========================================
+            // NAVEGACIÓN DE PESTAÑAS
+            // =========================================
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabSections = document.querySelectorAll('.tool-section');
+
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    tabSections.forEach(s => s.classList.remove('active'));
+
+                    btn.classList.add('active');
+                    const sectionId = btn.getAttribute('data-tab');
+                    document.getElementById(sectionId).classList.add('active');
+
+                    if (sectionId === 'explore-section' && !exploreLoaded) loadExplorePalettes();
+                    if (sectionId === 'colors-section' && !colorsLoaded) loadDictionaryColors();
+                    if (sectionId === 'pantone-section' && !pantoneLoaded) {
+                        const defaultBook = document.getElementById('pantoneBookFilter').value;
+                        loadPantoneColors(defaultBook);
+                    }
+                });
+            });
+
+            // =========================================
+            // GENERADOR DE PALETAS
+            // =========================================
+            const generatorContainer = document.getElementById('paletteContainer');
+            const generateBtn = document.getElementById('generateBtn');
+            const exportGenBtn = document.getElementById('exportGenBtn');
+
+            exportGenBtn.addEventListener('click', () => {
+                const currentHexes = currentPalette.map(c => c.hex);
+                exportPaletteToPNG(currentHexes, "Paleta_Generador");
+            });
+
+            function hexToHsl(hex) {
+                let r = parseInt(hex.slice(1, 3), 16) / 255;
+                let g = parseInt(hex.slice(3, 5), 16) / 255;
+                let b = parseInt(hex.slice(5, 7), 16) / 255;
+                let max = Math.max(r, g, b), min = Math.min(r, g, b);
+                let h, s, l = (max + min) / 2;
+                if (max == min) { h = s = 0; } else {
+                    let d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    switch (max) {
+                        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                        case g: h = (b - r) / d + 2; break;
+                        case b: h = (r - g) / d + 4; break;
+                    }
+                    h /= 6;
+                }
+                return [h * 360, s * 100, l * 100];
+            }
+
+            function hslToHex(h, s, l) {
+                l /= 100;
+                const a = s * Math.min(l, 1 - l) / 100;
+                const f = n => {
+                    const k = (n + h / 30) % 12;
+                    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+                    return Math.round(255 * color).toString(16).padStart(2, '0');
+                };
+                return `#${f(0)}${f(8)}${f(4)}`.toUpperCase();
+            }
+
+            function generateHarmonicColors(count, lockedColors) {
+                let baseHue, baseSat, baseLit;
+                if (lockedColors && lockedColors.length > 0) {
+                    const [h, s, l] = hexToHsl(lockedColors[0].hex);
+                    baseHue = h; baseSat = s; baseLit = l;
+                } else {
+                    baseHue = Math.random() * 360;
+                    baseSat = 50 + Math.random() * 40;
+                    baseLit = 40 + Math.random() * 40;
+                }
+
+                const newColors = [];
+                for (let i = 0; i < count; i++) {
+                    let hueShift = (Math.random() > 0.75) ? 180 : (Math.random() * 80 - 40);
+                    let hue = (baseHue + hueShift + 360) % 360;
+                    let sat = Math.max(30, Math.min(100, baseSat + (Math.random() * 30 - 15)));
+                    let lit = Math.max(20, Math.min(90, baseLit + (Math.random() * 40 - 20)));
+                    newColors.push(hslToHex(hue, sat, lit));
+                }
+                return newColors;
+            }
+
+            function initPaletteArray() {
+                if (currentPalette.length < numColors) {
+                    const toAdd = numColors - currentPalette.length;
+                    const newHexes = generateHarmonicColors(toAdd, currentPalette.filter(c => c.locked));
+                    for (let i = 0; i < toAdd; i++) {
+                        currentPalette.push({ hex: newHexes[i], locked: false });
+                    }
+                } else if (currentPalette.length > numColors) {
+                    currentPalette = currentPalette.slice(0, numColors);
+                }
+            }
+
+            function renderPalette(containerElem, paletteArray, isGenerator = true) {
+                containerElem.innerHTML = '';
+                paletteArray.forEach((colorObj, index) => {
+                    const textColor = getContrastColor(colorObj.hex);
+                    const col = document.createElement('div');
+                    col.className = `color-col ${colorObj.locked ? 'is-locked' : ''}`;
+                    col.style.backgroundColor = colorObj.hex;
+
+                    const controls = document.createElement('div');
+                    controls.className = 'color-controls';
+
+                    const hexBtn = document.createElement('button');
+                    hexBtn.className = 'hex-text';
+                    hexBtn.style.color = textColor;
+                    hexBtn.innerText = colorObj.hex;
+                    hexBtn.title = "Copiar HEX";
+                    hexBtn.onclick = () => {
+                        navigator.clipboard.writeText(colorObj.hex).then(() => showToast(`Copiado: ${colorObj.hex}`));
+                    };
+
+                    controls.appendChild(hexBtn);
+
+                    if (isGenerator) {
+                        const lockBtn = document.createElement('button');
+                        lockBtn.className = 'action-icon';
+                        lockBtn.style.color = textColor;
+                        lockBtn.innerHTML = colorObj.locked ? '<i class="fa-solid fa-lock"></i>' : '<i class="fa-solid fa-lock-open"></i>';
+                        lockBtn.title = colorObj.locked ? "Desbloquear" : "Bloquear";
+                        lockBtn.onclick = () => {
+                            currentPalette[index].locked = !currentPalette[index].locked;
+                            renderPalette(generatorContainer, currentPalette, true);
+                        };
+                        controls.insertBefore(lockBtn, hexBtn);
+                    }
+
+                    col.appendChild(controls);
+                    containerElem.appendChild(col);
+                });
+            }
+
+            function generateNewPalette() {
+                const lockedColors = currentPalette.filter(c => c.locked);
+                const unlockedCount = currentPalette.length - lockedColors.length;
+
+                if (unlockedCount > 0) {
+                    const newHexes = generateHarmonicColors(unlockedCount, lockedColors);
+                    let hexIndex = 0;
+                    currentPalette = currentPalette.map(colorObj => {
+                        if (!colorObj.locked) {
+                            return { ...colorObj, hex: newHexes[hexIndex++] };
+                        }
+                        return colorObj;
+                    });
+                }
+                renderPalette(generatorContainer, currentPalette, true);
+            }
+
+            colorCountInput.addEventListener('change', (e) => {
+                let val = parseInt(e.target.value);
+                if (val < 3) val = 3;
+                if (val > 10) val = 10;
+                numColors = val;
+                e.target.value = val;
+                initPaletteArray();
+                renderPalette(generatorContainer, currentPalette, true);
+            });
+
+            generateBtn.addEventListener('click', generateNewPalette);
+
+            document.addEventListener('keydown', (e) => {
+                if (document.getElementById('generator-section').classList.contains('active') &&
+                    document.activeElement.tagName !== 'INPUT' &&
+                    document.activeElement.tagName !== 'SELECT') {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        generateNewPalette();
+                    }
+                }
+            });
+
+            // =========================================
+            // EXTRACTOR DE IMAGEN PIXEL-PERFECT
+            // =========================================
+            const triggerUpload = () => document.getElementById('imageInput').click();
+            document.getElementById('uploadBtn').onclick = triggerUpload;
+            document.getElementById('uploadBtnTop').onclick = triggerUpload;
+            document.getElementById('previewPlaceholder').onclick = triggerUpload;
+
+            document.getElementById('imageInput').addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const img = new Image();
+                    img.onload = function () {
+                        currentExtractedImage = img;
+                        imageSizePill.textContent = `${img.width} × ${img.height} px`;
+                        setupInteractiveCanvas();
+                        initialExtraction();
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+
+            function setupInteractiveCanvas() {
+                document.getElementById('previewPlaceholder').style.display = 'none';
+                interactiveWrapper.style.display = 'inline-block';
+
+                const containerWidth = document.getElementById('imagePreviewContainer').clientWidth - 60;
+                let width = currentExtractedImage.width;
+                let height = currentExtractedImage.height;
+
+                if (width > containerWidth && containerWidth > 100) {
+                    height *= (containerWidth / width);
+                    width = containerWidth;
+                }
+
+                imageCanvas.width = width;
+                imageCanvas.height = height;
+                imageCtx.imageSmoothingEnabled = false;
+                imageCtx.clearRect(0, 0, width, height);
+                imageCtx.drawImage(currentExtractedImage, 0, 0, width, height);
+
+                offscreenCanvas.width = currentExtractedImage.width;
+                offscreenCanvas.height = currentExtractedImage.height;
+                offscreenCtx.imageSmoothingEnabled = false;
+                offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+                offscreenCtx.drawImage(currentExtractedImage, 0, 0);
+            }
+
+            function initialExtraction() {
+                colorPool = extractColorsAlgorithm(currentExtractedImage, 30);
+                extractorActions.style.display = 'flex';
+
+                const count = parseInt(extractColorCountInput.value);
+                extractedData = colorPool.slice(0, count).map(item => ({
+                    hex: item.hex, x: item.x, y: item.y, locked: false
+                }));
+
+                renderAll();
+            }
+
+            extractColorCountInput.addEventListener('change', (e) => {
+                let val = parseInt(e.target.value);
+                if (val < 3) val = 3;
+                if (val > 10) val = 10;
+                e.target.value = val;
+                if (currentExtractedImage && colorPool.length > 0) {
+                    updateExtractedArraySize(val);
+                }
+            });
+
+            function updateExtractedArraySize(newSize) {
+                if (newSize > extractedData.length) {
+                    const toAdd = newSize - extractedData.length;
+                    let availablePool = colorPool.filter(p => !extractedData.find(e => e.hex === p.hex));
+                    for (let i = 0; i < toAdd; i++) {
+                        let next = availablePool.shift() || colorPool[0];
+                        extractedData.push({ hex: next.hex, x: next.x, y: next.y, locked: false });
+                    }
+                } else if (newSize < extractedData.length) {
+                    let lockedItems = extractedData.filter(d => d.locked);
+                    let unlockedItems = extractedData.filter(d => !d.locked);
+
+                    extractedData = [];
+                    let added = 0;
+                    for (let item of lockedItems) {
+                        if (added < newSize) { extractedData.push(item); added++; }
+                    }
+                    for (let item of unlockedItems) {
+                        if (added < newSize) { extractedData.push(item); added++; }
+                    }
+                }
+                renderAll();
+            }
+
+            document.getElementById('refreshExtractedBtn').addEventListener('click', () => {
+                if (!currentExtractedImage || colorPool.length === 0) return showToast("Sube una imagen primero");
+
+                let usedHexes = extractedData.map(d => d.hex);
+                let availablePool = colorPool.filter(p => !usedHexes.includes(p.hex));
+                availablePool.sort(() => Math.random() - 0.5);
+
+                extractedData = extractedData.map(item => {
+                    if (item.locked) return item;
+                    let next = availablePool.shift() || colorPool[Math.floor(Math.random() * colorPool.length)];
+                    return { hex: next.hex, x: next.x, y: next.y, locked: false };
+                });
+
+                renderAll();
+            });
+
+            function renderAll() {
+                document.querySelectorAll('.color-marker').forEach(m => m.remove());
+                extractedPaletteContainer.innerHTML = '';
+
+                extractedData.forEach((dataItem, index) => {
+                    createMarkerUI(dataItem, index);
+                    createPaletteColUI(dataItem, index);
+                });
+            }
+
+            function createMarkerUI(data, index) {
+                const rect = imageCanvas.getBoundingClientRect();
+                const scaleX = (rect.width || imageCanvas.width) / imageCanvas.width;
+                const scaleY = (rect.height || imageCanvas.height) / imageCanvas.height;
+
+                const marker = document.createElement('div');
+                marker.className = 'color-marker';
+                if (data.locked) marker.classList.add('locked-marker');
+
+                const displayX = data.x * (imageCanvas.width / currentExtractedImage.width);
+                const displayY = data.y * (imageCanvas.height / currentExtractedImage.height);
+
+                marker.style.left = `${displayX * scaleX}px`;
+                marker.style.top = `${displayY * scaleY}px`;
+                marker.style.backgroundColor = data.hex;
+                marker.dataset.index = index;
+
+                const loupe = document.createElement('canvas');
+                loupe.className = 'loupe-canvas';
+                loupe.width = 11;
+                loupe.height = 11;
+                marker.appendChild(loupe);
+
+                marker.addEventListener('mousedown', dragStart);
+                marker.addEventListener('touchstart', dragStart, { passive: false });
+                marker.addEventListener('mouseenter', () => highlightPaletteColumn(index));
+                marker.addEventListener('mouseleave', removePaletteHighlights);
+
+                interactiveWrapper.appendChild(marker);
+            }
+
+            function createPaletteColUI(data, index) {
+                const textColor = getContrastColor(data.hex);
+                const col = document.createElement('div');
+                col.className = 'color-col extracted-col';
+                col.style.backgroundColor = data.hex;
+                col.dataset.index = index;
+
+                col.addEventListener('mouseenter', () => highlightMarker(index));
+                col.addEventListener('mouseleave', removeMarkerHighlights);
+
+                const controls = document.createElement('div');
+                controls.className = 'extractor-controls';
+
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'action-icon';
+                copyBtn.style.color = textColor;
+                copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+                copyBtn.title = "Copiar HEX";
+                copyBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    navigator.clipboard.writeText(data.hex).then(() => showToast(`Copiado: ${data.hex}`));
+                };
+
+                const lockBtn = document.createElement('button');
+                lockBtn.className = 'action-icon';
+                lockBtn.style.color = textColor;
+                lockBtn.innerHTML = data.locked ? '<i class="fa-solid fa-lock"></i>' : '<i class="fa-solid fa-lock-open"></i>';
+                lockBtn.title = data.locked ? "Desbloquear" : "Bloquear";
+                lockBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    data.locked = !data.locked;
+                    renderAll();
+                };
+
+                const eyeBtn = document.createElement('button');
+                eyeBtn.className = 'action-icon';
+                eyeBtn.style.color = textColor;
+                eyeBtn.innerHTML = '<i class="fa-solid fa-eye-dropper"></i>';
+                eyeBtn.title = "Localizar en imagen";
+                eyeBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    highlightMarker(index);
+                };
+
+                controls.appendChild(copyBtn);
+                controls.appendChild(lockBtn);
+                controls.appendChild(eyeBtn);
+
+                const hexText = document.createElement('div');
+                hexText.className = 'hex-text-rotated';
+                hexText.style.color = textColor;
+                hexText.innerText = data.hex;
+
+                col.appendChild(controls);
+                col.appendChild(hexText);
+                extractedPaletteContainer.appendChild(col);
+            }
+
+            function highlightMarker(index) {
+                removeMarkerHighlights();
+                const marker = document.querySelector(`.color-marker[data-index="${index}"]`);
+                if (marker) marker.classList.add('pulsing-highlight');
+            }
+
+            function removeMarkerHighlights() {
+                document.querySelectorAll('.color-marker').forEach(m => m.classList.remove('pulsing-highlight'));
+            }
+
+            function highlightPaletteColumn(index) {
+                removePaletteHighlights();
+                const col = document.querySelector(`.extracted-col[data-index="${index}"]`);
+                if (col) col.classList.add('hover-highlight');
+            }
+
+            function removePaletteHighlights() {
+                document.querySelectorAll('.extracted-col').forEach(c => c.classList.remove('hover-highlight'));
+            }
+
+            function dragStart(e) {
+                e.preventDefault();
+                activeMarker = e.target.closest('.color-marker');
+                if (!activeMarker) return;
+
+                activeMarker.classList.add('dragging');
+                updateLoupe(e);
+
+                document.addEventListener('mousemove', dragMove);
+                document.addEventListener('mouseup', dragEnd);
+                document.addEventListener('touchmove', dragMove, { passive: false });
+                document.addEventListener('touchend', dragEnd);
+            }
+
+            function dragMove(e) {
+                if (!activeMarker) return;
+                e.preventDefault();
+                updateLoupe(e);
+            }
+
+            function updateLoupe(e) {
+                const rect = imageCanvas.getBoundingClientRect();
+                let clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                let clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+                let cssX = Math.max(0, Math.min(clientX - rect.left, rect.width - 1));
+                let cssY = Math.max(0, Math.min(clientY - rect.top, rect.height - 1));
+
+                activeMarker.style.left = `${cssX}px`;
+                activeMarker.style.top = `${cssY}px`;
+
+                const origX = Math.floor(cssX * (currentExtractedImage.width / rect.width));
+                const origY = Math.floor(cssY * (currentExtractedImage.height / rect.height));
+
+                const pixelData = offscreenCtx.getImageData(origX, origY, 1, 1).data;
+                const hexColor = rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
+
+                activeMarker.style.backgroundColor = hexColor;
+
+                const index = activeMarker.dataset.index;
+                extractedData[index].hex = hexColor;
+                extractedData[index].x = origX;
+                extractedData[index].y = origY;
+
+                const colBg = extractedPaletteContainer.querySelector(`.extracted-col[data-index="${index}"]`);
+                if (colBg) {
+                    colBg.style.backgroundColor = hexColor;
+                    const hexText = colBg.querySelector('.hex-text-rotated');
+                    if (hexText) hexText.innerText = hexColor;
+
+                    const tColor = getContrastColor(hexColor);
+                    colBg.querySelectorAll('.action-icon, .hex-text-rotated').forEach(el => el.style.color = tColor);
+                }
+
+                const loupe = activeMarker.querySelector('.loupe-canvas');
+                if (loupe) {
+                    const lCtx = loupe.getContext('2d', { colorSpace: 'srgb' });
+                    lCtx.imageSmoothingEnabled = false;
+                    lCtx.clearRect(0, 0, loupe.width, loupe.height);
+                    const patchSize = loupe.width;
+                    const halfPatch = Math.floor(patchSize / 2);
+                    lCtx.drawImage(
+                        offscreenCanvas,
+                        origX - halfPatch, origY - halfPatch, patchSize, patchSize,
+                        0, 0, patchSize, patchSize
+                    );
+                }
+            }
+
+            function dragEnd() {
+                if (activeMarker) {
+                    activeMarker.classList.remove('dragging');
+                    activeMarker = null;
+                }
+                document.removeEventListener('mousemove', dragMove);
+                document.removeEventListener('mouseup', dragEnd);
+                document.removeEventListener('touchmove', dragMove);
+                document.removeEventListener('touchend', dragEnd);
+            }
+
+            function extractColorsAlgorithm(img, poolSize) {
+                const data = offscreenCtx.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height).data;
+                const map = new Map();
+
+                for (let i = 0; i < data.length; i += 64) {
+                    if (data[i + 3] < 128) continue;
+                    const hex = rgbToHex(data[i], data[i + 1], data[i + 2]);
+                    if (!map.has(hex)) {
+                        const pixelIndex = i / 4;
+                        map.set(hex, {
+                            count: 1,
+                            x: pixelIndex % offscreenCanvas.width,
+                            y: Math.floor(pixelIndex / offscreenCanvas.width)
+                        });
+                    } else {
+                        map.get(hex).count++;
+                    }
+                }
+
+                let sortedColors = Array.from(map.entries()).sort((a, b) => b[1].count - a[1].count);
+                const finalData = [];
+
+                for (const item of sortedColors) {
+                    const rgb = [
+                        parseInt(item[0].slice(1, 3), 16),
+                        parseInt(item[0].slice(3, 5), 16),
+                        parseInt(item[0].slice(5, 7), 16)
+                    ];
+
+                    let isDistinct = true;
+                    for (const fc of finalData) {
+                        const dist = Math.sqrt(
+                            Math.pow(rgb[0] - fc.rgb[0], 2) +
+                            Math.pow(rgb[1] - fc.rgb[1], 2) +
+                            Math.pow(rgb[2] - fc.rgb[2], 2)
+                        );
+                        if (dist < 8) {
+                            isDistinct = false;
+                            break;
+                        }
+                    }
+                    if (isDistinct) {
+                        finalData.push({ hex: item[0], x: item[1].x, y: item[1].y, rgb: rgb });
+                    }
+                    if (finalData.length >= poolSize) break;
+                }
+
+                return finalData;
+            }
+
+            document.getElementById('exportExtractedBtn').addEventListener('click', () => {
+                if (extractedData.length > 0) {
+                    exportPaletteToPNG(extractedData.map(d => d.hex), "Paleta_Extraida");
+                } else {
+                    showToast("Sube una imagen primero");
+                }
+            });
+
+            document.getElementById('sendToGenBtn').addEventListener('click', () => {
+                if (extractedData.length === 0) return showToast("Sube una imagen primero");
+                loadPaletteIntoGenerator(extractedData.map(d => d.hex));
+                showToast("Paleta enviada al generador");
+            });
+
+            function loadPaletteIntoGenerator(colors) {
+                colorCountInput.value = colors.length;
+                numColors = colors.length;
+                currentPalette = colors.map(hex => ({ hex: hex.toUpperCase(), locked: false }));
+                renderPalette(generatorContainer, currentPalette, true);
+                document.querySelector('[data-tab="generator-section"]').click();
+            }
+
+            // =========================================
+            // EXPLORAR PALETAS
+            // =========================================
+            const exploreGrid = document.getElementById('exploreGrid');
+            const exploreSearch = document.getElementById('exploreSearch');
+            const sizeFilter = document.getElementById('sizeFilter');
+
+            async function loadExplorePalettes() {
+                try {
+                    const response = await fetch('palettes_explore.json');
+                    if (!response.ok) throw new Error("Fallback local");
+                    allPalettesData = await response.json();
+                } catch (e) {
+                    allPalettesData = EMBEDDED_PALETTES;
+                }
+                renderExploreGrid(allPalettesData);
+                exploreLoaded = true;
+            }
+
+            function renderExploreGrid(data) {
+                exploreGrid.innerHTML = '';
+                if (data.length === 0) {
+                    exploreGrid.innerHTML = '<p style="text-align:center; color:var(--text-muted); grid-column: 1/-1; padding: 2rem;">No se encontraron resultados.</p>';
+                    return;
+                }
+                data.forEach(palette => {
+                    const card = document.createElement('div');
+                    card.className = 'palette-card';
+
+                    const colorPreview = document.createElement('div');
+                    colorPreview.className = 'card-colors';
+
+                    palette.colors.forEach(hex => {
+                        const c = document.createElement('div');
+                        c.className = 'card-color-preview';
+                        c.style.backgroundColor = hex;
+                        c.title = `Click para copiar ${hex}`;
+                        c.innerHTML = `<span>${hex}</span>`;
+                        c.onclick = (e) => {
+                            e.stopPropagation();
+                            navigator.clipboard.writeText(hex).then(() => showToast(`Copiado: ${hex}`));
+                        };
+                        colorPreview.appendChild(c);
+                    });
+
+                    const info = document.createElement('div');
+                    info.className = 'card-info';
+                    const name = document.createElement('h4');
+                    name.innerText = palette.name;
+
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.className = 'card-actions-group';
+
+                    const sendBtn = document.createElement('button');
+                    sendBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i>';
+                    sendBtn.title = "Abrir en el Generador";
+                    sendBtn.onclick = () => {
+                        loadPaletteIntoGenerator(palette.colors);
+                        showToast("Paleta enviada al generador");
+                    };
+
+                    const copyBtn = document.createElement('button');
+                    copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+                    copyBtn.title = "Copiar todos los HEX";
+                    copyBtn.onclick = () => {
+                        navigator.clipboard.writeText(palette.colors.join(', ')).then(() => showToast("Todos los HEX copiados"));
+                    };
+
+                    const exportBtn = document.createElement('button');
+                    exportBtn.innerHTML = '<i class="fa-solid fa-download"></i>';
+                    exportBtn.title = "Descargar PNG";
+                    exportBtn.onclick = () => exportPaletteToPNG(palette.colors, palette.name);
+
+                    actionsDiv.appendChild(sendBtn);
+                    actionsDiv.appendChild(copyBtn);
+                    actionsDiv.appendChild(exportBtn);
+
+                    info.appendChild(name);
+                    info.appendChild(actionsDiv);
+
+                    const tags = document.createElement('div');
+                    tags.className = 'card-tags';
+                    palette.tags.forEach(tag => {
+                        const t = document.createElement('span');
+                        t.className = 'tag';
+                        t.innerText = tag;
+                        tags.appendChild(t);
+                    });
+
+                    card.appendChild(colorPreview);
+                    card.appendChild(info);
+                    card.appendChild(tags);
+                    exploreGrid.appendChild(card);
+                });
+            }
+
+            function filterExplore() {
+                const searchTerm = exploreSearch.value.toLowerCase();
+                const size = sizeFilter.value;
+                const filteredData = allPalettesData.filter(palette => {
+                    const matchesSize = (size === 'all' || palette.colors.length === parseInt(size));
+                    const matchesSearch = searchTerm === '' ||
+                        palette.name.toLowerCase().includes(searchTerm) ||
+                        palette.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                    return matchesSize && matchesSearch;
+                });
+                renderExploreGrid(filteredData);
+            }
+
+            exploreSearch.addEventListener('input', filterExplore);
+            sizeFilter.addEventListener('change', filterExplore);
+
+            // =========================================
+            // DICCIONARIO DE COLORES
+            // =========================================
+            const colorsGrid = document.getElementById('colorsGrid');
+            const colorsSearch = document.getElementById('colorsSearch');
+            const familyButtons = document.querySelectorAll('.family-btn');
+
+            async function loadDictionaryColors() {
+                try {
+                    const response = await fetch('colors.json');
+                    if (!response.ok) throw new Error("Fallback local");
+                    allColorsData = await response.json();
+                } catch (e) {
+                    allColorsData = EMBEDDED_COLORS;
+                }
+                document.getElementById('colorsCount').innerText = allColorsData.length;
+                renderColorsGrid(allColorsData);
+                colorsLoaded = true;
+            }
+
+            function renderColorsGrid(data) {
+                colorsGrid.innerHTML = '';
+                if (data.length === 0) {
+                    colorsGrid.innerHTML = '<p style="text-align:center; color:var(--text-muted); grid-column: 1/-1; padding: 2rem;">No se encontraron colores.</p>';
+                    return;
+                }
+                data.forEach(colorObj => {
+                    const card = document.createElement('div');
+                    card.className = 'single-color-card';
+
+                    const colorArea = document.createElement('div');
+                    colorArea.className = 'scc-color';
+                    colorArea.style.backgroundColor = colorObj.hex;
+                    colorArea.title = "Ver en pantalla completa";
+                    colorArea.onclick = () => openFullscreen(colorObj.name, colorObj.hex);
+
+                    const info = document.createElement('div');
+                    info.className = 'scc-info';
+
+                    const details = document.createElement('div');
+                    details.className = 'scc-details';
+
+                    const name = document.createElement('h4');
+                    name.innerText = colorObj.name;
+                    const hexText = document.createElement('p');
+                    hexText.innerText = colorObj.hex;
+
+                    details.appendChild(name);
+                    details.appendChild(hexText);
+
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'pt-action';
+                    copyBtn.title = "Copiar HEX";
+                    copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+                    copyBtn.onclick = () => {
+                        navigator.clipboard.writeText(colorObj.hex).then(() => {
+                            showToast(`Copiado: ${colorObj.hex}`);
+                        });
+                    };
+
+                    info.appendChild(details);
+                    info.appendChild(copyBtn);
+
+                    card.appendChild(colorArea);
+                    card.appendChild(info);
+                    colorsGrid.appendChild(card);
+                });
+            }
+
+            function filterColors() {
+                const searchTerm = colorsSearch.value.toLowerCase();
+                const filteredData = allColorsData.filter(colorObj => {
+                    const matchesSearch = searchTerm === '' ||
+                        colorObj.name.toLowerCase().includes(searchTerm) ||
+                        colorObj.hex.toLowerCase().includes(searchTerm);
+                    const matchesFamily = currentColorFamily === 'all' || colorObj.family === currentColorFamily;
+                    return matchesSearch && matchesFamily;
+                });
+                renderColorsGrid(filteredData);
+            }
+
+            colorsSearch.addEventListener('input', filterColors);
+
+            familyButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    familyButtons.forEach(b => b.classList.remove('active'));
+                    const targetBtn = e.currentTarget;
+                    targetBtn.classList.add('active');
+                    currentColorFamily = targetBtn.getAttribute('data-family');
+                    filterColors();
+                });
+            });
+
+            // =========================================
+            // CATÁLOGO PANTONE
+            // =========================================
+            const pantoneGrid = document.getElementById('pantoneGrid');
+            const pantoneSearch = document.getElementById('pantoneSearch');
+            const pantoneBookFilter = document.getElementById('pantoneBookFilter');
+
+            async function loadPantoneColors(fileName) {
+                pantoneGrid.innerHTML = '<p style="text-align:center; color:var(--text-muted); grid-column: 1/-1; padding: 2rem;"><i class="fa-solid fa-spinner fa-spin"></i> Cargando catálogo Pantone...</p>';
+                try {
+                    const path = fileName === 'pantone.json' ? 'pantone.json' : `Pantone/${fileName}`;
+                    const response = await fetch(path);
+                    if (!response.ok) throw new Error("Fallback local");
+                    allPantoneData = await response.json();
+                } catch (e) {
+                    allPantoneData = EMBEDDED_PANTONE;
+                }
+
+                document.getElementById('pantoneCount').innerText = allPantoneData.length;
+                pantoneSearch.value = "";
+                renderPantoneGrid(allPantoneData);
+                pantoneLoaded = true;
+            }
+
+            function renderPantoneGrid(data) {
+                pantoneGrid.innerHTML = '';
+                if (data.length === 0) {
+                    pantoneGrid.innerHTML = '<p style="text-align:center; color:var(--text-muted); grid-column: 1/-1; padding: 2rem;">No se encontraron muestras Pantone.</p>';
+                    return;
+                }
+
+                const isSearching = pantoneSearch.value.trim() !== "";
+                const maxToRender = isSearching ? data.length : 500;
+                const dataToRender = data.slice(0, maxToRender);
+
+                dataToRender.forEach(colorObj => {
+                    const card = document.createElement('div');
+                    card.className = 'pantone-card';
+
+                    let rawCode = colorObj.code ? String(colorObj.code).trim() : "";
+                    let rawName = colorObj.name ? String(colorObj.name).trim() : "";
+
+                    // Formatear código/nombre limpio estilo ficha Pantone
+                    let displayTitle = rawName || rawCode || "Swatch";
+                    displayTitle = displayTitle.replace(/^PANTONE\s+/i, '');
+
+                    let fullNameForFs = `PANTONE ${displayTitle}`;
+
+                    const colorArea = document.createElement('div');
+                    colorArea.className = 'pt-color';
+                    colorArea.style.backgroundColor = colorObj.hex;
+                    colorArea.title = "Ver en pantalla completa";
+                    colorArea.onclick = () => openFullscreen(fullNameForFs, colorObj.hex);
+
+                    const info = document.createElement('div');
+                    info.className = 'pt-info';
+
+                    const details = document.createElement('div');
+                    details.className = 'pt-details';
+
+                    const brandLabel = document.createElement('span');
+                    brandLabel.className = 'pt-brand-label';
+                    brandLabel.innerText = 'PANTONE®';
+
+                    const name = document.createElement('h4');
+                    name.innerText = displayTitle;
+                    name.title = fullNameForFs;
+
+                    const hexText = document.createElement('p');
+                    hexText.innerText = colorObj.hex.toUpperCase();
+
+                    details.appendChild(brandLabel);
+                    details.appendChild(name);
+                    details.appendChild(hexText);
+
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'pt-action';
+                    copyBtn.title = `Copiar ${colorObj.hex}`;
+                    copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+                    copyBtn.onclick = () => {
+                        navigator.clipboard.writeText(colorObj.hex).then(() => {
+                            showToast(`Copiado: ${colorObj.hex}`);
+                        });
+                    };
+
+                    info.appendChild(details);
+                    info.appendChild(copyBtn);
+
+                    card.appendChild(colorArea);
+                    card.appendChild(info);
+                    pantoneGrid.appendChild(card);
+                });
+            }
+
+            function filterPantone() {
+                const searchTerm = pantoneSearch.value.toLowerCase();
+                const filteredData = allPantoneData.filter(colorObj => {
+                    const codeStr = colorObj.code ? String(colorObj.code).toLowerCase() : "";
+                    const nameStr = colorObj.name ? String(colorObj.name).toLowerCase() : "";
+                    const hexStr = colorObj.hex ? String(colorObj.hex).toLowerCase() : "";
+                    return codeStr.includes(searchTerm) || nameStr.includes(searchTerm) || hexStr.includes(searchTerm);
+                });
+                renderPantoneGrid(filteredData);
+            }
+
+            pantoneSearch.addEventListener('input', filterPantone);
+            pantoneBookFilter.addEventListener('change', (e) => loadPantoneColors(e.target.value));
+
+            // =========================================
+            // SELECTORES DESPLEGABLES PERSONALIZADOS
+            // =========================================
+            function initCustomSelects() {
+                const selects = document.querySelectorAll('.modern-select');
+                selects.forEach(select => {
+                    if (select.nextElementSibling && select.nextElementSibling.classList.contains('custom-select-wrapper')) return;
+
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'custom-select-wrapper';
+
+                    const trigger = document.createElement('div');
+                    trigger.className = 'custom-select-trigger';
+
+                    const selectedText = document.createElement('span');
+                    selectedText.innerText = select.options[select.selectedIndex].text;
+
+                    const icon = document.createElement('i');
+                    icon.className = 'fa-solid fa-chevron-down';
+
+                    trigger.appendChild(selectedText);
+                    trigger.appendChild(icon);
+
+                    const optionsContainer = document.createElement('div');
+                    optionsContainer.className = 'custom-select-options';
+
+                    Array.from(select.options).forEach((option, index) => {
+                        const customOption = document.createElement('div');
+                        customOption.className = 'custom-option';
+                        if (index === select.selectedIndex) customOption.classList.add('selected');
+                        customOption.innerText = option.text;
+                        customOption.setAttribute('data-value', option.value);
+
+                        customOption.addEventListener('click', function (e) {
+                            e.stopPropagation();
+                            optionsContainer.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
+                            this.classList.add('selected');
+                            selectedText.innerText = this.innerText;
+                            wrapper.classList.remove('open');
+
+                            select.value = this.getAttribute('data-value');
+                            select.dispatchEvent(new Event('change'));
+                        });
+
+                        optionsContainer.appendChild(customOption);
+                    });
+
+                    wrapper.appendChild(trigger);
+                    wrapper.appendChild(optionsContainer);
+                    select.parentNode.insertBefore(wrapper, select.nextSibling);
+
+                    trigger.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        document.querySelectorAll('.custom-select-wrapper').forEach(w => {
+                            if (w !== wrapper) w.classList.remove('open');
+                        });
+                        wrapper.classList.toggle('open');
+                    });
+                });
+
+                document.addEventListener('click', () => {
+                    document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open'));
+                });
+            }
+
+            initPaletteArray();
+            renderPalette(generatorContainer, currentPalette, true);
+            initCustomSelects();
+        });
+    </script>
+</body>
+
+</html>

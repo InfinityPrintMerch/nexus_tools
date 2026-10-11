@@ -1,0 +1,107 @@
+[
+    {
+        "code": "12-0645 TN",
+        "name": "Lemon Tonic",
+        "hex": "#FCF951"
+    },
+    {
+        "code": "13-0630 TN",
+        "name": "Safety Yellow",
+        "hex": "#EDFF00"
+    },
+    {
+        "code": "13-1145 TN",
+        "name": "Orange Pop",
+        "hex": "#FFBA52"
+    },
+    {
+        "code": "15-1460 TN",
+        "name": "Orange Clown Fish",
+        "hex": "#FF6F1D"
+    },
+    {
+        "code": "15-1360 TN",
+        "name": "Shocking Orange",
+        "hex": "#FF6D2B"
+    },
+    {
+        "code": "15-1456 TN",
+        "name": "Fiery Coral",
+        "hex": "#FF4F58"
+    },
+    {
+        "code": "16-1650 TN",
+        "name": "Diva Pink",
+        "hex": "#FF1659"
+    },
+    {
+        "code": "18-1757 TN",
+        "name": "Sparkling Cosmo",
+        "hex": "#D4295E"
+    },
+    {
+        "code": "13-2120 TN",
+        "name": "Cotton Candy",
+        "hex": "#FFA9D6"
+    },
+    {
+        "code": "16-2130 TN",
+        "name": "Knockout Pink",
+        "hex": "#FF3EA5"
+    },
+    {
+        "code": "16-2125 TN",
+        "name": "Sugar Plum",
+        "hex": "#FF67B3"
+    },
+    {
+        "code": "17-2435 TN",
+        "name": "Pink Glo",
+        "hex": "#FA008A"
+    },
+    {
+        "code": "18-3250 TN",
+        "name": "Purple Cactus Flower",
+        "hex": "#9D3695"
+    },
+    {
+        "code": "18-3640 TN",
+        "name": "Electric Purple",
+        "hex": "#69448E"
+    },
+    {
+        "code": "16-3828 TN",
+        "name": "Purple Hebe",
+        "hex": "#8870B9"
+    },
+    {
+        "code": "18-3940 TN",
+        "name": "Simply Purple",
+        "hex": "#6050A8"
+    },
+    {
+        "code": "18-4245 TN",
+        "name": "Electric Blue Lemonade",
+        "hex": "#0063B2"
+    },
+    {
+        "code": "17-4436 TN",
+        "name": "Atomic Blue",
+        "hex": "#0089B9"
+    },
+    {
+        "code": "14-4530 TN",
+        "name": "Bluefish",
+        "hex": "#4DC6E2"
+    },
+    {
+        "code": "16-6230 TN",
+        "name": "Andean Toucan",
+        "hex": "#00C756"
+    },
+    {
+        "code": "13-0340 TN",
+        "name": "Green Gecko",
+        "hex": "#69FF47"
+    }
+]

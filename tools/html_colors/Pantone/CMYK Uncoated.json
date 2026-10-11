@@ -1,0 +1,3362 @@
+[
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FCFAF1"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FFEA2E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DAC545"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CCBD5F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C2B667"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C1B777"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CBC291"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FFEBAD"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F1DEA3"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CFB344"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B6A150"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A89652"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AE9E60"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A5975E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FEE5AB"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F1E1B4"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EEE0BC"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AF904A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AC9251"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A28D56"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A4905D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FACF7D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#ECCD8C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DCC28C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FDF8E1"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F9F6E5"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D1BC36"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BFAF4C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B8AB59"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B4AA67"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BCB379"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FFEA9E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EFDB96"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E6D69F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B19B4A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9E8D4C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A59556"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#998C56"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FEE194"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EFD89D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E8D5A4"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EFE4CB"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9E854A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#927E4C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#907E52"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F8C86D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E4C079"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D5B87B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FFF7C7"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F8F2CE"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F1EABE"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B1A242"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#ACA04A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A49A59"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#ADA468"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FFE78B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EBD588"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E0CE90"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CEBD7E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#978748"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#97884B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#90834E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FDD87E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E9CF86"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E1CB94"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E6D8AF"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E3D5B4"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#857247"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#81714A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F8C060"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DFB667"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D0B06C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FFF4A9"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F3EAB3"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E9DFA6"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E5DDAD"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9D9245"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#92894C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#978F56"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FFE276"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E8D27D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DCC882"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C6B575"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D4C693"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#867946"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#807545"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FCD06B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E4C576"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D9C180"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DBC998"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D3C296"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D7CAA6"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#766847"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F5B54F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D9AB5B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C7A25F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FFF18B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F1E498"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E3D896"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DBD298"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E7E2C2"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#877F49"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#867F4B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FFDF65"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E4CA6D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D5C076"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C2AF6A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CABC80"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C9BB86"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#776E46"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FBC853"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D9B761"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D1B670"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CFBA82"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CCBA85"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CABA8D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FBE4B7"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F3AE48"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D09F4E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B99352"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FFEF6D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EBDB79"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DBCE7F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D2C889"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DAD2A4"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EDEAD4"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#767045"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FFDA4D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DFC45F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CCB766"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BCAA64"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BEAF71"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BDAF77"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FDF2D6"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F8BE46"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D3AD4F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CBAD60"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C7B06F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BFAA70"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BEAD7B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FBDEA3"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F2DDB2"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C79547"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B28C49"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FFEC4C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E3D05F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D2C46C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C9BE78"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CEC48C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DDD6AF"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FEF0C0"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FFD73A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D8BB4F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C2AC58"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B4A159"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B6A669"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B1A36B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FDECC3"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F7E9C6"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C9A045"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BFA155"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BBA25F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B6A065"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B3A06B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FBD88F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EFD49D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E4CEA1"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AA8447"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DAC599"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#977847"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#947A49"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#927A4B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B4A281"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#7D6F59"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FAD798"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#ECCC95"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EFDBB6"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AD7E47"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A27C45"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A0824F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A48959"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F6C381"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E4B87C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E3C492"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D9BC8D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#986E44"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#8C6C47"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#90734C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F2AE61"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DDA667"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D9AD77"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CCA26D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D1B985"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DCCAA3"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#836C45"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#836E47"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AA9777"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#756A57"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F8CC84"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E9C586"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E6CC9C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DDC394"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#987345"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#947549"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#947A4E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F5BC6F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E0B071"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DBB77D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D0B079"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CBAF7E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#856546"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#826647"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F0A256"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D7995A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D1A068"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C49764"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C9AD73"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CEBA8A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D2C198"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#736144"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A18E6F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#6D6351"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F7C170"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E2B974"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E1C28B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D5B884"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DCC69E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#886B46"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#846C47"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F3AF5E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DBA764"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D1AA71"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C8A46D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C2A370"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DECBA7"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#735B43"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#ED974F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D39051"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C8915B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BC8B5A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C0A366"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BFA877"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C2AE7F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DCD2BB"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9B8768"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#665E4F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F5B75F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DBAC60"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D6B376"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CDAC74"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D0B88A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E4D5B8"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#745F43"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F0A152"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D29A56"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C99E61"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BF9A62"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B99969"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CEB78D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F9D19B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EB8C49"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CB854B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BF8551"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B28153"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B7975B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B49C67"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B39E6C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D3C5A8"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#938165"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#60594D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F2AA4C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D7A354"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CBA364"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C3A067"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C5A876"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D3BE96"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FBE1B8"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EC9248"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CD8F4D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C39456"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B38D56"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B18F5E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BEA277"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F7C78D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EAC088"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C67D48"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B7794A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AB784C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A88851"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AF955B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A9935F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C8B798"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#8B7A62"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FBE6C3"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EE9C44"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D09848"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C29856"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B7945B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B69966"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C3AB7E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FAD7A2"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#ECCB9A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C58348"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B8864C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AA824E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A48252"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B19467"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F5C07E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E4B67C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E7C79A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B07249"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A36F48"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9E7F49"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A38850"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9D8553"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BDAE8E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#83745E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FBDEAB"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F0D5A5"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C88D45"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B4884A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AB874E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AB8D57"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B2996B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F9CF92"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EAC48C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#ECD4AA"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AD7947"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A37949"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#98774B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A2855B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F4B76F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E1AE71"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E0BA88"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D1AB7A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9F6C48"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DEC5A2"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#8D6445"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#866547"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B49A7A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#7D6C5B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F1AA66"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E9C08C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D7AF85"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CFAA82"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#915E47"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#866047"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#85664E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EB9D6D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D99C71"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C58C66"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DBBA9B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DFC6AB"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#7E5446"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#765446"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E78864"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CE8765"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D19B78"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B0775A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CBA78A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D2B389"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D5BD98"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#765A44"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AB9071"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#746658"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EE9E5A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E4B176"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D1A376"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C59D75"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CFB290"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#7B5643"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#795C46"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E88B5F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D18C62"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BE815D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CFA886"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CFAE8F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BE9E81"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#6C4E42"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E27559"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C8785B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C58764"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A96F54"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BE9576"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C8A476"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C9AB81"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D9C9AD"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A78B6C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#6B5F52"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EB9251"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DCA063"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C69468"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BC8F68"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C3A380"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C4A787"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#6C5242"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E47B54"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C87F56"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B77954"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C1926F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C29D7A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B18E6F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F9DABB"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DD6452"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BF6A53"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B87655"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A46951"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B18568"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BC9669"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BB9B6F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D3BF9F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9E866B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#635A4F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E9844A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D28E55"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BD855C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B2835E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B79571"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B89977"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FAE0C2"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DF6A4C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C27150"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AE6D4F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B37E5D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B18968"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A78264"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F5C7A2"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E7BD97"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B95F50"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AE654E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9C604B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A6785B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AD8558"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B08E62"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CEB695"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#947F66"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F8C994"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E67C49"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C97D49"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B27852"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A97854"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AA8562"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AB8C6D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F8D0A9"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#ECC7A4"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B9654A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A7634B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A67053"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A3775B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9B7459"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F2BA8D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E2B188"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F2DFCA"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A35A4A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#995B49"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9B6C53"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A57B4F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A17E54"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C0A987"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#8E7962"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F6C082"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F5E1C5"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C07046"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A86D4C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9F6E4E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9E7957"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9E7E61"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F4C194"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E6BA92"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D0A17A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A05B47"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9A634B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#946950"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#8F6951"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EEA780"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DBA07B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E9C9AC"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BB8864"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#925547"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#8E5F4B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9A6F4A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#93714C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BBA381"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#84725E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F3B574"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F1D3A8"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E1BD95"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A06248"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#97664B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#926C4E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#917154"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F0AF80"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DEAB83"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C8946F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EAD4BC"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#8E5645"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#875B48"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#815D49"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EA9770"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D69370"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DDB390"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B68161"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D7B99D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#805346"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BB987A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#6F4E43"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9D7E6F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#6C5C54"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E78C64"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D58B66"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D39C76"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DBB495"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D4B193"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#7C4F44"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#755044"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E57F61"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CC7E63"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C3886B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C5987D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BD9379"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E5D3C3"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#684941"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DE6255"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C56A58"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BB7360"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A56355"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AE7E67"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C9A990"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AF8A6D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D2C1B1"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#97786A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#655751"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E37A59"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CD7C5B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C78A67"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CEA27E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C19978"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AF896B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#6A4A42"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E16E59"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C47259"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B8775E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BB8871"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B2846C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D2B59F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F7CEB2"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DB544F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BF5A50"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B26555"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9F5D50"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A5725F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B8927B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A88165"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CBB6A2"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#937769"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#5D514D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E06D52"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C76F52"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BE7A59"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C18C6A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B48769"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A67D60"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#FADEC4"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DD5C50"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BC6554"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B06B55"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AE7760"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A97862"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BD9A82"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F3BE9D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E7B294"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BA534C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A9584F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#98584E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9C6758"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A77E6A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9E765D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C1A894"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#8C7364"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F7CFAD"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DC5E4C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BF624E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B46A51"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B4795A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AA7B5E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9E755B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F6CAA9"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E7BD9C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B6594E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A65D4E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A26855"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9C6A58"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AB836C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EFAD8D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E0A284"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DDAB8D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AB554E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#93534C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#8D5A4E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#986D5B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#936B53"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B79B87"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#866D60"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F4C099"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E9B893"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BA5A4B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AD5F4B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A86951"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A06E54"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#956B53"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F3BA93"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E1AE8B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DCB293"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9F5649"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#975C4C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#905E4F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9B725E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EB997B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DB9378"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D49C81"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#B57762"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#905049"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#855047"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#895E50"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#87604C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AB8E7D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#7D685D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#F0AF83"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E1A780"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E7C1A1"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A55648"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#9F5E4B"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#96634F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#8B614D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EEA47F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DC9F7C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D3A384"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DDBDA3"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#8D5447"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#855549"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#886150"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E78769"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D5846C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CB8A71"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AF715D"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C59B81"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#7C4C44"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#774F46"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#7B5647"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#A18575"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#756258"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EB9C73"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DA9973"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DBAF8A"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#EACFB6"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#955246"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#8A5848"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#805748"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E98F6F"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D38F70"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CC9579"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#D3AB8E"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C9A58C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#7A4D44"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#775448"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#E37760"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#CE7761"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#C7836C"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#AC6A59"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#BA8D74"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#DBC3B2"
+    },
+    {
+        "code": "P 42-16 C",
+        "name": "",
+        "hex": "#6C4942"
+    }
+]

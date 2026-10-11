@@ -1,0 +1,737 @@
+[
+    {
+        "code": "11-0102 TSX",
+        "name": "Marshmallow Crème",
+        "hex": "#F1F3FF"
+    },
+    {
+        "code": "11-0720 TSX",
+        "name": "Duckling",
+        "hex": "#F1EAAC"
+    },
+    {
+        "code": "12-4010 TSX",
+        "name": "Frosted Window",
+        "hex": "#BACCE6"
+    },
+    {
+        "code": "13-0663 TSX",
+        "name": "Sun Glare",
+        "hex": "#EDFF00"
+    },
+    {
+        "code": "13-3512 TSX",
+        "name": "Taffy Batter",
+        "hex": "#D2B2D5"
+    },
+    {
+        "code": "13-5329 TSX",
+        "name": "Polynya",
+        "hex": "#76DAD3"
+    },
+    {
+        "code": "14-1140 TSX",
+        "name": "Iced Mango",
+        "hex": "#FFAD4F"
+    },
+    {
+        "code": "14-3005 TSX",
+        "name": "Mauve Echo",
+        "hex": "#D0BDC2"
+    },
+    {
+        "code": "14-4703 TSX",
+        "name": "Gray Day",
+        "hex": "#B3B3B0"
+    },
+    {
+        "code": "15-1408 TSX",
+        "name": "Junco",
+        "hex": "#BEAC9C"
+    },
+    {
+        "code": "15-3918 TSX",
+        "name": "Baby Blue Jay",
+        "hex": "#9AB1DA"
+    },
+    {
+        "code": "16-0223 TSX",
+        "name": "Bull Kelp",
+        "hex": "#79906C"
+    },
+    {
+        "code": "16-1634 TSX",
+        "name": "Ranunculus",
+        "hex": "#EC8B8D"
+    },
+    {
+        "code": "16-4102 TSX",
+        "name": "Trouser",
+        "hex": "#9E9FA2"
+    },
+    {
+        "code": "17-0104 TSX",
+        "name": "Rooftop",
+        "hex": "#7B767A"
+    },
+    {
+        "code": "17-1402 TSX",
+        "name": "Newsprint",
+        "hex": "#5B5758"
+    },
+    {
+        "code": "17-2523 TSX",
+        "name": "Rose Bouquet",
+        "hex": "#C27794"
+    },
+    {
+        "code": "17-4002 TSX",
+        "name": "Mysterious",
+        "hex": "#8B8B8D"
+    },
+    {
+        "code": "18-0425 TSX",
+        "name": "Commander Green",
+        "hex": "#6B6D40"
+    },
+    {
+        "code": "18-1548 TSX",
+        "name": "Winery",
+        "hex": "#A6343A"
+    },
+    {
+        "code": "18-1726 TSX",
+        "name": "Red Moscato",
+        "hex": "#A65865"
+    },
+    {
+        "code": "11-0109 TSX",
+        "name": "Cappucino Foam",
+        "hex": "#F6F3E8"
+    },
+    {
+        "code": "11-4002 TSX",
+        "name": "Powdered Sugar",
+        "hex": "#F1F4FF"
+    },
+    {
+        "code": "12-4102 TSX",
+        "name": "Grout",
+        "hex": "#CFD4D7"
+    },
+    {
+        "code": "13-0716 TSX",
+        "name": "Baked Flan",
+        "hex": "#D6C49E"
+    },
+    {
+        "code": "13-3700 TSX",
+        "name": "Raw Silk",
+        "hex": "#C7C3C1"
+    },
+    {
+        "code": "13-6030 TSX",
+        "name": "Carnival Glass",
+        "hex": "#81E4BD"
+    },
+    {
+        "code": "14-1229 TSX",
+        "name": "Euphorbia",
+        "hex": "#FEAB73"
+    },
+    {
+        "code": "14-3606 TSX",
+        "name": "Celestial Dusk",
+        "hex": "#C7BDCE"
+    },
+    {
+        "code": "14-4803 TSX",
+        "name": "Woven Rush",
+        "hex": "#BBBEBD"
+    },
+    {
+        "code": "15-1609 TSX",
+        "name": "Pink Suede",
+        "hex": "#BE9D9B"
+    },
+    {
+        "code": "15-4128 TSX",
+        "name": "Comet Sea Star",
+        "hex": "#72AAD8"
+    },
+    {
+        "code": "16-1030 TSX",
+        "name": "Peanut Butter",
+        "hex": "#B59562"
+    },
+    {
+        "code": "16-1663 TSX",
+        "name": "Siesta",
+        "hex": "#FF6A6E"
+    },
+    {
+        "code": "16-4126 TSX",
+        "name": "Swimsuit",
+        "hex": "#5F95BE"
+    },
+    {
+        "code": "17-0112 TSX",
+        "name": "Matte Green",
+        "hex": "#7E8772"
+    },
+    {
+        "code": "17-1403 TSX",
+        "name": "Gray Hawk",
+        "hex": "#7F7C7A"
+    },
+    {
+        "code": "17-3316 TSX",
+        "name": "Purple Jasper",
+        "hex": "#99748F"
+    },
+    {
+        "code": "17-4022 TSX",
+        "name": "Top O The Morning",
+        "hex": "#6482B0"
+    },
+    {
+        "code": "18-0614 TSX",
+        "name": "Mountain Pass",
+        "hex": "#766B4F"
+    },
+    {
+        "code": "18-1560 TSX",
+        "name": "Mandevilla Red",
+        "hex": "#DA3A2C"
+    },
+    {
+        "code": "18-1850 TSX",
+        "name": "Red Lacquer",
+        "hex": "#9D273E"
+    },
+    {
+        "code": "11-0203 TSX",
+        "name": "Eggwhite",
+        "hex": "#EFEAE7"
+    },
+    {
+        "code": "12-0658 TSX",
+        "name": "Highlight",
+        "hex": "#FBEB70"
+    },
+    {
+        "code": "12-4207 TSX",
+        "name": "Quietude",
+        "hex": "#BDD3E2"
+    },
+    {
+        "code": "13-0761 TSX",
+        "name": "Spaghetti Squash",
+        "hex": "#FFD113"
+    },
+    {
+        "code": "13-4014 TSX",
+        "name": "Whispy Blue",
+        "hex": "#B0CBE7"
+    },
+    {
+        "code": "14-0255 TSX",
+        "name": "Kohlrabi",
+        "hex": "#9CCF65"
+    },
+    {
+        "code": "14-1325 TSX",
+        "name": "Peach Pie",
+        "hex": "#FFA88B"
+    },
+    {
+        "code": "14-3902 TSX",
+        "name": "Dream of Cotton",
+        "hex": "#C0B2BE"
+    },
+    {
+        "code": "15-0262 TSX",
+        "name": "Lime Zest",
+        "hex": "#7BB73D"
+    },
+    {
+        "code": "15-1619 TSX",
+        "name": "Pressed Rose",
+        "hex": "#D89C9A"
+    },
+    {
+        "code": "15-4321 TSX",
+        "name": "Fountain Wish",
+        "hex": "#7AB3CA"
+    },
+    {
+        "code": "16-1311 TSX",
+        "name": "Coconut Husk",
+        "hex": "#AA9F8A"
+    },
+    {
+        "code": "16-3209 TSX",
+        "name": "Discreet Mauve",
+        "hex": "#A98C9B"
+    },
+    {
+        "code": "16-4403 TSX",
+        "name": "Skyscraper",
+        "hex": "#919193"
+    },
+    {
+        "code": "17-0542 TSX",
+        "name": "Pepper Stem",
+        "hex": "#8D9440"
+    },
+    {
+        "code": "17-1421 TSX",
+        "name": "Deer",
+        "hex": "#9B736B"
+    },
+    {
+        "code": "17-3763 TSX",
+        "name": "Afterparty",
+        "hex": "#6F54A1"
+    },
+    {
+        "code": "17-4130 TSX",
+        "name": "Diving Hole",
+        "hex": "#3574A5"
+    },
+    {
+        "code": "18-0818 TSX",
+        "name": "Espresso Parfait",
+        "hex": "#76624E"
+    },
+    {
+        "code": "18-1624 TSX",
+        "name": "Redwood Trail",
+        "hex": "#AD696B"
+    },
+    {
+        "code": "18-1855 TSX",
+        "name": "Berry Pinwheel",
+        "hex": "#C13458"
+    },
+    {
+        "code": "11-0501 TSX",
+        "name": "Baby Powder",
+        "hex": "#F7F6EE"
+    },
+    {
+        "code": "12-0660 TSX",
+        "name": "Lemon Fizz",
+        "hex": "#F2E651"
+    },
+    {
+        "code": "12-4401 TSX",
+        "name": "Antique Crinoline",
+        "hex": "#D9DBDE"
+    },
+    {
+        "code": "13-0763 TSX",
+        "name": "Owl's Eye",
+        "hex": "#FFBF3A"
+    },
+    {
+        "code": "13-4220 TSX",
+        "name": "Arctic Paradise",
+        "hex": "#A1CDEC"
+    },
+    {
+        "code": "14-0543 TSX",
+        "name": "Spider Mum",
+        "hex": "#C0C673"
+    },
+    {
+        "code": "14-1519 TSX",
+        "name": "Sugar Honey Glaze",
+        "hex": "#DBAFAA"
+    },
+    {
+        "code": "14-3921 TSX",
+        "name": "Lacecap Hydrangea",
+        "hex": "#96B3DE"
+    },
+    {
+        "code": "15-0722 TSX",
+        "name": "Lioness",
+        "hex": "#C0AC7A"
+    },
+    {
+        "code": "15-1863 TSX",
+        "name": "Candy Kiss",
+        "hex": "#FF5696"
+    },
+    {
+        "code": "15-4333 TSX",
+        "name": "Out of the Blue",
+        "hex": "#00A4CC"
+    },
+    {
+        "code": "16-1355 TSX",
+        "name": "Orange Slice",
+        "hex": "#FE6D00"
+    },
+    {
+        "code": "16-3902 TSX",
+        "name": "Squirrel",
+        "hex": "#A19C9C"
+    },
+    {
+        "code": "16-4704 TSX",
+        "name": "Thundercloud",
+        "hex": "#7A7B7D"
+    },
+    {
+        "code": "17-0606 TSX",
+        "name": "Crusted Gravel",
+        "hex": "#89867A"
+    },
+    {
+        "code": "17-1460 TSX",
+        "name": "Firelight",
+        "hex": "#EC4E46"
+    },
+    {
+        "code": "17-3805 TSX",
+        "name": "Ube Pudding",
+        "hex": "#968D9E"
+    },
+    {
+        "code": "17-4303 TSX",
+        "name": "Igneous Rock",
+        "hex": "#92979B"
+    },
+    {
+        "code": "18-0921 TSX",
+        "name": "Groundhog",
+        "hex": "#856449"
+    },
+    {
+        "code": "18-1645 TSX",
+        "name": "Valiant Red",
+        "hex": "#9B283C"
+    },
+    {
+        "code": "18-1935 TSX",
+        "name": "Red Velvet",
+        "hex": "#7F2A3C"
+    },
+    {
+        "code": "11-0503 TSX",
+        "name": "Meringue",
+        "hex": "#FAF3E3"
+    },
+    {
+        "code": "12-0739 TSX",
+        "name": "Daisy Floret",
+        "hex": "#FCDE76"
+    },
+    {
+        "code": "13-0201 TSX",
+        "name": "Tiptoe",
+        "hex": "#BEBDBF"
+    },
+    {
+        "code": "13-1325 TSX",
+        "name": "Alluring Apricot",
+        "hex": "#FFC0A0"
+    },
+    {
+        "code": "13-4320 TSX",
+        "name": "Polar Wind",
+        "hex": "#97CBEB"
+    },
+    {
+        "code": "14-0926 TSX",
+        "name": "Sunflower Seed",
+        "hex": "#D3C28F"
+    },
+    {
+        "code": "14-1906 TSX",
+        "name": "Boto Dolphin",
+        "hex": "#D9ADAC"
+    },
+    {
+        "code": "14-4003 TSX",
+        "name": "Staple",
+        "hex": "#B8B4B9"
+    },
+    {
+        "code": "15-1260 TSX",
+        "name": "Fall Fantasy",
+        "hex": "#FF9026"
+    },
+    {
+        "code": "15-2615 TSX",
+        "name": "Bashful Blush",
+        "hex": "#D2A6AE"
+    },
+    {
+        "code": "15-4535 TSX",
+        "name": "Blue Blossom",
+        "hex": "#2DA8D8"
+    },
+    {
+        "code": "16-1404 TSX",
+        "name": "River Rock",
+        "hex": "#B7A290"
+    },
+    {
+        "code": "16-3936 TSX",
+        "name": "Coastline Blue",
+        "hex": "#7D95CE"
+    },
+    {
+        "code": "16-5128 TSX",
+        "name": "Jaded",
+        "hex": "#52ACAA"
+    },
+    {
+        "code": "17-1220 TSX",
+        "name": "Affogato",
+        "hex": "#A88B70"
+    },
+    {
+        "code": "17-1541 TSX",
+        "name": "Persimmon Glaze",
+        "hex": "#DF5750"
+    },
+    {
+        "code": "17-3818 TSX",
+        "name": "Purple Yam",
+        "hex": "#8176A0"
+    },
+    {
+        "code": "17-4563 TSX",
+        "name": "Spring Break",
+        "hex": "#008DCC"
+    },
+    {
+        "code": "18-1032 TSX",
+        "name": "Crimini",
+        "hex": "#8A6C56"
+    },
+    {
+        "code": "18-1647 TSX",
+        "name": "Rosella",
+        "hex": "#C62734"
+    },
+    {
+        "code": "18-2054 TSX",
+        "name": "Bossy Pink",
+        "hex": "#CE3D66"
+    },
+    {
+        "code": "11-0518 TSX",
+        "name": "Béchamel",
+        "hex": "#F7ECC5"
+    },
+    {
+        "code": "12-0830 TSX",
+        "name": "Pancake Batter",
+        "hex": "#EAD295"
+    },
+    {
+        "code": "13-0240 TSX",
+        "name": "Tomatillo",
+        "hex": "#BFDF8E"
+    },
+    {
+        "code": "13-1805 TSX",
+        "name": "Pink Gecko",
+        "hex": "#DCC8C6"
+    },
+    {
+        "code": "13-4421 TSX",
+        "name": "Castaway",
+        "hex": "#91D5ED"
+    },
+    {
+        "code": "14-0937 TSX",
+        "name": "Banana Pudding",
+        "hex": "#D4B265"
+    },
+    {
+        "code": "14-2116 TSX",
+        "name": "Fairy Wing",
+        "hex": "#E6B3C0"
+    },
+    {
+        "code": "14-4204 TSX",
+        "name": "Rare Coin",
+        "hex": "#B9BCBF"
+    },
+    {
+        "code": "15-1351 TSX",
+        "name": "Candied Yams",
+        "hex": "#FF8449"
+    },
+    {
+        "code": "15-3407 TSX",
+        "name": "La La Lovely",
+        "hex": "#BAA0B3"
+    },
+    {
+        "code": "16-0102 TSX",
+        "name": "Wolf Tail",
+        "hex": "#959393"
+    },
+    {
+        "code": "16-1530 TSX",
+        "name": "Coral Chic",
+        "hex": "#FF8270"
+    },
+    {
+        "code": "16-4002 TSX",
+        "name": "Concrete",
+        "hex": "#949497"
+    },
+    {
+        "code": "16-5616 TSX",
+        "name": "Weathered Metal",
+        "hex": "#6B9BA3"
+    },
+    {
+        "code": "17-1323 TSX",
+        "name": "Poulet Saute",
+        "hex": "#9B654C"
+    },
+    {
+        "code": "17-1561 TSX",
+        "name": "Red Maple",
+        "hex": "#D02D23"
+    },
+    {
+        "code": "17-3921 TSX",
+        "name": "Faded Ticking",
+        "hex": "#677399"
+    },
+    {
+        "code": "17-6156 TSX",
+        "name": "Irish Jig",
+        "hex": "#00873A"
+    },
+    {
+        "code": "18-1123 TSX",
+        "name": "Rum Caramel",
+        "hex": "#89654E"
+    },
+    {
+        "code": "18-1650 TSX",
+        "name": "Endangered",
+        "hex": "#CD2428"
+    },
+    {
+        "code": "18-2350 TSX",
+        "name": "Boudoir Red",
+        "hex": "#B12763"
+    },
+    {
+        "code": "11-0610 TSX",
+        "name": "Silence",
+        "hex": "#F6EFE5"
+    },
+    {
+        "code": "12-2007 TSX",
+        "name": "Little Piglet",
+        "hex": "#ECD1D6"
+    },
+    {
+        "code": "13-0402 TSX",
+        "name": "Tortilla",
+        "hex": "#C8BAAB"
+    },
+    {
+        "code": "13-2820 TSX",
+        "name": "Party Pink",
+        "hex": "#EBB8DB"
+    },
+    {
+        "code": "13-4504 TSX",
+        "name": "Turquenite",
+        "hex": "#C9C9C6"
+    },
+    {
+        "code": "14-0938 TSX",
+        "name": "Ancient Grain",
+        "hex": "#D3B781"
+    },
+    {
+        "code": "14-2810 TSX",
+        "name": "Charm Pink",
+        "hex": "#DEBBC9"
+    },
+    {
+        "code": "14-4434 TSX",
+        "name": "Aged Copper",
+        "hex": "#5CC8D7"
+    },
+    {
+        "code": "15-1363 TSX",
+        "name": "Live Wire",
+        "hex": "#FF9F67"
+    },
+    {
+        "code": "15-3814 TSX",
+        "name": "Mystic Violet",
+        "hex": "#ADA1C3"
+    },
+    {
+        "code": "16-0163 TSX",
+        "name": "Lounge Lizard",
+        "hex": "#9AFF1C"
+    },
+    {
+        "code": "16-1534 TSX",
+        "name": "Blush Beauty",
+        "hex": "#E57868"
+    },
+    {
+        "code": "16-4036 TSX",
+        "name": "Blue Perennial",
+        "hex": "#4B81BF"
+    },
+    {
+        "code": "16-6264 TSX",
+        "name": "Green Spring",
+        "hex": "#00A93C"
+    },
+    {
+        "code": "17-1363 TSX",
+        "name": "Exuberant Orange",
+        "hex": "#FF582D"
+    },
+    {
+        "code": "17-2255 TSX",
+        "name": "Cheeky Pink",
+        "hex": "#F55995"
+    },
+    {
+        "code": "17-3931 TSX",
+        "name": "Sea Urchin",
+        "hex": "#6374A5"
+    },
+    {
+        "code": "18-0416 TSX",
+        "name": "Terrarium Moss",
+        "hex": "#616247"
+    },
+    {
+        "code": "18-1446 TSX",
+        "name": "Fire Finch",
+        "hex": "#AF3A2F"
+    },
+    {
+        "code": "18-1656 TSX",
+        "name": "Fierce",
+        "hex": "#C51F31"
+    },
+    {
+        "code": "18-2534 TSX",
+        "name": "Dried Hydrangea",
+        "hex": "#994465"
+    }
+]

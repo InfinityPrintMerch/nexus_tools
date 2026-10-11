@@ -1,0 +1,3257 @@
+[
+    {
+        "name": "Noche Estrellada",
+        "colors": [
+            "#0F172A",
+            "#1E293B",
+            "#334155"
+        ],
+        "tags": [
+            "oscuro",
+            "frio",
+            "minimal"
+        ]
+    },
+    {
+        "name": "Atardecer Neón",
+        "colors": [
+            "#FF007F",
+            "#7F00FF",
+            "#00FFFF",
+            "#FFD700",
+            "#FF4500"
+        ],
+        "tags": [
+            "vibrante",
+            "neon",
+            "retro"
+        ]
+    },
+    {
+        "name": "Brisa de Mar",
+        "colors": [
+            "#E0F2FE",
+            "#7DD3FC",
+            "#0EA5E9"
+        ],
+        "tags": [
+            "pastel",
+            "frio",
+            "suave"
+        ]
+    },
+    {
+        "name": "Bosque Profundo",
+        "colors": [
+            "#166534",
+            "#15803D",
+            "#16A34A",
+            "#4ADE80",
+            "#A7F3D0"
+        ],
+        "tags": [
+            "naturaleza",
+            "verde",
+            "frio"
+        ]
+    },
+    {
+        "name": "Vibra Vintage",
+        "colors": [
+            "#C04000",
+            "#D97706",
+            "#FBBF24",
+            "#FDE68A",
+            "#FFFBEB"
+        ],
+        "tags": [
+            "retro",
+            "calido",
+            "suave"
+        ]
+    },
+    {
+        "name": "Desierto Rojo",
+        "colors": [
+            "#7F1D1D",
+            "#B91C1C",
+            "#EF4444"
+        ],
+        "tags": [
+            "calido",
+            "oscuro",
+            "rojo"
+        ]
+    },
+    {
+        "name": "Helado de Menta",
+        "colors": [
+            "#A7F3D0",
+            "#6EE7B7",
+            "#34D399",
+            "#10B981",
+            "#059669"
+        ],
+        "tags": [
+            "pastel",
+            "verde",
+            "suave"
+        ]
+    },
+    {
+        "name": "Minimalismo Monocromo",
+        "colors": [
+            "#111111",
+            "#CCCCCC",
+            "#FFFFFF"
+        ],
+        "tags": [
+            "minimal",
+            "oscuro",
+            "frio"
+        ]
+    },
+    {
+        "name": "Fuego y Hielo",
+        "colors": [
+            "#FF4500",
+            "#FFD700",
+            "#FFFFFF",
+            "#00BFFF",
+            "#000080"
+        ],
+        "tags": [
+            "vibrante",
+            "contraste"
+        ]
+    },
+    {
+        "name": "Tierra Mojada",
+        "colors": [
+            "#44403C",
+            "#78716C",
+            "#A8A29E"
+        ],
+        "tags": [
+            "naturaleza",
+            "gris",
+            "suave"
+        ]
+    },
+    {
+        "name": "Caramelo de Fresa",
+        "colors": [
+            "#FECDD3",
+            "#FDA4AF",
+            "#F43F5E",
+            "#E11D48",
+            "#BE123C"
+        ],
+        "tags": [
+            "pastel",
+            "rojo",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Cielo Urbano",
+        "colors": [
+            "#475569",
+            "#94A3B8",
+            "#CBD5E1"
+        ],
+        "tags": [
+            "gris",
+            "frio",
+            "minimal"
+        ]
+    },
+    {
+        "name": "Café Matutino",
+        "colors": [
+            "#292524",
+            "#57534E",
+            "#78716C",
+            "#A8A29E",
+            "#D6D3D1"
+        ],
+        "tags": [
+            "naturaleza",
+            "calido",
+            "suave"
+        ]
+    },
+    {
+        "name": "Aurora Boreal",
+        "colors": [
+            "#1E3A8A",
+            "#065F46",
+            "#047857",
+            "#10B981",
+            "#A7F3D0"
+        ],
+        "tags": [
+            "frio",
+            "naturaleza",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Cyberpunk City",
+        "colors": [
+            "#FCEE09",
+            "#00F0FF",
+            "#FF003C",
+            "#0D0208",
+            "#711C91"
+        ],
+        "tags": [
+            "cyberpunk",
+            "neon",
+            "vibrante",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Neon Tokyo",
+        "colors": [
+            "#091833",
+            "#133E7C",
+            "#EA00D9",
+            "#0ABDC6",
+            "#711C91"
+        ],
+        "tags": [
+            "cyberpunk",
+            "neon",
+            "frio"
+        ]
+    },
+    {
+        "name": "Hacker Terminal",
+        "colors": [
+            "#0D0208",
+            "#00FF41",
+            "#008F11"
+        ],
+        "tags": [
+            "cyberpunk",
+            "oscuro",
+            "verde",
+            "minimal"
+        ]
+    },
+    {
+        "name": "Synthwave Sunset",
+        "colors": [
+            "#2D1B2E",
+            "#B43E8F",
+            "#EA6227",
+            "#F2A65A",
+            "#77C9D4"
+        ],
+        "tags": [
+            "retro",
+            "synthwave",
+            "vibrante",
+            "calido"
+        ]
+    },
+    {
+        "name": "Vaporwave Dream",
+        "colors": [
+            "#FF6AD5",
+            "#C774E8",
+            "#AD8CFF",
+            "#8795E8",
+            "#94D0FF"
+        ],
+        "tags": [
+            "vaporwave",
+            "retro",
+            "pastel",
+            "neon"
+        ]
+    },
+    {
+        "name": "80s Arcade",
+        "colors": [
+            "#2B2B2B",
+            "#FF0055",
+            "#00FF66",
+            "#00CCFF",
+            "#FFD700"
+        ],
+        "tags": [
+            "retro",
+            "arcade",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "90s Memphis",
+        "colors": [
+            "#FF5722",
+            "#FFEB3B",
+            "#00BCD4",
+            "#E91E63",
+            "#212121"
+        ],
+        "tags": [
+            "retro",
+            "vibrante",
+            "contraste"
+        ]
+    },
+    {
+        "name": "70s Nostalgia",
+        "colors": [
+            "#264653",
+            "#2A9D8F",
+            "#E9C46A",
+            "#F4A261",
+            "#E76F51"
+        ],
+        "tags": [
+            "retro",
+            "calido",
+            "vintage",
+            "suave"
+        ]
+    },
+    {
+        "name": "Bosque Ghibli",
+        "colors": [
+            "#2D4221",
+            "#4A6E32",
+            "#7E9C57",
+            "#C4D6B0",
+            "#F0F4E8"
+        ],
+        "tags": [
+            "anime",
+            "naturaleza",
+            "verde",
+            "suave"
+        ]
+    },
+    {
+        "name": "Cielo Anime",
+        "colors": [
+            "#1A4A76",
+            "#3B81B6",
+            "#87BEEB",
+            "#DDEEFF",
+            "#FFFFFF"
+        ],
+        "tags": [
+            "anime",
+            "frio",
+            "pastel",
+            "cielo"
+        ]
+    },
+    {
+        "name": "Mecha Unit-01",
+        "colors": [
+            "#761C91",
+            "#52D135",
+            "#FF7200",
+            "#151515",
+            "#EBEBEB"
+        ],
+        "tags": [
+            "anime",
+            "cyberpunk",
+            "contraste",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Magical Girl",
+        "colors": [
+            "#FFB7B2",
+            "#FF9EBB",
+            "#FF7EB3",
+            "#D291BC",
+            "#E0BBE4"
+        ],
+        "tags": [
+            "anime",
+            "pastel",
+            "rosa",
+            "suave"
+        ]
+    },
+    {
+        "name": "Shonen Energy",
+        "colors": [
+            "#E63946",
+            "#F4A261",
+            "#E9C46A",
+            "#2A9D8F",
+            "#264653"
+        ],
+        "tags": [
+            "anime",
+            "vibrante",
+            "contraste",
+            "accion"
+        ]
+    },
+    {
+        "name": "Dark Academia",
+        "colors": [
+            "#2C221E",
+            "#423629",
+            "#5C4D3C",
+            "#7A6752",
+            "#1C2D23"
+        ],
+        "tags": [
+            "aesthetic",
+            "oscuro",
+            "vintage",
+            "calido"
+        ]
+    },
+    {
+        "name": "Cottagecore",
+        "colors": [
+            "#E2D4B7",
+            "#D1C2A3",
+            "#A8B69A",
+            "#7A8A6B",
+            "#4A5D44"
+        ],
+        "tags": [
+            "aesthetic",
+            "naturaleza",
+            "suave",
+            "pastel"
+        ]
+    },
+    {
+        "name": "Y2K Cyber",
+        "colors": [
+            "#D4D4D4",
+            "#A3A3A3",
+            "#737373",
+            "#FF00FF",
+            "#00FFFF"
+        ],
+        "tags": [
+            "y2k",
+            "retro",
+            "cyberpunk",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Pastel Goth",
+        "colors": [
+            "#2B2B2B",
+            "#5C5C5C",
+            "#CBAACB",
+            "#FFB6B9",
+            "#82C1B4"
+        ],
+        "tags": [
+            "aesthetic",
+            "pastel",
+            "oscuro",
+            "contraste"
+        ]
+    },
+    {
+        "name": "Fairycore",
+        "colors": [
+            "#FFF0F5",
+            "#FFE4E1",
+            "#FFDAB9",
+            "#E6E6FA",
+            "#D8BFD8"
+        ],
+        "tags": [
+            "aesthetic",
+            "pastel",
+            "suave",
+            "rosa"
+        ]
+    },
+    {
+        "name": "Deep Space",
+        "colors": [
+            "#0B0C10",
+            "#1F2833",
+            "#C5C6C7",
+            "#45A29E",
+            "#66FCF1"
+        ],
+        "tags": [
+            "sci-fi",
+            "cyberpunk",
+            "oscuro",
+            "frio"
+        ]
+    },
+    {
+        "name": "Mars Colony",
+        "colors": [
+            "#451A03",
+            "#78350F",
+            "#B45309",
+            "#D97706",
+            "#FDE68A"
+        ],
+        "tags": [
+            "sci-fi",
+            "calido",
+            "espacio",
+            "rojo"
+        ]
+    },
+    {
+        "name": "Matrix Code",
+        "colors": [
+            "#000000",
+            "#003B00",
+            "#008F11"
+        ],
+        "tags": [
+            "sci-fi",
+            "cyberpunk",
+            "verde",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Hielo Alienígena",
+        "colors": [
+            "#001B2E",
+            "#014F86",
+            "#2A6F97"
+        ],
+        "tags": [
+            "sci-fi",
+            "frio",
+            "espacio"
+        ]
+    },
+    {
+        "name": "Otoño Dorado",
+        "colors": [
+            "#3C1518",
+            "#69140E",
+            "#A44200",
+            "#D58936",
+            "#F2F3AE"
+        ],
+        "tags": [
+            "naturaleza",
+            "calido",
+            "otoño",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Abismo Oceánico",
+        "colors": [
+            "#00112A",
+            "#002A54",
+            "#00477D",
+            "#006BA6",
+            "#0093D0"
+        ],
+        "tags": [
+            "naturaleza",
+            "frio",
+            "agua",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Volcán",
+        "colors": [
+            "#141414",
+            "#300A0A",
+            "#731102",
+            "#C9360A",
+            "#FF7F11"
+        ],
+        "tags": [
+            "naturaleza",
+            "calido",
+            "fuego",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Flores de Cerezo",
+        "colors": [
+            "#FFB7B2",
+            "#FFDAC1",
+            "#E2F0CB"
+        ],
+        "tags": [
+            "naturaleza",
+            "primavera",
+            "pastel",
+            "anime"
+        ]
+    },
+    {
+        "name": "Matcha Latte",
+        "colors": [
+            "#DDF1E5",
+            "#B3E2C4",
+            "#6BA77F",
+            "#3B694B",
+            "#1C3625"
+        ],
+        "tags": [
+            "comida",
+            "verde",
+            "pastel",
+            "suave"
+        ]
+    },
+    {
+        "name": "Blueberry Pie",
+        "colors": [
+            "#1A1423",
+            "#372549",
+            "#774C60",
+            "#B75D69",
+            "#EACDC2"
+        ],
+        "tags": [
+            "comida",
+            "oscuro",
+            "calido",
+            "contraste"
+        ]
+    },
+    {
+        "name": "Citrus Splash",
+        "colors": [
+            "#FF9F1C",
+            "#FFBF69",
+            "#FFFFFF",
+            "#CBF3F0",
+            "#2EC4B6"
+        ],
+        "tags": [
+            "comida",
+            "vibrante",
+            "verano",
+            "frio"
+        ]
+    },
+    {
+        "name": "Café Moca",
+        "colors": [
+            "#3E2723",
+            "#4E342E",
+            "#5D4037"
+        ],
+        "tags": [
+            "comida",
+            "calido",
+            "minimal",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Drácula",
+        "colors": [
+            "#000000",
+            "#1A1A1A",
+            "#8B0000",
+            "#FF0000",
+            "#FFFFFF"
+        ],
+        "tags": [
+            "oscuro",
+            "rojo",
+            "contraste",
+            "gótico"
+        ]
+    },
+    {
+        "name": "Midnight Jazz",
+        "colors": [
+            "#050517",
+            "#1E1E40",
+            "#D9A05B",
+            "#F2E2C4",
+            "#A64B2A"
+        ],
+        "tags": [
+            "retro",
+            "oscuro",
+            "elegante",
+            "calido"
+        ]
+    },
+    {
+        "name": "Realeza",
+        "colors": [
+            "#1A0B2E",
+            "#3A1078",
+            "#FFD700"
+        ],
+        "tags": [
+            "elegante",
+            "oscuro",
+            "contraste"
+        ]
+    },
+    {
+        "name": "Minimal Dark UI",
+        "colors": [
+            "#121212",
+            "#1E1E1E",
+            "#BB86FC",
+            "#03DAC6",
+            "#CF6679"
+        ],
+        "tags": [
+            "ui",
+            "cyberpunk",
+            "minimal",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Clean Light UI",
+        "colors": [
+            "#F8F9FA",
+            "#E9ECEF",
+            "#DEE2E6"
+        ],
+        "tags": [
+            "ui",
+            "minimal",
+            "claro",
+            "frio"
+        ]
+    },
+    {
+        "name": "Tóxico",
+        "colors": [
+            "#1A1A1D",
+            "#4E4E50",
+            "#6F2232",
+            "#950740",
+            "#C3073F"
+        ],
+        "tags": [
+            "cyberpunk",
+            "oscuro",
+            "rojo",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Rayo Nocturno",
+        "colors": [
+            "#0A0A23",
+            "#1F1F3B",
+            "#3B3B66"
+        ],
+        "tags": [
+            "oscuro",
+            "frio",
+            "minimal"
+        ]
+    },
+    {
+        "name": "Aurora Radiante",
+        "colors": [
+            "#FF4D4D",
+            "#FF8C00",
+            "#FFE066",
+            "#33FF66",
+            "#3366FF"
+        ],
+        "tags": [
+            "vibrante",
+            "aurora",
+            "retro"
+        ]
+    },
+    {
+        "name": "Brisa Ártica",
+        "colors": [
+            "#E0F7FA",
+            "#80DEEA",
+            "#00ACC1"
+        ],
+        "tags": [
+            "pastel",
+            "frio",
+            "suave"
+        ]
+    },
+    {
+        "name": "Selva Oculta",
+        "colors": [
+            "#0B5345",
+            "#145A32",
+            "#196F3D",
+            "#27AE60",
+            "#52BE80"
+        ],
+        "tags": [
+            "naturaleza",
+            "verde",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Tono Vintage",
+        "colors": [
+            "#C04000",
+            "#D97706",
+            "#F4D35E",
+            "#F2F2F2",
+            "#E0E0E0"
+        ],
+        "tags": [
+            "retro",
+            "calido",
+            "suave"
+        ]
+    },
+    {
+        "name": "Ceniza Roja",
+        "colors": [
+            "#7F1D1D",
+            "#B22222",
+            "#FA8072"
+        ],
+        "tags": [
+            "calido",
+            "oscuro",
+            "rojo"
+        ]
+    },
+    {
+        "name": "Hielo Místico",
+        "colors": [
+            "#A7F3D0",
+            "#7EE8A4",
+            "#4CBF4B",
+            "#2F8F2F",
+            "#166E16"
+        ],
+        "tags": [
+            "pastel",
+            "verde",
+            "suave"
+        ]
+    },
+    {
+        "name": "Monocromo Sombra",
+        "colors": [
+            "#111111",
+            "#4D4D4D",
+            "#999999"
+        ],
+        "tags": [
+            "minimal",
+            "oscuro",
+            "frio"
+        ]
+    },
+    {
+        "name": "Fuego Vivo",
+        "colors": [
+            "#FF4500",
+            "#FF6347",
+            "#FFD700",
+            "#FFA500",
+            "#FF8C00"
+        ],
+        "tags": [
+            "vibrante",
+            "contraste"
+        ]
+    },
+    {
+        "name": "Tierra Umbría",
+        "colors": [
+            "#3D2F23",
+            "#6F4E37",
+            "#A0522D"
+        ],
+        "tags": [
+            "naturaleza",
+            "calido",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Fucsia Eléctrico",
+        "colors": [
+            "#FF00FF",
+            "#FF33FF",
+            "#CC00CC",
+            "#990099",
+            "#660066"
+        ],
+        "tags": [
+            "neon",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Niebla Urbana",
+        "colors": [
+            "#475569",
+            "#94A3B8",
+            "#CBD5E1"
+        ],
+        "tags": [
+            "gris",
+            "frio",
+            "minimal"
+        ]
+    },
+    {
+        "name": "Café Profundo",
+        "colors": [
+            "#4B2E2E",
+            "#6F4E37",
+            "#A0522D",
+            "#D2691E"
+        ],
+        "tags": [
+            "calido",
+            "naturaleza"
+        ]
+    },
+    {
+        "name": "Luz de Alba",
+        "colors": [
+            "#FFE4B5",
+            "#FFDAB9",
+            "#FFCBA4"
+        ],
+        "tags": [
+            "pastel",
+            "calido"
+        ]
+    },
+    {
+        "name": "Aurora Boreal Oscura",
+        "colors": [
+            "#2C3E50",
+            "#34495E",
+            "#4A69AD",
+            "#6C5CE7",
+            "#A29BFE"
+        ],
+        "tags": [
+            "oscuro",
+            "vibrante",
+            "naturaleza"
+        ]
+    },
+    {
+        "name": "Ciudad Cibernética",
+        "colors": [
+            "#0D0208",
+            "#00FFEF",
+            "#FF00FF",
+            "#00FF7F"
+        ],
+        "tags": [
+            "cyberpunk",
+            "neon",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Atardecer Abstracto",
+        "colors": [
+            "#FF6F00",
+            "#FFA000",
+            "#FFCC80",
+            "#FFE0B2",
+            "#FFE4B5"
+        ],
+        "tags": [
+            "vibrante",
+            "calido"
+        ]
+    },
+    {
+        "name": "Lago Sombrío",
+        "colors": [
+            "#0A1F44",
+            "#0D3B66",
+            "#2E8BFF"
+        ],
+        "tags": [
+            "oscuro",
+            "frio",
+            "naturaleza"
+        ]
+    },
+    {
+        "name": "Fulgor Solar",
+        "colors": [
+            "#FFDD00",
+            "#FFAB00",
+            "#FF6F00"
+        ],
+        "tags": [
+            "vibrante",
+            "contraste"
+        ]
+    },
+    {
+        "name": "Bosque Encantado",
+        "colors": [
+            "#0B6623",
+            "#306754",
+            "#6B8E23",
+            "#A9DFBF"
+        ],
+        "tags": [
+            "naturaleza",
+            "verde",
+            "suave"
+        ]
+    },
+    {
+        "name": "Cielo Enrojecido",
+        "colors": [
+            "#8B0000",
+            "#B22222",
+            "#FF6347"
+        ],
+        "tags": [
+            "oscuro",
+            "rojo",
+            "calido"
+        ]
+    },
+    {
+        "name": "Noche Eléctrica",
+        "colors": [
+            "#0D0D0D",
+            "#2E2E2E",
+            "#4D4D4D",
+            "#00FFEF"
+        ],
+        "tags": [
+            "oscuro",
+            "neon",
+            "minimal"
+        ]
+    },
+    {
+        "name": "Cumbre Helada",
+        "colors": [
+            "#D0E8F2",
+            "#A7D3F2",
+            "#80C1F2"
+        ],
+        "tags": [
+            "frio",
+            "pastel",
+            "suave"
+        ]
+    },
+    {
+        "name": "Fuego y Ceniza",
+        "colors": [
+            "#4B1F1F",
+            "#8B0000",
+            "#FFC300"
+        ],
+        "tags": [
+            "contraste",
+            "calido"
+        ]
+    },
+    {
+        "name": "Mar Profundo",
+        "colors": [
+            "#001F3F",
+            "#003366",
+            "#00509E"
+        ],
+        "tags": [
+            "oscuro",
+            "agua",
+            "frio"
+        ]
+    },
+    {
+        "name": "Rosa Explosivo",
+        "colors": [
+            "#FF007F",
+            "#FF66B2",
+            "#CC3399"
+        ],
+        "tags": [
+            "vibrante",
+            "rosa"
+        ]
+    },
+    {
+        "name": "Tierra de Cenizas",
+        "colors": [
+            "#4E4E4E",
+            "#7A7A7A",
+            "#A0A0A0"
+        ],
+        "tags": [
+            "oscuro",
+            "gris",
+            "minimal"
+        ]
+    },
+    {
+        "name": "Niebla Plateada",
+        "colors": [
+            "#C0C0C0",
+            "#D3D3D3",
+            "#E0E0E0"
+        ],
+        "tags": [
+            "pastel",
+            "suave"
+        ]
+    },
+    {
+        "name": "Luz Ártica",
+        "colors": [
+            "#00FFF7",
+            "#00CED1",
+            "#007F7F"
+        ],
+        "tags": [
+            "frio",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Llama Violeta",
+        "colors": [
+            "#8A2BE2",
+            "#9400D3",
+            "#BA55D3"
+        ],
+        "tags": [
+            "vibrante",
+            "violeta"
+        ]
+    },
+    {
+        "name": "Ocaso Espectral",
+        "colors": [
+            "#FF4500",
+            "#FF6347",
+            "#FF8C00",
+            "#F0E68C"
+        ],
+        "tags": [
+            "vibrante",
+            "calido"
+        ]
+    },
+    {
+        "name": "Cueva Azul",
+        "colors": [
+            "#0D1B2A",
+            "#1B263B",
+            "#415A77"
+        ],
+        "tags": [
+            "oscuro",
+            "frio",
+            "naturaleza"
+        ]
+    },
+    {
+        "name": "Fulgor Nocturno",
+        "colors": [
+            "#121212",
+            "#222222",
+            "#444444",
+            "#00FFEF"
+        ],
+        "tags": [
+            "oscuro",
+            "neon",
+            "minimal"
+        ]
+    },
+    {
+        "name": "Tierra de Lava",
+        "colors": [
+            "#8B0000",
+            "#D2691E",
+            "#FF4500"
+        ],
+        "tags": [
+            "calido",
+            "fuego"
+        ]
+    },
+    {
+        "name": "Cielo de Verano",
+        "colors": [
+            "#FFD700",
+            "#FFA500",
+            "#FF6347"
+        ],
+        "tags": [
+            "vibrante",
+            "calido"
+        ]
+    },
+    {
+        "name": "Oceano Profundo",
+        "colors": [
+            "#011F4B",
+            "#03396C",
+            "#005B96"
+        ],
+        "tags": [
+            "oscuro",
+            "agua",
+            "frio"
+        ]
+    },
+    {
+        "name": "Luz de Aurora",
+        "colors": [
+            "#FF6F61",
+            "#FFCC33",
+            "#66CCFF"
+        ],
+        "tags": [
+            "vibrante",
+            "aurora",
+            "retro"
+        ]
+    },
+    {
+        "name": "Niebla Gris",
+        "colors": [
+            "#606060",
+            "#7A7A7A",
+            "#9E9E9E"
+        ],
+        "tags": [
+            "oscuro",
+            "minimal",
+            "frio"
+        ]
+    },
+    {
+        "name": "Llama de Amanecer",
+        "colors": [
+            "#FF4500",
+            "#FFA500",
+            "#FFD700"
+        ],
+        "tags": [
+            "calido",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Bosque Encendido",
+        "colors": [
+            "#005500",
+            "#228B22",
+            "#66CDAA"
+        ],
+        "tags": [
+            "naturaleza",
+            "verde",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Neón Lunar",
+        "colors": [
+            "#CC00FF",
+            "#6600FF",
+            "#00FFFF"
+        ],
+        "tags": [
+            "neon",
+            "vibrante",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Ceniza Volcánica",
+        "colors": [
+            "#4B4B4B",
+            "#7A7A7A",
+            "#A9A9A9"
+        ],
+        "tags": [
+            "oscuro",
+            "gris",
+            "minimal"
+        ]
+    },
+    {
+        "name": "Marea de Verano",
+        "colors": [
+            "#FF7F50",
+            "#FF6347",
+            "#FFA07A"
+        ],
+        "tags": [
+            "vibrante",
+            "calido"
+        ]
+    },
+    {
+        "name": "Cumbre Glacial",
+        "colors": [
+            "#A0D8EF",
+            "#70C1B3",
+            "#4D908E"
+        ],
+        "tags": [
+            "frio",
+            "agua",
+            "pastel"
+        ]
+    },
+    {
+        "name": "Sol de Medianoche",
+        "colors": [
+            "#1A1A2E",
+            "#16213E",
+            "#0F3460"
+        ],
+        "tags": [
+            "oscuro",
+            "frio",
+            "minimal"
+        ]
+    },
+    {
+        "name": "Luz de Coral",
+        "colors": [
+            "#FF6F61",
+            "#FFB347",
+            "#FF69B4"
+        ],
+        "tags": [
+            "vibrante",
+            "rosa",
+            "pastel"
+        ]
+    },
+    {
+        "name": "Noche de Obsidiana",
+        "colors": [
+            "#0D0D0D",
+            "#1A1A1A",
+            "#333333"
+        ],
+        "tags": [
+            "oscuro",
+            "minimal",
+            "frio"
+        ]
+    },
+    {
+        "name": "Aurora Boreal Fucsia",
+        "colors": [
+            "#EE82EE",
+            "#DA70D6",
+            "#BA55D3"
+        ],
+        "tags": [
+            "vibrante",
+            "violeta",
+            "neon"
+        ]
+    },
+    {
+        "name": "Caminos de Otoño",
+        "colors": [
+            "#D2691E",
+            "#FF8C00",
+            "#FFB347"
+        ],
+        "tags": [
+            "calido",
+            "vibrante",
+            "vintage"
+        ]
+    },
+    {
+        "name": "Aguacero Urbano",
+        "colors": [
+            "#3B82F6",
+            "#60A5FA",
+            "#93C5FD"
+        ],
+        "tags": [
+            "frio",
+            "pastel",
+            "minimal"
+        ]
+    },
+    {
+        "name": "Cálido Amanecer",
+        "colors": [
+            "#FFB347",
+            "#FFCC33",
+            "#FFDD44"
+        ],
+        "tags": [
+            "calido",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Nieve Rosa",
+        "colors": [
+            "#FAE1DC",
+            "#F5C6D4",
+            "#E6A0C4"
+        ],
+        "tags": [
+            "pastel",
+            "rosa",
+            "suave"
+        ]
+    },
+    {
+        "name": "Mar de Medianoche",
+        "colors": [
+            "#0D1B2A",
+            "#133B5C",
+            "#1F618D"
+        ],
+        "tags": [
+            "oscuro",
+            "agua",
+            "frio"
+        ]
+    },
+    {
+        "name": "Fulgor de Fuego",
+        "colors": [
+            "#FF5733",
+            "#FF8D1A",
+            "#FFC300"
+        ],
+        "tags": [
+            "vibrante",
+            "calido"
+        ]
+    },
+    {
+        "name": "Selva de Esmeralda",
+        "colors": [
+            "#006400",
+            "#008000",
+            "#228B22"
+        ],
+        "tags": [
+            "naturaleza",
+            "verde",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Cielo de Cobre",
+        "colors": [
+            "#B87333",
+            "#D2691E",
+            "#FF7F50"
+        ],
+        "tags": [
+            "vibrante",
+            "calido"
+        ]
+    },
+    {
+        "name": "Río de Plata",
+        "colors": [
+            "#BDC3C7",
+            "#95A5A6",
+            "#7F8C8D"
+        ],
+        "tags": [
+            "gris",
+            "minimal",
+            "frio"
+        ]
+    },
+    {
+        "name": "Luz de Esmeralda",
+        "colors": [
+            "#50C878",
+            "#3EB489",
+            "#2E8B57"
+        ],
+        "tags": [
+            "verde",
+            "naturaleza",
+            "suave"
+        ]
+    },
+    {
+        "name": "Tierra de Cenizas",
+        "colors": [
+            "#3E3E3E",
+            "#5C5C5C",
+            "#7A7A7A"
+        ],
+        "tags": [
+            "oscuro",
+            "gris",
+            "minimal"
+        ]
+    },
+    {
+        "name": "Brillo Lunar",
+        "colors": [
+            "#C0C0C0",
+            "#D3D3D3",
+            "#E0E0E0"
+        ],
+        "tags": [
+            "pastel",
+            "suave"
+        ]
+    },
+    {
+        "name": "Viento de Invierno",
+        "colors": [
+            "#E0F7FA",
+            "#B2EBF2",
+            "#80DEEA"
+        ],
+        "tags": [
+            "frio",
+            "pastel",
+            "suave"
+        ]
+    },
+    {
+        "name": "Fuego de Otoño",
+        "colors": [
+            "#D2691E",
+            "#F4A261",
+            "#FF7F50"
+        ],
+        "tags": [
+            "calido",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Ocaso en el Desierto",
+        "colors": [
+            "#FF4500",
+            "#FF6347",
+            "#FFA07A"
+        ],
+        "tags": [
+            "calido",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Valle de Zafiro",
+        "colors": [
+            "#0F4C81",
+            "#157E9F",
+            "#2E86C1"
+        ],
+        "tags": [
+            "oscuro",
+            "agua",
+            "frio"
+        ]
+    },
+    {
+        "name": "Niebla de Azufre",
+        "colors": [
+            "#AAB7B8",
+            "#9DB4B4",
+            "#A0AEB4"
+        ],
+        "tags": [
+            "gris",
+            "frio",
+            "minimal"
+        ]
+    },
+    {
+        "name": "Ceniza Violeta",
+        "colors": [
+            "#8A2BE2",
+            "#9400D3",
+            "#BA55D3"
+        ],
+        "tags": [
+            "violeta",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Cinematic Teal & Orange",
+        "colors": [
+            "#0D1B2A",
+            "#1B263B",
+            "#415A77",
+            "#E09F3E",
+            "#9E2A2B"
+        ],
+        "tags": [
+            "cine",
+            "contraste",
+            "moderno"
+        ]
+    },
+    {
+        "name": "Grand Budapest",
+        "colors": [
+            "#F2BAC9",
+            "#F2E2CE",
+            "#D98E73",
+            "#8C6A5D",
+            "#5B7065"
+        ],
+        "tags": [
+            "cine",
+            "pastel",
+            "retro"
+        ]
+    },
+    {
+        "name": "Sci-Fi Dystopia",
+        "colors": [
+            "#000000",
+            "#141414",
+            "#FF2A2A",
+            "#FF7B00",
+            "#00F0FF"
+        ],
+        "tags": [
+            "cyberpunk",
+            "cine",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Horror Clásico",
+        "colors": [
+            "#0A0A0A",
+            "#242424",
+            "#404040",
+            "#8B0000",
+            "#FF0000"
+        ],
+        "tags": [
+            "cine",
+            "oscuro",
+            "rojo"
+        ]
+    },
+    {
+        "name": "Frutiger Aero",
+        "colors": [
+            "#00B4D8",
+            "#90E0EF",
+            "#48CAE4",
+            "#0077B6",
+            "#A7C957"
+        ],
+        "tags": [
+            "y2k",
+            "tech",
+            "claro",
+            "azul"
+        ]
+    },
+    {
+        "name": "Art Deco",
+        "colors": [
+            "#111111",
+            "#D4AF37",
+            "#F3E5AB",
+            "#0A2229",
+            "#1D3B36"
+        ],
+        "tags": [
+            "elegante",
+            "vintage",
+            "oro"
+        ]
+    },
+    {
+        "name": "Pop Art Comic",
+        "colors": [
+            "#FF0000",
+            "#FFFF00",
+            "#0000FF",
+            "#000000",
+            "#FFFFFF"
+        ],
+        "tags": [
+            "retro",
+            "vibrante",
+            "arte"
+        ]
+    },
+    {
+        "name": "Renacimiento Óleo",
+        "colors": [
+            "#3B2F2F",
+            "#5C4033",
+            "#8B5A2B",
+            "#CD853F",
+            "#DEB887"
+        ],
+        "tags": [
+            "arte",
+            "calido",
+            "vintage"
+        ]
+    },
+    {
+        "name": "Invierno Ártico",
+        "colors": [
+            "#E0FBFC",
+            "#C2DFE3",
+            "#9DB4C0",
+            "#5C6B73",
+            "#253237"
+        ],
+        "tags": [
+            "frio",
+            "naturaleza",
+            "invierno"
+        ]
+    },
+    {
+        "name": "Selva Tropical",
+        "colors": [
+            "#004B23",
+            "#007200",
+            "#38B000",
+            "#CCFF33",
+            "#FFD000"
+        ],
+        "tags": [
+            "naturaleza",
+            "verde",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Desierto de Sonora",
+        "colors": [
+            "#D8A47F",
+            "#F07167",
+            "#0081A7",
+            "#00AFB9",
+            "#FDFCDC"
+        ],
+        "tags": [
+            "calido",
+            "contraste",
+            "naturaleza"
+        ]
+    },
+    {
+        "name": "Cueva de Cristal",
+        "colors": [
+            "#2D1B4E",
+            "#452A7A",
+            "#6A4C9C",
+            "#9A7DCC",
+            "#D3C4E3"
+        ],
+        "tags": [
+            "naturaleza",
+            "morado",
+            "frio"
+        ]
+    },
+    {
+        "name": "Pantano Tóxico",
+        "colors": [
+            "#1C2314",
+            "#2E3B1F",
+            "#485E2C",
+            "#7A9E48",
+            "#ADCC66"
+        ],
+        "tags": [
+            "naturaleza",
+            "verde",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Océano Abisal",
+        "colors": [
+            "#03045E",
+            "#023E8A",
+            "#0077B6",
+            "#0096C7",
+            "#00B4D8"
+        ],
+        "tags": [
+            "mar",
+            "azul",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Vino y Queso",
+        "colors": [
+            "#2B0918",
+            "#4A051C",
+            "#7A1631",
+            "#B32847",
+            "#F5E6CC"
+        ],
+        "tags": [
+            "comida",
+            "oscuro",
+            "elegante"
+        ]
+    },
+    {
+        "name": "Sushi Bar",
+        "colors": [
+            "#F46036",
+            "#2E294E",
+            "#1B998B",
+            "#E71D36",
+            "#C5D86D"
+        ],
+        "tags": [
+            "comida",
+            "contraste",
+            "asiatico"
+        ]
+    },
+    {
+        "name": "Panadería Artesanal",
+        "colors": [
+            "#D4A373",
+            "#FAEDCD",
+            "#FEFAE0",
+            "#E9EDC9",
+            "#CCD5AE"
+        ],
+        "tags": [
+            "comida",
+            "calido",
+            "suave"
+        ]
+    },
+    {
+        "name": "Macarons Franceses",
+        "colors": [
+            "#FFADAD",
+            "#FFD6A5",
+            "#FDFFB6",
+            "#CAFFBF",
+            "#9BF6FF"
+        ],
+        "tags": [
+            "pastel",
+            "comida",
+            "arcoiris"
+        ]
+    },
+    {
+        "name": "Heladería Retro",
+        "colors": [
+            "#F2B5D4",
+            "#F4D8CD",
+            "#FFF5EE",
+            "#7BC5AE",
+            "#403D39"
+        ],
+        "tags": [
+            "comida",
+            "retro",
+            "suave"
+        ]
+    },
+    {
+        "name": "Consola 16-bit",
+        "colors": [
+            "#E0E0E0",
+            "#9E9E9E",
+            "#616161",
+            "#4A148C",
+            "#B71C1C"
+        ],
+        "tags": [
+            "gaming",
+            "retro",
+            "gris"
+        ]
+    },
+    {
+        "name": "Mago de Fantasía",
+        "colors": [
+            "#000B49",
+            "#0B2082",
+            "#1E3EB3",
+            "#F2D027",
+            "#F9F8F8"
+        ],
+        "tags": [
+            "fantasia",
+            "gaming",
+            "contraste"
+        ]
+    },
+    {
+        "name": "Poción Venenosa",
+        "colors": [
+            "#240046",
+            "#3C096C",
+            "#5A189A",
+            "#7B2CBF",
+            "#00FF00"
+        ],
+        "tags": [
+            "fantasia",
+            "oscuro",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Arcade Clásico",
+        "colors": [
+            "#000000",
+            "#FF0000",
+            "#00FF00",
+            "#0000FF",
+            "#FFFF00"
+        ],
+        "tags": [
+            "arcade",
+            "retro",
+            "basico"
+        ]
+    },
+    {
+        "name": "Modo Lectura UI",
+        "colors": [
+            "#F4F1EA",
+            "#E8E2D2",
+            "#D3C7B6",
+            "#3A352F",
+            "#23201D"
+        ],
+        "tags": [
+            "ui",
+            "lectura",
+            "suave"
+        ]
+    },
+    {
+        "name": "Dashboard Finanzas",
+        "colors": [
+            "#0F172A",
+            "#1E293B",
+            "#10B981",
+            "#EF4444",
+            "#3B82F6"
+        ],
+        "tags": [
+            "ui",
+            "finanzas",
+            "contraste"
+        ]
+    },
+    {
+        "name": "App de Salud",
+        "colors": [
+            "#E0F7FA",
+            "#B2EBF2",
+            "#4DD0E1",
+            "#FFFFFF",
+            "#FF8A65"
+        ],
+        "tags": [
+            "ui",
+            "limpio",
+            "suave"
+        ]
+    },
+    {
+        "name": "E-commerce Femenino",
+        "colors": [
+            "#FDFBF7",
+            "#F4E3E3",
+            "#DDA7A5",
+            "#A67A7E",
+            "#423B3E"
+        ],
+        "tags": [
+            "ui",
+            "elegante",
+            "pastel"
+        ]
+    },
+    {
+        "name": "Lo-Fi Beats",
+        "colors": [
+            "#2A2D34",
+            "#483A58",
+            "#A69CAC",
+            "#F1E0C5",
+            "#E4B363"
+        ],
+        "tags": [
+            "aesthetic",
+            "suave",
+            "oscuro",
+            "musica"
+        ]
+    },
+    {
+        "name": "Punk Rock",
+        "colors": [
+            "#1A1A1A",
+            "#E60000",
+            "#FF007F",
+            "#FFFFFF",
+            "#595959"
+        ],
+        "tags": [
+            "vibrante",
+            "contraste",
+            "rebelde",
+            "musica"
+        ]
+    },
+    {
+        "name": "Blues Club",
+        "colors": [
+            "#0D1321",
+            "#1D2D44",
+            "#3E5C76",
+            "#748CAB",
+            "#F0EBD8"
+        ],
+        "tags": [
+            "musica",
+            "oscuro",
+            "azul"
+        ]
+    },
+    {
+        "name": "Atardecer Vapor",
+        "colors": [
+            "#FF71CE",
+            "#01CDFE",
+            "#05FFA1",
+            "#B967FF",
+            "#FFFB96"
+        ],
+        "tags": [
+            "vaporwave",
+            "neon",
+            "retro"
+        ]
+    },
+    {
+        "name": "Cinta de Cassette",
+        "colors": [
+            "#2C363F",
+            "#E75A7C",
+            "#F2F5EA",
+            "#D6DBB2",
+            "#BBC7A4"
+        ],
+        "tags": [
+            "retro",
+            "suave",
+            "vintage"
+        ]
+    },
+    {
+        "name": "Drift Japonés",
+        "colors": [
+            "#000000",
+            "#FFFFFF",
+            "#FF0000"
+        ],
+        "tags": [
+            "coche",
+            "contraste",
+            "blanco-negro"
+        ]
+    },
+    {
+        "name": "Oro Elegante",
+        "colors": [
+            "#FFDF00",
+            "#D4AF37",
+            "#996515"
+        ],
+        "tags": [
+            "elegante",
+            "oro",
+            "basico"
+        ]
+    },
+    {
+        "name": "Alerta Crítica",
+        "colors": [
+            "#FF0000",
+            "#8B0000",
+            "#220000"
+        ],
+        "tags": [
+            "rojo",
+            "ui",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Cielo Despejado",
+        "colors": [
+            "#87CEEB",
+            "#4682B4",
+            "#F0F8FF"
+        ],
+        "tags": [
+            "azul",
+            "cielo",
+            "suave"
+        ]
+    },
+    {
+        "name": "Minimalismo Puro",
+        "colors": [
+            "#FFFFFF",
+            "#F5F5F5",
+            "#121212"
+        ],
+        "tags": [
+            "minimal",
+            "ui",
+            "contraste"
+        ]
+    },
+    {
+        "name": "Gótico Moderno",
+        "colors": [
+            "#0A0A0A",
+            "#1C1C1C",
+            "#2E2E2E",
+            "#595959",
+            "#A6A6A6"
+        ],
+        "tags": [
+            "gotico",
+            "gris",
+            "monocromo"
+        ]
+    },
+    {
+        "name": "Papel Viejo",
+        "colors": [
+            "#D4C19C",
+            "#C4A47C",
+            "#8C6B4A",
+            "#5C4033",
+            "#2E1F18"
+        ],
+        "tags": [
+            "vintage",
+            "marron",
+            "lectura"
+        ]
+    },
+    {
+        "name": "Neón Extremo",
+        "colors": [
+            "#050505",
+            "#1F1F1F",
+            "#00FF33",
+            "#FE019A",
+            "#00FFFF"
+        ],
+        "tags": [
+            "neon",
+            "cyberpunk",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Escala de Azules",
+        "colors": [
+            "#03045E",
+            "#023E8A",
+            "#0077B6",
+            "#0096C7",
+            "#00B4D8",
+            "#48CAE4",
+            "#90E0EF"
+        ],
+        "tags": [
+            "monocromo",
+            "azul",
+            "frio",
+            "gradiente"
+        ]
+    },
+    {
+        "name": "Escala de Rojos",
+        "colors": [
+            "#450A0A",
+            "#7F1D1D",
+            "#B91C1C",
+            "#DC2626",
+            "#EF4444",
+            "#F87171",
+            "#FCA5A5"
+        ],
+        "tags": [
+            "monocromo",
+            "rojo",
+            "calido",
+            "peligro"
+        ]
+    },
+    {
+        "name": "Escala de Verdes",
+        "colors": [
+            "#064E3B",
+            "#065F46",
+            "#047857",
+            "#059669",
+            "#10B981",
+            "#34D399",
+            "#6EE7B7"
+        ],
+        "tags": [
+            "monocromo",
+            "verde",
+            "naturaleza",
+            "exito"
+        ]
+    },
+    {
+        "name": "Escala de Morados",
+        "colors": [
+            "#2E1065",
+            "#4C1D95",
+            "#5B21B6",
+            "#6D28D9",
+            "#7C3AED",
+            "#8B5CF6",
+            "#A78BFA"
+        ],
+        "tags": [
+            "monocromo",
+            "morado",
+            "magia",
+            "profundo"
+        ]
+    },
+    {
+        "name": "Escala de Grises",
+        "colors": [
+            "#111827",
+            "#1F2937",
+            "#374151",
+            "#4B5563",
+            "#6B7280",
+            "#9CA3AF",
+            "#D1D5DB"
+        ],
+        "tags": [
+            "monocromo",
+            "gris",
+            "minimal",
+            "ui"
+        ]
+    },
+    {
+        "name": "Caramel Macchiato",
+        "colors": [
+            "#291812",
+            "#472A1F",
+            "#694231",
+            "#8C5C45",
+            "#B0795B",
+            "#D19C79",
+            "#EDC4A6"
+        ],
+        "tags": [
+            "monocromo",
+            "cafe",
+            "calido",
+            "comida"
+        ]
+    },
+    {
+        "name": "Matcha Ceremonial",
+        "colors": [
+            "#1C261D",
+            "#2D4030",
+            "#446146",
+            "#618A62",
+            "#87B387",
+            "#B3D9B2",
+            "#E0F2DF"
+        ],
+        "tags": [
+            "monocromo",
+            "verde",
+            "suave",
+            "pastel"
+        ]
+    },
+    {
+        "name": "Arcoíris Pastel",
+        "colors": [
+            "#FFADAD",
+            "#FFD6A5",
+            "#FDFFB6",
+            "#CAFFBF",
+            "#9BF6FF",
+            "#A0C4FF",
+            "#BDB2FF"
+        ],
+        "tags": [
+            "pastel",
+            "arcoiris",
+            "vibrante",
+            "suave"
+        ]
+    },
+    {
+        "name": "Atardecer Infinito",
+        "colors": [
+            "#4A0404",
+            "#7A1000",
+            "#A82B00",
+            "#D64C00",
+            "#F27D00",
+            "#FFAE19",
+            "#FFDF59"
+        ],
+        "tags": [
+            "calido",
+            "gradiente",
+            "naranja",
+            "fuego"
+        ]
+    },
+    {
+        "name": "Neon Overdrive",
+        "colors": [
+            "#050505",
+            "#120458",
+            "#7A04EB",
+            "#FF00E6",
+            "#FF0055",
+            "#FF5E00",
+            "#FFEA00"
+        ],
+        "tags": [
+            "cyberpunk",
+            "neon",
+            "vibrante",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Ecosistema Bosque",
+        "colors": [
+            "#1A2421",
+            "#2D4036",
+            "#455E4C",
+            "#628264",
+            "#85A384",
+            "#ABC4A8",
+            "#D6E5D1"
+        ],
+        "tags": [
+            "naturaleza",
+            "verde",
+            "monocromo",
+            "suave"
+        ]
+    },
+    {
+        "name": "Fosa de las Marianas",
+        "colors": [
+            "#001233",
+            "#002855",
+            "#00407A",
+            "#005B9F",
+            "#0077C2",
+            "#0096E0",
+            "#00B4F5"
+        ],
+        "tags": [
+            "mar",
+            "azul",
+            "profundo",
+            "gradiente"
+        ]
+    },
+    {
+        "name": "Sueño Violeta",
+        "colors": [
+            "#FFB5E8",
+            "#FF9CEE",
+            "#FFCCF9",
+            "#FCC2FF",
+            "#F6A6FF",
+            "#B28DFF",
+            "#C5A3FF"
+        ],
+        "tags": [
+            "pastel",
+            "morado",
+            "y2k",
+            "suave"
+        ]
+    },
+    {
+        "name": "Hoja de Arce",
+        "colors": [
+            "#3D1308",
+            "#61210F",
+            "#8C3310",
+            "#BA4A00",
+            "#D66A00",
+            "#EFA00B",
+            "#F3CA40"
+        ],
+        "tags": [
+            "otoño",
+            "calido",
+            "gradiente",
+            "naturaleza"
+        ]
+    },
+    {
+        "name": "UI Slate Light",
+        "colors": [
+            "#F8FAFC",
+            "#F1F5F9",
+            "#E2E8F0",
+            "#CBD5E1",
+            "#94A3B8",
+            "#64748B",
+            "#475569"
+        ],
+        "tags": [
+            "ui",
+            "claro",
+            "minimal",
+            "monocromo"
+        ]
+    },
+    {
+        "name": "UI Slate Dark",
+        "colors": [
+            "#0F172A",
+            "#1E293B",
+            "#334155",
+            "#475569",
+            "#64748B",
+            "#94A3B8",
+            "#CBD5E1"
+        ],
+        "tags": [
+            "ui",
+            "oscuro",
+            "minimal",
+            "monocromo"
+        ]
+    },
+    {
+        "name": "Synthwave 7-Track",
+        "colors": [
+            "#0D0221",
+            "#261447",
+            "#540D6E",
+            "#EE4266",
+            "#FFD23F",
+            "#3BCEAC",
+            "#0EAD69"
+        ],
+        "tags": [
+            "retro",
+            "synthwave",
+            "vibrante",
+            "neon"
+        ]
+    },
+    {
+        "name": "Brillo de Oro",
+        "colors": [
+            "#5C4D0A",
+            "#8C7716",
+            "#C7AA24",
+            "#FAD834",
+            "#FFE566"
+        ],
+        "tags": [
+            "monocromo",
+            "oro",
+            "elegante",
+            "amarillo"
+        ]
+    },
+    {
+        "name": "Rosa Chicle",
+        "colors": [
+            "#6B0F33",
+            "#9C1A4F",
+            "#D42A6F",
+            "#FA5A96",
+            "#FF9EC4"
+        ],
+        "tags": [
+            "monocromo",
+            "rosa",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Café Tostado",
+        "colors": [
+            "#452B1E",
+            "#7D523A",
+            "#C29374"
+        ],
+        "tags": [
+            "monocromo",
+            "cafe",
+            "calido"
+        ]
+    },
+    {
+        "name": "Cian Profundo",
+        "colors": [
+            "#003B4A",
+            "#006B85",
+            "#00ABC2"
+        ],
+        "tags": [
+            "monocromo",
+            "cian",
+            "frio"
+        ]
+    },
+    {
+        "name": "Escala de Naranjas",
+        "colors": [
+            "#431407",
+            "#7C2D12",
+            "#C2410C",
+            "#EA580C",
+            "#F97316",
+            "#FB923C",
+            "#FDBA74"
+        ],
+        "tags": [
+            "monocromo",
+            "naranja",
+            "calido",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Escala de Rosas",
+        "colors": [
+            "#4C0519",
+            "#831843",
+            "#BE185D",
+            "#E11D48",
+            "#F43F5E",
+            "#FB7185",
+            "#FDA4AF"
+        ],
+        "tags": [
+            "monocromo",
+            "rosa",
+            "romantico",
+            "femenino"
+        ]
+    },
+    {
+        "name": "Escala de Amarillos",
+        "colors": [
+            "#422006",
+            "#713F12",
+            "#A16207",
+            "#CA8A04",
+            "#EAB308",
+            "#FDE047",
+            "#FEF08A"
+        ],
+        "tags": [
+            "monocromo",
+            "amarillo",
+            "sol",
+            "alegria"
+        ]
+    },
+    {
+        "name": "Escala de Verde Azulado",
+        "colors": [
+            "#042F2E",
+            "#115E59",
+            "#0F766E",
+            "#0D9488",
+            "#14B8A6",
+            "#2DD4BF",
+            "#5EEAD4"
+        ],
+        "tags": [
+            "monocromo",
+            "teal",
+            "oceano",
+            "profundo"
+        ]
+    },
+    {
+        "name": "Galaxia Espiral",
+        "colors": [
+            "#0B0014",
+            "#1D0047",
+            "#3B0086",
+            "#6100C2",
+            "#9000FF",
+            "#B952FF",
+            "#D79CFF"
+        ],
+        "tags": [
+            "espacio",
+            "morado",
+            "cyberpunk",
+            "magia"
+        ]
+    },
+    {
+        "name": "Nebulosa",
+        "colors": [
+            "#10002B",
+            "#240046",
+            "#3C096C",
+            "#5A189A",
+            "#7B2CBF",
+            "#9D4EDD",
+            "#C77DFF"
+        ],
+        "tags": [
+            "espacio",
+            "morado",
+            "oscuro",
+            "gradiente"
+        ]
+    },
+    {
+        "name": "Agujero Negro",
+        "colors": [
+            "#000000",
+            "#0D0D12",
+            "#181822",
+            "#232333",
+            "#F2E9E4"
+        ],
+        "tags": [
+            "espacio",
+            "oscuro",
+            "minimal"
+        ]
+    },
+    {
+        "name": "Estrella Enana Blanca",
+        "colors": [
+            "#FFFFFF",
+            "#F8F9FA",
+            "#E9ECEF",
+            "#DEE2E6",
+            "#CED4DA"
+        ],
+        "tags": [
+            "espacio",
+            "blanco",
+            "claro",
+            "minimal"
+        ]
+    },
+    {
+        "name": "Cobre Oxidado",
+        "colors": [
+            "#3E1F00",
+            "#7A3E00",
+            "#B85D00",
+            "#D97706",
+            "#2A9D8F",
+            "#264653"
+        ],
+        "tags": [
+            "metales",
+            "industrial",
+            "contraste"
+        ]
+    },
+    {
+        "name": "Acero Inoxidable",
+        "colors": [
+            "#2B2D42",
+            "#8D99AE",
+            "#EDF2F4",
+            "#B0BEC5",
+            "#78909C"
+        ],
+        "tags": [
+            "metales",
+            "gris",
+            "frio",
+            "industrial"
+        ]
+    },
+    {
+        "name": "Oro Rosa",
+        "colors": [
+            "#B76E79",
+            "#C07C88",
+            "#C98A97",
+            "#D298A6",
+            "#DBA6B5",
+            "#E4B4C4",
+            "#EDC2D3"
+        ],
+        "tags": [
+            "metales",
+            "rosa",
+            "elegante",
+            "monocromo"
+        ]
+    },
+    {
+        "name": "Bronce Antiguo",
+        "colors": [
+            "#3B2F2F",
+            "#4A3B3B",
+            "#594747",
+            "#685353",
+            "#8C7171",
+            "#A68A8A",
+            "#BF9F9F"
+        ],
+        "tags": [
+            "metales",
+            "calido",
+            "vintage",
+            "monocromo"
+        ]
+    },
+    {
+        "name": "Halloween Clásico",
+        "colors": [
+            "#000000",
+            "#1A1A1A",
+            "#4A4A4A",
+            "#FF7518",
+            "#FF9933",
+            "#FFB366",
+            "#5C2A9D"
+        ],
+        "tags": [
+            "festivo",
+            "halloween",
+            "naranja",
+            "oscuro"
+        ]
+    },
+    {
+        "name": "Bosque Encantado",
+        "colors": [
+            "#0B1305",
+            "#16260A",
+            "#22390F",
+            "#49111C",
+            "#5E1624",
+            "#731A2C",
+            "#A2253E"
+        ],
+        "tags": [
+            "fantasia",
+            "oscuro",
+            "rojo",
+            "verde"
+        ]
+    },
+    {
+        "name": "Noche de Brujas",
+        "colors": [
+            "#110B11",
+            "#211522",
+            "#312033",
+            "#6A4C93",
+            "#8A5A99",
+            "#FF595E",
+            "#FFCA3A"
+        ],
+        "tags": [
+            "festivo",
+            "halloween",
+            "morado",
+            "contraste"
+        ]
+    },
+    {
+        "name": "Boho Chic",
+        "colors": [
+            "#E2D4C1",
+            "#CDB49B",
+            "#A48165",
+            "#7D583B",
+            "#4A3626"
+        ],
+        "tags": [
+            "interiorismo",
+            "boho",
+            "calido",
+            "suave"
+        ]
+    },
+    {
+        "name": "Minimalismo Japandi",
+        "colors": [
+            "#F5F5F5",
+            "#E0E0E0",
+            "#9E9E9E",
+            "#616161",
+            "#212121"
+        ],
+        "tags": [
+            "interiorismo",
+            "minimal",
+            "zen",
+            "gris"
+        ]
+    },
+    {
+        "name": "Loft Industrial",
+        "colors": [
+            "#1E1E24",
+            "#444140",
+            "#F5E9E2",
+            "#BCA37F",
+            "#8B572A"
+        ],
+        "tags": [
+            "interiorismo",
+            "oscuro",
+            "madera",
+            "metal"
+        ]
+    },
+    {
+        "name": "Verano Mediterráneo",
+        "colors": [
+            "#034C8C",
+            "#0367A6",
+            "#048ABF",
+            "#F2D06B",
+            "#F2F2F2"
+        ],
+        "tags": [
+            "interiorismo",
+            "mar",
+            "verano",
+            "frio"
+        ]
+    },
+    {
+        "name": "Amanecer en Marte",
+        "colors": [
+            "#4E070C",
+            "#8B1E13",
+            "#C43615",
+            "#E4572E",
+            "#F3A712",
+            "#F6D860",
+            "#FDF5E6"
+        ],
+        "tags": [
+            "sci-fi",
+            "rojo",
+            "gradiente",
+            "calido"
+        ]
+    },
+    {
+        "name": "Neon Biológico",
+        "colors": [
+            "#0B3B24",
+            "#096236",
+            "#04A759",
+            "#00F57B",
+            "#59FFAD",
+            "#94FFC8",
+            "#CDFFE2"
+        ],
+        "tags": [
+            "cyberpunk",
+            "verde",
+            "neon",
+            "toxico"
+        ]
+    },
+    {
+        "name": "Holo-Proyección",
+        "colors": [
+            "#001B2E",
+            "#003A61",
+            "#0062A3",
+            "#008BF8",
+            "#4DB2FF",
+            "#99D4FF",
+            "#CCEAFF"
+        ],
+        "tags": [
+            "sci-fi",
+            "tecnologia",
+            "azul",
+            "neon"
+        ]
+    },
+    {
+        "name": "Dunas de Arena",
+        "colors": [
+            "#5C4033",
+            "#8B5A2B",
+            "#CD853F",
+            "#DEB887",
+            "#D2B48C",
+            "#F5DEB3",
+            "#FFF8DC"
+        ],
+        "tags": [
+            "naturaleza",
+            "arena",
+            "monocromo",
+            "calido"
+        ]
+    },
+    {
+        "name": "Campo de Lavanda",
+        "colors": [
+            "#2E1A47",
+            "#48286E",
+            "#663A82",
+            "#844C9C",
+            "#A368C4",
+            "#C48EEA",
+            "#E6B8FF"
+        ],
+        "tags": [
+            "naturaleza",
+            "morado",
+            "monocromo",
+            "suave"
+        ]
+    },
+    {
+        "name": "Cielo Tormentoso",
+        "colors": [
+            "#1C2529",
+            "#2A363B",
+            "#394850",
+            "#4B5B65",
+            "#5C6E79",
+            "#708491",
+            "#849BA9"
+        ],
+        "tags": [
+            "naturaleza",
+            "gris",
+            "frio",
+            "monocromo"
+        ]
+    },
+    {
+        "name": "Volcán Activo",
+        "colors": [
+            "#2B0E0E",
+            "#4E1212",
+            "#7A1C1C",
+            "#A82B2B",
+            "#D64242",
+            "#FF5C5C",
+            "#FF8585"
+        ],
+        "tags": [
+            "naturaleza",
+            "fuego",
+            "rojo",
+            "monocromo"
+        ]
+    },
+    {
+        "name": "Fresa y Vainilla",
+        "colors": [
+            "#FF0054",
+            "#FF5470",
+            "#FF9EAA",
+            "#FFD0D6",
+            "#FFF0F5"
+        ],
+        "tags": [
+            "comida",
+            "rosa",
+            "dulce",
+            "pastel"
+        ]
+    },
+    {
+        "name": "Té de Manzanilla",
+        "colors": [
+            "#E6B800",
+            "#FFCC00",
+            "#FFE680",
+            "#FFF2B3",
+            "#FFFCE6"
+        ],
+        "tags": [
+            "comida",
+            "amarillo",
+            "suave",
+            "calido"
+        ]
+    },
+    {
+        "name": "Mora Azul",
+        "colors": [
+            "#1D2B53",
+            "#293C7A",
+            "#3B52A1",
+            "#5C75C7",
+            "#869DEC",
+            "#B2C5FA",
+            "#D9E3FF"
+        ],
+        "tags": [
+            "comida",
+            "azul",
+            "morado",
+            "suave"
+        ]
+    },
+    {
+        "name": "Pantalla Fósforo",
+        "colors": [
+            "#001100",
+            "#003300",
+            "#006600",
+            "#009900",
+            "#00CC00",
+            "#00FF00",
+            "#99FF99"
+        ],
+        "tags": [
+            "retro",
+            "verde",
+            "terminal",
+            "monocromo"
+        ]
+    },
+    {
+        "name": "Televisión Estática",
+        "colors": [
+            "#222222",
+            "#444444",
+            "#666666",
+            "#888888",
+            "#AAAAAA",
+            "#CCCCCC",
+            "#EEEEEE"
+        ],
+        "tags": [
+            "retro",
+            "gris",
+            "televisión",
+            "monocromo"
+        ]
+    },
+    {
+        "name": "Cámara Polaroid",
+        "colors": [
+            "#F0ECE1",
+            "#D6CCC2",
+            "#E85D04",
+            "#DC2F02",
+            "#9D0208"
+        ],
+        "tags": [
+            "retro",
+            "vintage",
+            "naranja",
+            "calido"
+        ]
+    },
+    {
+        "name": "Modo Noche OLED",
+        "colors": [
+            "#000000",
+            "#0A0A0A",
+            "#141414",
+            "#1E1E1E",
+            "#282828",
+            "#323232",
+            "#3C3C3C"
+        ],
+        "tags": [
+            "ui",
+            "oscuro",
+            "oled",
+            "negro"
+        ]
+    },
+    {
+        "name": "UI Alertas",
+        "colors": [
+            "#EF4444",
+            "#F59E0B",
+            "#10B981",
+            "#3B82F6",
+            "#6366F1"
+        ],
+        "tags": [
+            "ui",
+            "basico",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Dashboard Moderno",
+        "colors": [
+            "#F3F4F6",
+            "#FFFFFF",
+            "#8B5CF6",
+            "#EC4899",
+            "#14B8A6"
+        ],
+        "tags": [
+            "ui",
+            "claro",
+            "limpio",
+            "vibrante"
+        ]
+    },
+    {
+        "name": "Zafiro Precioso",
+        "colors": [
+            "#00173D",
+            "#002B6B",
+            "#00409E",
+            "#0056D1",
+            "#1A75FF",
+            "#4D94FF",
+            "#80B3FF"
+        ],
+        "tags": [
+            "joya",
+            "azul",
+            "elegante",
+            "monocromo"
+        ]
+    },
+    {
+        "name": "Rubí Intenso",
+        "colors": [
+            "#360000",
+            "#6B0000",
+            "#A10000",
+            "#D60000",
+            "#FF1A1A",
+            "#FF4D4D",
+            "#FF8080"
+        ],
+        "tags": [
+            "joya",
+            "rojo",
+            "elegante",
+            "monocromo"
+        ]
+    },
+    {
+        "name": "Esmeralda Pura",
+        "colors": [
+            "#002E14",
+            "#005224",
+            "#007A36",
+            "#00A348",
+            "#00CC5A",
+            "#2EFF82",
+            "#66FF9F"
+        ],
+        "tags": [
+            "joya",
+            "verde",
+            "elegante",
+            "monocromo"
+        ]
+    },
+    {
+        "name": "Amatista Mística",
+        "colors": [
+            "#29003D",
+            "#4B006B",
+            "#6E009E",
+            "#9000D1",
+            "#B21AFF",
+            "#C54DFF",
+            "#D880FF"
+        ],
+        "tags": [
+            "joya",
+            "morado",
+            "elegante",
+            "monocromo"
+        ]
+    },
+    {
+        "name": "Roca Volcánica",
+        "colors": [
+            "#0A0A0A",
+            "#1C1C1C",
+            "#FF3300"
+        ],
+        "tags": [
+            "minimal",
+            "oscuro",
+            "contraste",
+            "rojo"
+        ]
+    }
+]

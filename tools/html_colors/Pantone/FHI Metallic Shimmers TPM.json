@@ -1,0 +1,737 @@
+[
+    {
+        "code": "20-0001 TPM",
+        "name": "Ice Flow",
+        "hex": "#D3D9DC"
+    },
+    {
+        "code": "20-0008 TPM",
+        "name": "Aluminum Foil",
+        "hex": "#65645E"
+    },
+    {
+        "code": "20-0015 TPM",
+        "name": "Comet Streak",
+        "hex": "#909986"
+    },
+    {
+        "code": "20-0022 TPM",
+        "name": "Effervescent",
+        "hex": "#C0AD96"
+    },
+    {
+        "code": "20-0029 TPM",
+        "name": "Bronze Medal",
+        "hex": "#A17652"
+    },
+    {
+        "code": "20-0036 TPM",
+        "name": "Two Penny",
+        "hex": "#955C20"
+    },
+    {
+        "code": "20-0043 TPM",
+        "name": "Faded Jade",
+        "hex": "#DBDD98"
+    },
+    {
+        "code": "20-0050 TPM",
+        "name": "Peach Bellini",
+        "hex": "#DC9777"
+    },
+    {
+        "code": "20-0057 TPM",
+        "name": "Siena Treasure",
+        "hex": "#AE6036"
+    },
+    {
+        "code": "20-0064 TPM",
+        "name": "Silky Rose",
+        "hex": "#87381E"
+    },
+    {
+        "code": "20-0071 TPM",
+        "name": "Vineyard Mist",
+        "hex": "#883840"
+    },
+    {
+        "code": "20-0078 TPM",
+        "name": "Ballet Dancer",
+        "hex": "#DC878F"
+    },
+    {
+        "code": "20-0085 TPM",
+        "name": "Golden Touch",
+        "hex": "#B9AD97"
+    },
+    {
+        "code": "20-0092 TPM",
+        "name": "Pale Orchid",
+        "hex": "#D8B7AD"
+    },
+    {
+        "code": "20-0099 TPM",
+        "name": "Silk Tie Taupe",
+        "hex": "#8D7663"
+    },
+    {
+        "code": "20-0106 TPM",
+        "name": "Anemonium",
+        "hex": "#BE5A7F"
+    },
+    {
+        "code": "20-0113 TPM",
+        "name": "Glistening Grape",
+        "hex": "#6A1A4C"
+    },
+    {
+        "code": "20-0120 TPM",
+        "name": "Rose Onyx",
+        "hex": "#491442"
+    },
+    {
+        "code": "20-0127 TPM",
+        "name": "Part Ribbon",
+        "hex": "#5B4A8C"
+    },
+    {
+        "code": "20-0134 TPM",
+        "name": "Mystic Wand",
+        "hex": "#3A3368"
+    },
+    {
+        "code": "20-0141 TPM",
+        "name": "Azurite",
+        "hex": "#1B2B41"
+    },
+    {
+        "code": "20-0002 TPM",
+        "name": "Ice Palace",
+        "hex": "#B5B7B6"
+    },
+    {
+        "code": "20-0009 TPM",
+        "name": "Steel Plate",
+        "hex": "#6E767A"
+    },
+    {
+        "code": "20-0016 TPM",
+        "name": "Gray Lustre",
+        "hex": "#82867E"
+    },
+    {
+        "code": "20-0023 TPM",
+        "name": "Satin Sheets",
+        "hex": "#AD9B86"
+    },
+    {
+        "code": "20-0030 TPM",
+        "name": "Shimmer On",
+        "hex": "#5C4031"
+    },
+    {
+        "code": "20-0037 TPM",
+        "name": "Fort Knox",
+        "hex": "#AC9255"
+    },
+    {
+        "code": "20-0044 TPM",
+        "name": "Cool Calcite",
+        "hex": "#D7CF7B"
+    },
+    {
+        "code": "20-0051 TPM",
+        "name": "Krill",
+        "hex": "#E79465"
+    },
+    {
+        "code": "20-0058 TPM",
+        "name": "Copper Skillet",
+        "hex": "#B95118"
+    },
+    {
+        "code": "20-0065 TPM",
+        "name": "Sockeye Salmon",
+        "hex": "#CB6153"
+    },
+    {
+        "code": "20-0072 TPM",
+        "name": "Raspberry Soda",
+        "hex": "#B35567"
+    },
+    {
+        "code": "20-0079 TPM",
+        "name": "Glowing Cheeks",
+        "hex": "#C05564"
+    },
+    {
+        "code": "20-0086 TPM",
+        "name": "Water Chestnut",
+        "hex": "#BAB58F"
+    },
+    {
+        "code": "20-0093 TPM",
+        "name": "Satin Chemise",
+        "hex": "#DBC0AF"
+    },
+    {
+        "code": "20-0100 TPM",
+        "name": "Phantom",
+        "hex": "#7E6D62"
+    },
+    {
+        "code": "20-0107 TPM",
+        "name": "Lady Slipper",
+        "hex": "#B4668A"
+    },
+    {
+        "code": "20-0114 TPM",
+        "name": "Magenta Lacquer",
+        "hex": "#95116C"
+    },
+    {
+        "code": "20-0121 TPM",
+        "name": "Pretty in Pink",
+        "hex": "#A28A9A"
+    },
+    {
+        "code": "20-0128 TPM",
+        "name": "Violaceous",
+        "hex": "#737397"
+    },
+    {
+        "code": "20-0135 TPM",
+        "name": "Violet Femme",
+        "hex": "#1F1539"
+    },
+    {
+        "code": "20-0142 TPM",
+        "name": "Neon Navy",
+        "hex": "#131936"
+    },
+    {
+        "code": "20-0003 TPM",
+        "name": "Disco Ball",
+        "hex": "#B0B0AE"
+    },
+    {
+        "code": "20-0010 TPM",
+        "name": "Steel Wool",
+        "hex": "#666D72"
+    },
+    {
+        "code": "20-0017 TPM",
+        "name": "Razor's Edge",
+        "hex": "#8B8B82"
+    },
+    {
+        "code": "20-0024 TPM",
+        "name": "Spumante",
+        "hex": "#D7C1A3"
+    },
+    {
+        "code": "20-0031 TPM",
+        "name": "Coffee Bean Oil",
+        "hex": "#4B3C33"
+    },
+    {
+        "code": "20-0038 TPM",
+        "name": "Glitteratti",
+        "hex": "#B59A48"
+    },
+    {
+        "code": "20-0045 TPM",
+        "name": "Limoncello",
+        "hex": "#DDC738"
+    },
+    {
+        "code": "20-0052 TPM",
+        "name": "Citronella",
+        "hex": "#DB9A69"
+    },
+    {
+        "code": "20-0059 TPM",
+        "name": "Sweet 'n' Sour",
+        "hex": "#EC4600"
+    },
+    {
+        "code": "20-0066 TPM",
+        "name": "Lilium Luster",
+        "hex": "#A2352E"
+    },
+    {
+        "code": "20-0073 TPM",
+        "name": "Shock Value",
+        "hex": "#BA2A4D"
+    },
+    {
+        "code": "20-0080 TPM",
+        "name": "Pucker Up Pink",
+        "hex": "#CA3368"
+    },
+    {
+        "code": "20-0087 TPM",
+        "name": "Lead Crystal",
+        "hex": "#C2BFB5"
+    },
+    {
+        "code": "20-0094 TPM",
+        "name": "Rose Gold",
+        "hex": "#E7B2A4"
+    },
+    {
+        "code": "20-0101 TPM",
+        "name": "Shadow Sheen",
+        "hex": "#675A53"
+    },
+    {
+        "code": "20-0108 TPM",
+        "name": "Pixie",
+        "hex": "#C79EB5"
+    },
+    {
+        "code": "20-0115 TPM",
+        "name": "Power Pink",
+        "hex": "#C1A7B7"
+    },
+    {
+        "code": "20-0122 TPM",
+        "name": "Luscious Grape",
+        "hex": "#62505D"
+    },
+    {
+        "code": "20-0129 TPM",
+        "name": "Silver shadow",
+        "hex": "#939097"
+    },
+    {
+        "code": "20-0136 TPM",
+        "name": "Contrail",
+        "hex": "#6F757E"
+    },
+    {
+        "code": "20-0143 TPM",
+        "name": "Polar Cap",
+        "hex": "#A1B9C3"
+    },
+    {
+        "code": "20-0004 TPM",
+        "name": "Silvery",
+        "hex": "#8C8F8D"
+    },
+    {
+        "code": "20-0011 TPM",
+        "name": "Bezel",
+        "hex": "#39444A"
+    },
+    {
+        "code": "20-0018 TPM",
+        "name": "Scratch Off",
+        "hex": "#817C74"
+    },
+    {
+        "code": "20-0025 TPM",
+        "name": "Buffed Beige",
+        "hex": "#BDA182"
+    },
+    {
+        "code": "20-0032 TPM",
+        "name": "Blackbird Feather",
+        "hex": "#41312A"
+    },
+    {
+        "code": "20-0039 TPM",
+        "name": "Trophy Cup",
+        "hex": "#A08864"
+    },
+    {
+        "code": "20-0046 TPM",
+        "name": "Firefly",
+        "hex": "#D1CE21"
+    },
+    {
+        "code": "20-0053 TPM",
+        "name": "Gilded Pleasure",
+        "hex": "#EE9103"
+    },
+    {
+        "code": "20-0060 TPM",
+        "name": "Flasher",
+        "hex": "#DF481A"
+    },
+    {
+        "code": "20-0067 TPM",
+        "name": "Guava Jam",
+        "hex": "#B7434D"
+    },
+    {
+        "code": "20-0074 TPM",
+        "name": "Berry Gloss",
+        "hex": "#BB0049"
+    },
+    {
+        "code": "20-0081 TPM",
+        "name": "Blue or Not",
+        "hex": "#E6E9E4"
+    },
+    {
+        "code": "20-0088 TPM",
+        "name": "Golden Eagle",
+        "hex": "#BCADA1"
+    },
+    {
+        "code": "20-0095 TPM",
+        "name": "Sloe Gin Fizz",
+        "hex": "#A97F76"
+    },
+    {
+        "code": "20-0102 TPM",
+        "name": "Cherries Jubilee",
+        "hex": "#5A2C36"
+    },
+    {
+        "code": "20-0109 TPM",
+        "name": "Carnival",
+        "hex": "#C7528C"
+    },
+    {
+        "code": "20-0116 TPM",
+        "name": "Hocus Pocus",
+        "hex": "#A78CAD"
+    },
+    {
+        "code": "20-0123 TPM",
+        "name": "Queen of Night",
+        "hex": "#402533"
+    },
+    {
+        "code": "20-0130 TPM",
+        "name": "Lavender Shimmer",
+        "hex": "#B2AFCD"
+    },
+    {
+        "code": "20-0137 TPM",
+        "name": "Black Oyster",
+        "hex": "#363D4A"
+    },
+    {
+        "code": "20-0144 TPM",
+        "name": "Laser Beam",
+        "hex": "#223474"
+    },
+    {
+        "code": "20-0005 TPM",
+        "name": "Chrome",
+        "hex": "#888789"
+    },
+    {
+        "code": "20-0012 TPM",
+        "name": "Metallic Fir",
+        "hex": "#505457"
+    },
+    {
+        "code": "20-0019 TPM",
+        "name": "Iced Pewter",
+        "hex": "#69645B"
+    },
+    {
+        "code": "20-0026 TPM",
+        "name": "Desert Mirage",
+        "hex": "#B49478"
+    },
+    {
+        "code": "20-0033 TPM",
+        "name": "Glamour Gold",
+        "hex": "#BE9B64"
+    },
+    {
+        "code": "20-0040 TPM",
+        "name": "Luxe Lemon",
+        "hex": "#F5E400"
+    },
+    {
+        "code": "20-0047 TPM",
+        "name": "Fleur De Lis",
+        "hex": "#DAA51D"
+    },
+    {
+        "code": "20-0054 TPM",
+        "name": "Amber Ale",
+        "hex": "#D17400"
+    },
+    {
+        "code": "20-0061 TPM",
+        "name": "Corazon",
+        "hex": "#D22809"
+    },
+    {
+        "code": "20-0068 TPM",
+        "name": "Fruit Punch",
+        "hex": "#CE3D48"
+    },
+    {
+        "code": "20-0075 TPM",
+        "name": "Space Cherry",
+        "hex": "#990011"
+    },
+    {
+        "code": "20-0082 TPM",
+        "name": "Lacquer",
+        "hex": "#E7E5DF"
+    },
+    {
+        "code": "20-0089 TPM",
+        "name": "Silver Plate",
+        "hex": "#ADA59F"
+    },
+    {
+        "code": "20-0096 TPM",
+        "name": "Cellophane",
+        "hex": "#AFA19C"
+    },
+    {
+        "code": "20-0103 TPM",
+        "name": "Intimate Pink",
+        "hex": "#F4DEE3"
+    },
+    {
+        "code": "20-0110 TPM",
+        "name": "Sparkling Fuchsia",
+        "hex": "#9D225D"
+    },
+    {
+        "code": "20-0117 TPM",
+        "name": "Lavender Oil",
+        "hex": "#82537C"
+    },
+    {
+        "code": "20-0124 TPM",
+        "name": "Aubergine Gleam",
+        "hex": "#301728"
+    },
+    {
+        "code": "20-0131 TPM",
+        "name": "Purple Sequin",
+        "hex": "#4E2272"
+    },
+    {
+        "code": "20-0138 TPM",
+        "name": "Blue Giant",
+        "hex": "#344044"
+    },
+    {
+        "code": "20-0145 TPM",
+        "name": "Galactica",
+        "hex": "#112C56"
+    },
+    {
+        "code": "20-0006 TPM",
+        "name": "Liquid Luster",
+        "hex": "#79797C"
+    },
+    {
+        "code": "20-0013 TPM",
+        "name": "Gadget Gray",
+        "hex": "#454A4C"
+    },
+    {
+        "code": "20-0020 TPM",
+        "name": "Satin Slipper",
+        "hex": "#948A77"
+    },
+    {
+        "code": "20-0027 TPM",
+        "name": "Gold Leaf",
+        "hex": "#C59F7B"
+    },
+    {
+        "code": "20-0034 TPM",
+        "name": "Golden Egg",
+        "hex": "#BC9E6E"
+    },
+    {
+        "code": "20-0041 TPM",
+        "name": "Clarified Butter",
+        "hex": "#F1D44B"
+    },
+    {
+        "code": "20-0048 TPM",
+        "name": "Gold Coast",
+        "hex": "#E3A130"
+    },
+    {
+        "code": "20-0055 TPM",
+        "name": "Jack-O-Lantern",
+        "hex": "#CD6000"
+    },
+    {
+        "code": "20-0062 TPM",
+        "name": "Sugar & Spice",
+        "hex": "#C05D48"
+    },
+    {
+        "code": "20-0069 TPM",
+        "name": "Candy Apple Red",
+        "hex": "#B60017"
+    },
+    {
+        "code": "20-0076 TPM",
+        "name": "Sceptre Red",
+        "hex": "#840016"
+    },
+    {
+        "code": "20-0083 TPM",
+        "name": "Silver Coin",
+        "hex": "#E4DDD3"
+    },
+    {
+        "code": "20-0090 TPM",
+        "name": "Himalayan Salt",
+        "hex": "#D1BAB5"
+    },
+    {
+        "code": "20-0097 TPM",
+        "name": "Agave Nectar",
+        "hex": "#A37969"
+    },
+    {
+        "code": "20-0104 TPM",
+        "name": "Tutu Pink",
+        "hex": "#E9CBD7"
+    },
+    {
+        "code": "20-0111 TPM",
+        "name": "Vitality",
+        "hex": "#80144C"
+    },
+    {
+        "code": "20-0118 TPM",
+        "name": "Scottish Thistle",
+        "hex": "#904B8C"
+    },
+    {
+        "code": "20-0125 TPM",
+        "name": "Danburite",
+        "hex": "#CFCED8"
+    },
+    {
+        "code": "20-0132 TPM",
+        "name": "Plum Violet",
+        "hex": "#2A0F38"
+    },
+    {
+        "code": "20-0139 TPM",
+        "name": "Bleu Clair",
+        "hex": "#C5D8E1"
+    },
+    {
+        "code": "20-0146 TPM",
+        "name": "Magnetic Blue",
+        "hex": "#05308C"
+    },
+    {
+        "code": "20-0007 TPM",
+        "name": "Micron",
+        "hex": "#656665"
+    },
+    {
+        "code": "20-0014 TPM",
+        "name": "Wedding Bells",
+        "hex": "#ABB0A5"
+    },
+    {
+        "code": "20-0021 TPM",
+        "name": "Silver-plated",
+        "hex": "#BCB29E"
+    },
+    {
+        "code": "20-0028 TPM",
+        "name": "Brass Knuckles",
+        "hex": "#996848"
+    },
+    {
+        "code": "20-0035 TPM",
+        "name": "Space Sand",
+        "hex": "#B48E5D"
+    },
+    {
+        "code": "20-0042 TPM",
+        "name": "Platinum Frosting",
+        "hex": "#D8CA9D"
+    },
+    {
+        "code": "20-0049 TPM",
+        "name": "Solar Flare",
+        "hex": "#EA9A00"
+    },
+    {
+        "code": "20-0056 TPM",
+        "name": "Coralessence",
+        "hex": "#F26B5B"
+    },
+    {
+        "code": "20-0063 TPM",
+        "name": "Bronzer",
+        "hex": "#9E4936"
+    },
+    {
+        "code": "20-0070 TPM",
+        "name": "Grape Frost",
+        "hex": "#9C676A"
+    },
+    {
+        "code": "20-0077 TPM",
+        "name": "Dynasty Pink",
+        "hex": "#E1A4A8"
+    },
+    {
+        "code": "20-0084 TPM",
+        "name": "Frosted Birch",
+        "hex": "#D1C6B8"
+    },
+    {
+        "code": "20-0091 TPM",
+        "name": "Filmy",
+        "hex": "#D3C2BE"
+    },
+    {
+        "code": "20-0098 TPM",
+        "name": "Penny Loafer",
+        "hex": "#6C4D4A"
+    },
+    {
+        "code": "20-0105 TPM",
+        "name": "Corsage",
+        "hex": "#D890B0"
+    },
+    {
+        "code": "20-0112 TPM",
+        "name": "Celebration",
+        "hex": "#820043"
+    },
+    {
+        "code": "20-0119 TPM",
+        "name": "Mystic Vibes",
+        "hex": "#5A1F51"
+    },
+    {
+        "code": "20-0126 TPM",
+        "name": "Sterling Lavender",
+        "hex": "#9C9BAC"
+    },
+    {
+        "code": "20-0133 TPM",
+        "name": "Kir Royale",
+        "hex": "#280E40"
+    },
+    {
+        "code": "20-0140 TPM",
+        "name": "Slipstream",
+        "hex": "#5B687C"
+    },
+    {
+        "code": "20-0147 TPM",
+        "name": "Diode Blue",
+        "hex": "#0045AC"
+    }
+]
