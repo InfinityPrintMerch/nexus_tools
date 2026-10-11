@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Generador de Plantillas | Eduardo Workspace</title>
+    <link rel="icon" href="data:,">
+
+    <!-- SCRIPT DE PROTECCIÓN DE ACCESO SILENCIOSO -->
+    <!-- NOTA: Comenta temporalmente este bloque si deseas probar el archivo localmente fuera del portal -->
+    <script>
+        if (!sessionStorage.getItem('secure_app_token')) {
+            document.documentElement.style.display = 'none';
+            window.location.replace("../../index.html");
+        }
+    </script>
+
+    <!-- Librerías PDF y Vector SVG2PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/svg2pdf.js@2.2.1/dist/svg2pdf.umd.min.js"></script>
+    <script>window.jsPDF = window.jspdf.jsPDF;</script>
+
+    <!-- Fuente Poppins e Iconos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        /* VARIABLES DE AURO STUDIO */
+        :root {
+            --primary: #6F8A3C;
+            --primary-hover: #58702f;
+            --primary-light: #f2f5eb;
+            --bg-color: #f4f6f4;
+            --surface: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --cut-color: #FF3366;
+            --fold-color: #2b6cb0;
+            --danger: #e53e3e;
+            --danger-light: #fff5f5;
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            --transition: all 0.22s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: url('../../assets/auro/bg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 14px 20px;
+        }
+
+        /* Scrollbars personalizados */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* CABECERA SUPERIOR COMPACTA */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 11px 22px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            margin-bottom: 14px;
+            flex-shrink: 0;
+            gap: 15px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-pill-btn {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.82rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 13px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-pill-btn:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .header-title h1 {
+            color: var(--primary);
+            font-size: 1.16rem;
+            font-weight: 700;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .editor-help-actions {
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .help-btn {
+            background: var(--surface);
+            color: var(--text-main);
+            border: 1.5px solid var(--border);
+            padding: 6px 13px;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .help-btn i {
+            color: var(--primary);
+        }
+
+        .help-btn:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(111, 138, 60, 0.3);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .template-main-workspace {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =========================================
+           SECCIÓN 1: CATÁLOGO DE PLANTILLAS (GALERÍA)
+           ========================================= */
+        #gallery-section {
+            flex: 1;
+            min-height: 0;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            padding: 24px 28px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .toolbar-info h2 {
+            font-size: 1.25rem;
+            color: var(--text-main);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toolbar-info h2 i {
+            color: var(--primary);
+        }
+
+        .toolbar-info p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .templates-grid {
+            flex: 1;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 18px;
+            padding: 4px 6px 12px 2px;
+            align-content: start;
+        }
+
+        .template-card {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .template-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .template-card-img {
+            width: 100%;
+            height: 155px;
+            background-color: var(--primary-light);
+            background-size: cover;
+            background-position: center;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .template-card-img i {
+            font-size: 3rem;
+            color: var(--primary);
+            opacity: 0.65;
+            transition: transform 0.3s ease;
+        }
+
+        .template-card:hover .template-card-img i {
+            transform: scale(1.08);
+            opacity: 0.9;
+        }
+
+        .template-card-content {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .template-card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .template-card-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        .template-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* =========================================
+           SECCIÓN 2: ESTACIÓN DE EDICIÓN PARAMÉTRICA
+           ========================================= */
+        #editor-section {
+            flex: 1;
+            min-height: 0;
+            display: none;
+            grid-template-columns: 1fr 410px;
+            gap: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* COLUMNA IZQUIERDA: TAPETE DE CORTE VECTORIAL */
+        .viewer-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .viewer-toolbar {
+            padding: 10px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #fafbfa;
+            flex-shrink: 0;
+        }
+
+        .viewer-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .viewer-status i {
+            color: var(--primary);
+        }
+
+        .dimensions-pill {
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+            background: var(--primary-light);
+            color: var(--primary-hover);
+            border: 1px solid rgba(111, 138, 60, 0.25);
+        }
+
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 3px 6px;
+            border-radius: var(--radius-sm);
+        }
+
+        .zoom-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            cursor: pointer;
+            width: 25px;
+            height: 25px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.76rem;
+            transition: var(--transition);
+        }
+
+        .zoom-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .zoom-level {
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 44px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        /* Tapete de corte técnico con cuadrícula milimétrica */
+        .cutting-mat-viewport {
+            flex: 1;
+            overflow: auto;
+            background-color: #e9ece9;
+            background-image:
+                linear-gradient(rgba(111, 138, 60, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(111, 138, 60, 0.08) 1px, transparent 1px),
+                radial-gradient(#cbd5e0 1px, transparent 1px);
+            background-size: 100px 100px, 100px 100px, 20px 20px;
+            padding: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 0;
+            position: relative;
+        }
+
+        .cutting-mat {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.15s ease;
+            transform-origin: center center;
+        }
+
+        .cutting-mat svg {
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.1));
+        }
+
+        /* Leyenda flotante inferior en el tapete */
+        .canvas-overlay-bottom {
+            position: absolute;
+            bottom: 14px;
+            left: 16px;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .preview-legend {
+            pointer-events: auto;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(8px);
+            padding: 8px 14px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .legend-cut {
+            width: 22px;
+            height: 2.5px;
+            background: var(--cut-color);
+            border-radius: 2px;
+        }
+
+        .legend-fold {
+            width: 22px;
+            height: 0;
+            border-bottom: 2.5px dashed var(--fold-color);
+        }
+
+        /* COLUMNA DERECHA: PANEL DE PARÁMETROS Y DESCARGA */
+        .sidebar-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            background: #fafbfa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header h2 {
+            font-size: 0.94rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-header h2 i {
+            color: var(--primary);
+        }
+
+        /* Selector de Unidades (mm / cm) */
+        .template-units {
+            display: inline-flex;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 2px;
+        }
+
+        .unit-radio {
+            display: none;
+        }
+
+        .unit-label {
+            padding: 4px 11px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .unit-radio:checked+.unit-label {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 2px 5px rgba(111, 138, 60, 0.25);
+        }
+
+        .sidebar-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .config-section {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 13px 14px;
+        }
+
+        .sidebar-heading {
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dynamic-inputs-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .modern-input-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 7px 12px;
+            transition: var(--transition);
+        }
+
+        .modern-input-group:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(111, 138, 60, 0.12);
+        }
+
+        .modern-input-group label {
+            font-size: 0.8rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .input-right-wrap {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .modern-input {
+            background: transparent;
+            border: none;
+            color: var(--primary-hover);
+            font-size: 0.92rem;
+            font-weight: 700;
+            width: 75px;
+            text-align: right;
+            outline: none;
+        }
+
+        .unit-suffix {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* PIE DE EXPORTACIÓN FIJO ABAJO */
+        .sidebar-footer {
+            padding: 14px 16px;
+            border-top: 1px solid var(--border);
+            background: #fafbfa;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 11px 16px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.24);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: var(--surface);
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        /* =========================================
+           MODAL DE AYUDA / SLIDER Y TOAST
+           ========================================= */
+        .custom-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(25, 32, 28, 0.65);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .custom-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            width: 92%;
+            max-width: 640px;
+            padding: 28px;
+            position: relative;
+            transform: translateY(15px) scale(0.97);
+            transition: transform 0.25s ease;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .custom-modal.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--danger-light);
+            color: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .modal-content h2 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            font-weight: 700;
+            padding-right: 36px;
+        }
+
+        .modal-content p {
+            color: var(--text-main);
+            font-size: 0.85rem;
+            line-height: 1.55;
+            background: var(--primary-light);
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--primary);
+        }
+
+        .modal-slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .slider-btn {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .slider-btn:hover {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .modal-image-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-image-container img {
+            max-width: 100%;
+            max-height: 48vh;
+            object-fit: contain;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .modal-placeholder {
+            width: 100%;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 40px 20px;
+            background: var(--bg-color);
+            border-radius: var(--radius-md);
+            border: 1.5px dashed var(--border);
+            font-size: 0.85rem;
+        }
+
+        .modal-placeholder i {
+            font-size: 2.4rem;
+            color: var(--primary);
+            opacity: 0.5;
+        }
+
+        .slider-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--border);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .dot.active {
+            background: var(--primary);
+            transform: scale(1.3);
+        }
+
+        /* Toast Flotante */
+        .global-toast {
+            position: fixed;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: #ffffff;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(111, 138, 60, 0.35);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: bottom 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .global-toast.show {
+            bottom: 24px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 960px) {
+            body {
+                height: auto;
+                overflow: auto;
+            }
+
+            #editor-section {
+                grid-template-columns: 1fr;
+            }
+
+            .viewer-panel {
+                height: 480px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- CABECERA SUPERIOR -->
+    <header class="app-header">
+        <div class="header-left">
+            <a href="../../index.html" class="nav-pill-btn" id="portalBackLink">
+                <i class="fas fa-arrow-left"></i> Portal
+            </a>
+            <button type="button" class="nav-pill-btn" id="btnReturn" style="display: none;">
+                <i class="fa-solid fa-table-cells-large"></i> Volver al Catálogo
+            </button>
+
+            <div class="header-title">
+                <h1><i class="fas fa-box-open"></i> <span id="headerMainTitle">Generador de Plantillas</span></h1>
+                <p id="headerSubtitle">Trazo paramétrico de cajas, empaques y bolsas a escala real 1:1</p>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <div class="editor-help-actions" id="editorHelpActions">
+                <button type="button" class="help-btn" id="btnHowTo">
+                    <i class="fa-solid fa-puzzle-piece"></i> Cómo Armar
+                </button>
+                <button type="button" class="help-btn" id="btnExample">
+                    <i class="fa-solid fa-image"></i> Ver Ejemplo
+                </button>
+            </div>
+
+            <div class="header-badge">
+                <i class="fas fa-ruler-combined"></i>
+                <span>Corte Vectorial 1:1</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="template-main-workspace">
+
+        <!-- VISTA 1: CATÁLOGO DE PLANTILLAS -->
+        <section id="gallery-section">
+            <div class="toolbar">
+                <div class="toolbar-info">
+                    <h2><i class="fas fa-layer-group"></i> Catálogo de Plantillas</h2>
+                    <p>Selecciona un modelo para personalizar sus dimensiones y generar el archivo técnico de corte y
+                        doblez.</p>
+                </div>
+            </div>
+
+            <div class="templates-grid" id="templatesGrid"></div>
+        </section>
+
+        <!-- VISTA 2: EDITOR PARAMÉTRICO (VISOR IZQ + CONTROLES DER) -->
+        <section id="editor-section">
+
+            <!-- PANEL IZQUIERDO: TAPETE DE CORTE -->
+            <div class="viewer-panel">
+                <div class="viewer-toolbar">
+                    <div class="viewer-status">
+                        <i class="fas fa-vector-square"></i>
+                        <span id="editorTitle">Plantilla</span>
+                        <span class="dimensions-pill" id="liveSizePill">0 × 0 mm</span>
+                    </div>
+
+                    <div class="zoom-controls">
+                        <button type="button" class="zoom-btn" id="zoomOutBtn" title="Alejar"><i
+                                class="fas fa-minus"></i></button>
+                        <span class="zoom-level" id="zoomLevelText">100%</span>
+                        <button type="button" class="zoom-btn" id="zoomInBtn" title="Acercar"><i
+                                class="fas fa-plus"></i></button>
+                        <button type="button" class="zoom-btn" id="zoomResetBtn" title="Restaurar 100%"><i
+                                class="fas fa-expand"></i></button>
+                    </div>
+                </div>
+
+                <div class="cutting-mat-viewport">
+                    <div class="cutting-mat" id="svgPreview"></div>
+
+                    <div class="canvas-overlay-bottom">
+                        <div class="preview-legend">
+                            <div class="legend-item"><span class="legend-cut"></span> Línea de Corte</div>
+                            <div class="legend-item"><span class="legend-fold"></span> Línea de Doblez</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL DERECHO: DIMENSIONES, OPCIONES Y EXPORTACIÓN -->
+            <aside class="sidebar-panel">
+                <div class="sidebar-header">
+                    <h2><i class="fas fa-sliders"></i> Parámetros</h2>
+
+                    <div class="template-units">
+                        <input type="radio" name="units" id="unit-mm" value="mm" checked class="unit-radio">
+                        <label for="unit-mm" class="unit-label">mm</label>
+                        <input type="radio" name="units" id="unit-cm" value="cm" class="unit-radio">
+                        <label for="unit-cm" class="unit-label">cm</label>
+                    </div>
+                </div>
+
+                <div class="sidebar-body">
+                    <div class="config-section">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-ruler-combined"></i> Dimensiones Principales
+                        </h3>
+                        <div id="dynamicInputsDimensions" class="dynamic-inputs-container"></div>
+                    </div>
+
+                    <div class="config-section" id="optionsSectionBox">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-gears"></i> Ajustes de Plantilla</h3>
+                        <div id="dynamicInputsOptions" class="dynamic-inputs-container"></div>
+                    </div>
+                </div>
+
+                <div class="sidebar-footer">
+                    <button type="button" class="btn-action btn-primary" id="btnDownloadPdf">
+                        <i class="fa-solid fa-file-pdf"></i> Descargar PDF Exacto (Escala 1:1)
+                    </button>
+                    <button type="button" class="btn-action btn-outline" id="btnDownloadSvg">
+                        <i class="fa-solid fa-file-code"></i> Descargar Vector SVG Puro
+                    </button>
+                </div>
+            </aside>
+
+        </section>
+
+    </main>
+
+    <!-- TOAST DE NOTIFICACIÓN -->
+    <div id="globalToast" class="global-toast">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toastMsg">Exportado</span>
+    </div>
+
+    <!-- MODAL DE INSTRUCCIONES Y EJEMPLOS -->
+    <div id="dynamicModal" class="custom-modal">
+        <div class="modal-content">
+            <button type="button" class="modal-close" id="closeModalBtn"><i class="fa-solid fa-xmark"></i></button>
+            <h2 id="modalTitle">Título</h2>
+            <p id="modalDesc" style="display: none;"></p>
+
+            <div class="modal-slider-wrapper">
+                <button type="button" class="slider-btn" id="prevSlide"><i
+                        class="fa-solid fa-chevron-left"></i></button>
+                <div class="modal-image-container">
+                    <img id="modalImage" src="" alt="Imagen de referencia">
+                    <div id="modalImagePlaceholder" class="modal-placeholder">
+                        <i class="fa-solid fa-image"></i>
+                        <span>Imagen de referencia no disponible</span>
+                    </div>
+                </div>
+                <button type="button" class="slider-btn" id="nextSlide"><i
+                        class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
+            <div class="slider-indicators" id="sliderDots"></div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS DE TUS MODELOS EN CARPETA models/ -->
+    <script src="models/cubo.js"></script>
+    <script src="models/caja_tarjetas.js"></script>
+    <script src="models/bolsa.js"></script>
+    <script src="models/caja_gema.js"></script>
+    <script src="models/caja_de_regalo.js"></script>
+
+    <!-- LÓGICA INTEGRADA DEL GENERADOR DE PLANTILLAS -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // --- 1. CARGA DINÁMICA DE MODELOS ---
+            if (!window.DivineTemplates) window.DivineTemplates = {};
+            let activeTemplate = null;
+            let currentRender = null;
+            let currentZoom = 1.0;
+
+            const grid = document.getElementById('templatesGrid');
+            const editorSection = document.getElementById('editor-section');
+            const gallerySection = document.getElementById('gallery-section');
+            const dimContainer = document.getElementById('dynamicInputsDimensions');
+            const optContainer = document.getElementById('dynamicInputsOptions');
+            const optionsSectionBox = document.getElementById('optionsSectionBox');
+            const svgPreview = document.getElementById('svgPreview');
+            const liveSizePill = document.getElementById('liveSizePill');
+
+            const btnReturn = document.getElementById('btnReturn');
+            const editorHelpActions = document.getElementById('editorHelpActions');
+            const headerMainTitle = document.getElementById('headerMainTitle');
+
+            // Controles de Zoom
+            const zoomOutBtn = document.getElementById('zoomOutBtn');
+            const zoomInBtn = document.getElementById('zoomInBtn');
+            const zoomResetBtn = document.getElementById('zoomResetBtn');
+            const zoomLevelText = document.getElementById('zoomLevelText');
+
+            function applyZoom() {
+                zoomLevelText.textContent = `${Math.round(currentZoom * 100)}%`;
+                svgPreview.style.transform = `scale(${currentZoom})`;
+            }
+
+            zoomInBtn.addEventListener('click', () => {
+                currentZoom = Math.min(2.5, +(currentZoom + 0.15).toFixed(2));
+                applyZoom();
+            });
+
+            zoomOutBtn.addEventListener('click', () => {
+                currentZoom = Math.max(0.4, +(currentZoom - 0.15).toFixed(2));
+                applyZoom();
+            });
+
+            zoomResetBtn.addEventListener('click', () => {
+                currentZoom = 1.0;
+                applyZoom();
+            });
+
+            // Variables Modal Slider
+            let currentSliderImages = [];
+            let currentSlideIndex = 0;
+            const modal = document.getElementById('dynamicModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalPlaceholder = document.getElementById('modalImagePlaceholder');
+            const btnPrev = document.getElementById('prevSlide');
+            const btnNext = document.getElementById('nextSlide');
+            const sliderDots = document.getElementById('sliderDots');
+
+            function init() {
+                renderGallery();
+            }
+
+            function renderGallery() {
+                grid.innerHTML = '';
+                const templatesList = Object.values(window.DivineTemplates);
+
+                if (templatesList.length === 0) {
+                    grid.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 50px 20px; color: var(--text-muted);">
+                            <i class="fa-solid fa-box-open" style="font-size: 2.8rem; color: var(--primary); margin-bottom: 12px;"></i>
+                            <p>No se detectaron plantillas cargadas en <strong>models/</strong>.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                templatesList.forEach(temp => {
+                    const card = document.createElement('div');
+                    card.className = 'template-card';
+                    card.onclick = () => openEditor(temp.id);
+
+                    const cover = temp.coverImage || '';
+                    card.innerHTML = `
+                        <div class="template-card-img" style="${cover ? `background-image: url('${cover}')` : ''}">
+                            ${!cover ? '<i class="fa-solid fa-box-open"></i>' : ''}
+                        </div>
+                        <div class="template-card-content">
+                            <div>
+                                <h3 class="template-card-title">${temp.name}</h3>
+                                <p class="template-card-desc">${temp.desc || 'Plantilla paramétrica personalizable lista para corte.'}</p>
+                            </div>
+                            <div class="template-card-footer">
+                                <span>Personalizar medidas</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+
+            function openEditor(id) {
+                activeTemplate = window.DivineTemplates[id];
+                if (!activeTemplate) return;
+
+                document.getElementById('editorTitle').innerText = activeTemplate.name;
+                headerMainTitle.innerText = activeTemplate.name;
+
+                dimContainer.innerHTML = '';
+                optContainer.innerHTML = '';
+
+                currentZoom = 1.0;
+                applyZoom();
+
+                const currentUnit = document.querySelector('.unit-radio:checked').value;
+
+                if (!activeTemplate.render) {
+                    svgPreview.innerHTML = `
+                        <div style="text-align:center; color: var(--text-muted);">
+                            <i class="fa-solid fa-person-digging" style="font-size: 3rem; color: var(--primary); margin-bottom: 10px;"></i>
+                            <p>Modelo en desarrollo.</p>
+                        </div>
+                    `;
+                    optionsSectionBox.style.display = 'none';
+                } else {
+                    let hasOptions = false;
+
+                    activeTemplate.params.forEach(param => {
+                        const group = document.createElement('div');
+                        group.className = 'modern-input-group';
+                        group.innerHTML = `
+                            <label for="input_${param.id}">${param.label}:</label>
+                            <div class="input-right-wrap">
+                                <input type="number" step="any" class="modern-input param-input" id="input_${param.id}" value="${param.default}">
+                                <span class="unit-suffix">${currentUnit}</span>
+                            </div>
+                        `;
+                        if (param.type === 'dim') {
+                            dimContainer.appendChild(group);
+                        } else {
+                            optContainer.appendChild(group);
+                            hasOptions = true;
+                        }
+                    });
+
+                    optionsSectionBox.style.display = hasOptions ? 'block' : 'none';
+
+                    document.querySelectorAll('.param-input').forEach(input => {
+                        input.addEventListener('input', updateCanvas);
+                    });
+                    updateCanvas();
+                }
+
+                gallerySection.style.display = 'none';
+                editorSection.style.display = 'grid';
+                btnReturn.style.display = 'inline-flex';
+                editorHelpActions.style.display = 'inline-flex';
+            }
+
+            function updateCanvas() {
+                if (!activeTemplate || !activeTemplate.render) return;
+
+                const inputs = {};
+                const selectedUnit = document.querySelector('.unit-radio:checked').value;
+                const unitMult = selectedUnit === 'cm' ? 10 : 1;
+
+                document.querySelectorAll('.unit-suffix').forEach(el => {
+                    el.textContent = selectedUnit;
+                });
+
+                activeTemplate.params.forEach(p => {
+                    const inputEl = document.getElementById(`input_${p.id}`);
+                    const rawVal = inputEl ? parseFloat(inputEl.value) : p.default;
+                    inputs[p.id] = (isNaN(rawVal) ? p.default : rawVal) * unitMult;
+                });
+
+                currentRender = activeTemplate.render(inputs);
+                svgPreview.innerHTML = currentRender.svg;
+
+                if (currentRender && currentRender.width && currentRender.height) {
+                    liveSizePill.textContent = `Lienzo: ${Math.round(currentRender.width)} × ${Math.round(currentRender.height)} mm`;
+                }
+            }
+
+            document.querySelectorAll('.unit-radio').forEach(r => {
+                r.addEventListener('change', updateCanvas);
+            });
+
+            // --- 2. MODAL DE AYUDA Y EJEMPLOS ---
+            function openModal(type) {
+                if (!activeTemplate) return;
+
+                if (type === 'armar') {
+                    document.getElementById('modalTitle').innerText = `Cómo armar: ${activeTemplate.name}`;
+                    document.getElementById('modalDesc').innerText = activeTemplate.assemblyText || 'Sigue las líneas de corte y pliega hacia adentro las líneas punteadas de doblez.';
+                    document.getElementById('modalDesc').style.display = 'block';
+                    currentSliderImages = activeTemplate.assemblyImages || [];
+                } else {
+                    document.getElementById('modalTitle').innerText = `Ejemplos: ${activeTemplate.name}`;
+                    document.getElementById('modalDesc').style.display = 'none';
+                    currentSliderImages = activeTemplate.exampleImages || [];
+                }
+
+                currentSlideIndex = 0;
+                updateSliderView();
+                modal.classList.add('active');
+            }
+
+            function updateSliderView() {
+                sliderDots.innerHTML = '';
+
+                currentSliderImages.forEach((_, idx) => {
+                    const dot = document.createElement('div');
+                    dot.className = `dot ${idx === currentSlideIndex ? 'active' : ''}`;
+                    sliderDots.appendChild(dot);
+                });
+
+                if (currentSliderImages && currentSliderImages.length > 0) {
+                    modalImage.style.display = 'block';
+                    modalPlaceholder.style.display = 'none';
+                    modalImage.src = currentSliderImages[currentSlideIndex];
+                } else {
+                    modalImage.style.display = 'none';
+                    modalPlaceholder.style.display = 'flex';
+                }
+            }
+
+            btnPrev.onclick = () => {
+                if (currentSlideIndex > 0) {
+                    currentSlideIndex--;
+                    updateSliderView();
+                }
+            };
+
+            btnNext.onclick = () => {
+                if (currentSlideIndex < currentSliderImages.length - 1) {
+                    currentSlideIndex++;
+                    updateSliderView();
+                }
+            };
+
+            document.getElementById('btnHowTo').onclick = () => openModal('armar');
+            document.getElementById('btnExample').onclick = () => openModal('ejemplo');
+            document.getElementById('closeModalBtn').onclick = () => modal.classList.remove('active');
+            modal.addEventListener('click', e => {
+                if (e.target === modal) modal.classList.remove('active');
+            });
+
+            // --- 3. EXPORTACIÓN PDF (DISEÑO EDITORIAL AUTO-ESCALABLE 1:1) ---
+            document.getElementById('btnDownloadPdf').onclick = async () => {
+                if (!currentRender) return showToast("No hay diseño cargado.");
+
+                showToast("Generando PDF Vectorial...");
+
+                const { jsPDF } = window.jspdf;
+
+                const minMargin = 20;
+                const pdfWidth = Math.max(210, currentRender.width + (minMargin * 2));
+                const scale = pdfWidth / 210;
+
+                const margin = 20 * scale;
+                const headerH = 18 * scale;
+                const footerH = 25 * scale;
+                const pdfHeight = Math.max(297, currentRender.height + headerH + footerH + (margin * 2));
+
+                const doc = new jsPDF({
+                    orientation: pdfWidth > pdfHeight ? 'l' : 'p',
+                    unit: 'mm',
+                    format: [pdfWidth, pdfHeight]
+                });
+
+                // ENCABEZADO
+                doc.setFillColor(31, 31, 35);
+                doc.rect(0, 0, pdfWidth, headerH, 'F');
+
+                let logoWidthScaled = 22 * scale;
+                try {
+                    const logoData = await getLogoData('../../assets/logo.png');
+                    const logoH = (logoData.height / logoData.width) * logoWidthScaled;
+                    const logoY = (headerH - logoH) / 2;
+                    doc.addImage(logoData.dataUrl, 'PNG', margin, logoY, logoWidthScaled, logoH);
+                } catch (e) {
+                    logoWidthScaled = 0;
+                }
+
+                const textStartX = margin + logoWidthScaled + (6 * scale);
+
+                doc.setTextColor(255, 255, 255);
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(14 * scale);
+
+                const titleY = (headerH / 2) - (1 * scale);
+                doc.text(activeTemplate.name.toUpperCase(), textStartX, titleY);
+
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(8 * scale);
+                doc.setTextColor(180, 180, 180);
+                const unitLabel = document.querySelector('.unit-radio:checked').value;
+                doc.text(`GUIA DE CORTE - ESCALA 1:1 - UNIDADES: ${unitLabel.toUpperCase()}`, textStartX, titleY + (5 * scale));
+
+                // INYECCIÓN SVG
+                const svgElement = document.querySelector('#svgPreview svg');
+                if (!svgElement) return showToast("Error: SVG no encontrado");
+
+                const availableHeight = pdfHeight - headerH - footerH;
+                const startX = (pdfWidth - currentRender.width) / 2;
+                const startY = headerH + ((availableHeight - currentRender.height) / 2);
+
+                await doc.svg(svgElement, {
+                    x: startX,
+                    y: startY,
+                    width: currentRender.width,
+                    height: currentRender.height
+                });
+
+                // PIE DE PÁGINA
+                const footY = pdfHeight - (25 * scale);
+
+                doc.setDrawColor(200, 200, 200);
+                doc.setLineWidth(0.3 * scale);
+                doc.line(margin, footY - (5 * scale), pdfWidth - margin, footY - (5 * scale));
+
+                doc.setTextColor(100, 100, 100);
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(9 * scale);
+                doc.text(`Eduardo Workspace © 2026 | Imprenta Arcoiris`, pdfWidth / 2, footY, { align: 'center' });
+
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(8 * scale);
+                doc.setTextColor(150, 150, 150);
+                doc.text(`Generado automáticamente. Todos los derechos reservados.`, pdfWidth / 2, footY + (5 * scale), { align: 'center' });
+
+                doc.setTextColor(255, 51, 102);
+                doc.text(`IMPORTANTE: Imprimir al 100% de escala (Tamaño Real). No usar "Ajustar al área de impresión".`, pdfWidth / 2, footY + (10 * scale), { align: 'center' });
+
+                let medidasText = "Medidas: ";
+                activeTemplate.params.forEach(p => {
+                    let val = document.getElementById(`input_${p.id}`).value || p.default;
+                    medidasText += `${p.label} = ${val}${unitLabel} | `;
+                });
+
+                doc.setTextColor(120, 120, 120);
+                doc.setFontSize(7 * scale);
+                doc.text(medidasText.slice(0, -3), margin, footY + (15 * scale));
+
+                doc.save(`Plantilla_${activeTemplate.name.replace(/\s+/g, '_')}.pdf`);
+                showToast("PDF Técnico 1:1 descargado");
+            };
+
+            function getLogoData(url) {
+                return new Promise((resolve, reject) => {
+                    let img = new Image();
+                    img.onload = () => {
+                        let canvas = document.createElement("canvas");
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        let ctx = canvas.getContext("2d");
+                        ctx.drawImage(img, 0, 0);
+                        resolve({
+                            dataUrl: canvas.toDataURL("image/png"),
+                            width: img.width,
+                            height: img.height
+                        });
+                    };
+                    img.onerror = reject;
+                    img.src = url;
+                });
+            }
+
+            // Descarga de SVG puro
+            document.getElementById('btnDownloadSvg').onclick = () => {
+                if (!currentRender) return;
+                const blob = new Blob([currentRender.svg], { type: "image/svg+xml;charset=utf-8" });
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = `Plantilla_${activeTemplate.name.replace(/\s+/g, '_')}.svg`;
+                link.click();
+                showToast("Vector SVG descargado");
+            };
+
+            // Regresar al catálogo de plantillas
+            btnReturn.onclick = () => {
+                editorSection.style.display = 'none';
+                gallerySection.style.display = 'flex';
+                btnReturn.style.display = 'none';
+                editorHelpActions.style.display = 'none';
+                headerMainTitle.innerText = 'Generador de Plantillas';
+            };
+
+            function showToast(msg) {
+                const toast = document.getElementById('globalToast');
+                document.getElementById('toastMsg').innerText = msg;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }
+
+            init();
+        });
+    </script>
+</body>
+
+</html>

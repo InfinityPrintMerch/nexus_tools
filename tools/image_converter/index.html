@@ -5,14 +5,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Convertir Imagen | Eduardo Workspace</title>
+    <link rel="icon" href="data:,">
 
-    <!-- SCRIPT DE PROTECCIÓN DE ACCESO SILENCIOSO -->
+    <!-- 1. PRE-CARGA INMEDIATA DEL TEMA EN CACHÉ (EVITA DESTELLO BLANCO) -->
     <script>
-        if (!sessionStorage.getItem('secure_app_token')) {
-            document.documentElement.style.display = 'none';
-            window.location.replace("../../index.html");
-        }
+        (function () {
+            try {
+                const cachedTheme = localStorage.getItem('eduardo_workspace_theme') ||
+                    localStorage.getItem('artivo-admin-theme') ||
+                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                if (cachedTheme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) { }
+        })();
     </script>
+
+    <!-- 2. GUARDIÁN DE SEGURIDAD CENTRALIZADO (FIREBASE AUTH + FIRESTORE) -->
+    <script type="module" src="../../js/auth-guard.js" data-tool-id="image_converter"
+        data-login-url="../../index.html"></script>
 
     <!-- Librerías requeridas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -25,22 +36,81 @@
         rel="stylesheet">
 
     <style>
-        /* VARIABLES DE AURO STUDIO */
+        /* =========================================
+           VARIABLES DE AURO STUDIO (MODO CLARO)
+           ========================================= */
         :root {
             --primary: #6F8A3C;
             --primary-hover: #58702f;
             --primary-light: #f2f5eb;
+            --border-focus: #6F8A3C;
+
             --bg-color: #f4f6f4;
+            --bg-overlay: rgba(244, 246, 244, 0);
             --surface: #ffffff;
+            --toolbar-bg: #fafbfa;
+            --input-bg: #ffffff;
+            --banner-bg: rgba(255, 255, 255, 0.95);
+            --banner-border: rgba(255, 255, 255, 0.6);
+            --card-border: #e2e8f0;
+
+            --mat-bg: #e9ece9;
+            --mat-line: rgba(111, 138, 60, 0.07);
+            --mat-dot: #cbd5e0;
+
             --text-main: #2d3748;
             --text-muted: #718096;
             --border: #e2e8f0;
+            --danger: #e53e3e;
+            --danger-hover: #c53030;
+            --danger-light: #fff5f5;
+
+            --switch-bg: #e2e8f0;
+            --switch-knob: #ffffff;
+
             --radius-xl: 20px;
             --radius-lg: 16px;
             --radius-md: 12px;
+            --radius-sm: 8px;
             --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
             --transition: all 0.3s ease;
+        }
+
+        /* =========================================
+           VARIABLES MODO OSCURO
+           ========================================= */
+        [data-theme="dark"] {
+            --primary: #84a348;
+            --primary-hover: #96b559;
+            --primary-light: rgba(132, 163, 72, 0.16);
+            --border-focus: #84a348;
+
+            --bg-color: #0f1419;
+            --bg-overlay: rgba(15, 20, 25, 0.88);
+            --surface: #182026;
+            --toolbar-bg: #141b20;
+            --input-bg: #11171c;
+            --banner-bg: rgba(24, 32, 38, 0.92);
+            --banner-border: rgba(255, 255, 255, 0.07);
+            --card-border: #283540;
+
+            --mat-bg: #12181d;
+            --mat-line: rgba(132, 163, 72, 0.07);
+            --mat-dot: #26323d;
+
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #283540;
+            --danger: #fc8181;
+            --danger-hover: #f56565;
+            --danger-light: rgba(229, 62, 62, 0.15);
+
+            --switch-bg: #283540;
+            --switch-knob: #84a348;
+
+            --shadow-sm: 0 4px 10px -1px rgba(0, 0, 0, 0.35);
+            --shadow-md: 0 12px 28px -5px rgba(0, 0, 0, 0.5);
         }
 
         * {
@@ -53,7 +123,6 @@
         body {
             background-color: var(--bg-color);
             background-image: url('../../assets/auro/bg.png');
-            /* Ajusta la ruta a tu imagen de fondo */
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -61,290 +130,451 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            padding: 14px 20px;
+            position: relative;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: var(--bg-overlay);
+            pointer-events: none;
+            z-index: 0;
+            transition: background 0.3s ease;
+        }
+
+        body:not(.auth-verified) .pdf-main-workspace,
+        body:not(.auth-verified) .app-header {
+            display: none !important;
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 8px;
+        }
+
+        [data-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
         }
 
         .container {
             width: 100%;
-            max-width: 1200px;
-            margin: 20px auto;
             flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
         }
 
-        /* BANNER Y NAVEGACIÓN */
-        .back-nav {
-            margin-bottom: 20px;
+        /* =========================================
+           SWITCH DE MODO OSCURO
+           ========================================= */
+        .theme-switch {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            width: 60px;
+            height: 32px;
+            flex-shrink: 0;
+            margin: 0;
         }
 
-        .back-nav a {
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .switch-slider {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: var(--switch-bg);
+            border-radius: 50px;
+            border: 1.5px solid var(--border);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .switch-slider .icon-sun {
+            color: #f59e0b;
+            font-size: 12px;
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        .switch-slider .icon-moon {
+            color: #94a3b8;
+            font-size: 12px;
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        [data-theme="dark"] .switch-slider .icon-moon {
+            color: #ffffff;
+        }
+
+        .switch-knob {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 23px;
+            height: 23px;
+            background-color: var(--switch-knob);
+            border-radius: 50%;
+            transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+        }
+
+        .theme-switch input:checked+.switch-slider .switch-knob {
+            transform: translateX(27px);
+        }
+
+        .theme-switch:hover .switch-slider {
+            border-color: var(--primary);
+        }
+
+        /* =========================================
+           CABECERA SUPERIOR COMPACTA (ESTILO ASSEMBLER)
+           ========================================= */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--banner-bg);
+            backdrop-filter: blur(10px);
+            padding: 11px 22px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--banner-border);
+            margin-bottom: 14px;
+            flex-shrink: 0;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-pill-btn {
             color: var(--text-muted);
             text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
+            font-weight: 600;
+            font-size: 0.82rem;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            transition: var(--transition);
-        }
-
-        .back-nav a:hover {
-            color: var(--primary);
-        }
-
-        .top-banner {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 20px 30px;
-            border-radius: var(--radius-xl);
-            margin-bottom: 24px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            text-align: center;
-        }
-
-        .top-banner h1 {
-            color: var(--primary);
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .top-banner p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        /* TARJETA PRINCIPAL */
-        .card {
-            background: var(--surface);
-            border-radius: var(--radius-xl);
-            padding: 40px;
-            box-shadow: var(--shadow-md);
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* ZONA DE DRAG & DROP INICIAL */
-        .file-upload {
-            border: 2px dashed var(--border);
-            background: var(--primary-light);
-            padding: 60px 20px;
-            border-radius: var(--radius-lg);
+            padding: 6px 13px;
+            border-radius: var(--radius-sm);
+            background: var(--input-bg);
+            border: 1px solid var(--border);
             cursor: pointer;
             transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            text-align: center;
+            white-space: nowrap;
         }
 
-        .file-upload.dragover,
-        .file-upload:hover {
-            border-color: var(--primary);
-            background: #e4efe0;
-        }
-
-        .file-upload i {
+        .nav-pill-btn:hover {
             color: var(--primary);
-            font-size: 45px;
+            background: var(--primary-light);
+            border-color: var(--primary);
         }
 
-        .file-upload span {
-            font-weight: 500;
-            color: var(--text-main);
-            font-size: 1.1rem;
+        .header-title h1 {
+            color: var(--primary);
+            font-size: 1.16rem;
+            font-weight: 700;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* CONTENEDOR DE TRABAJO (Oculto al inicio) */
-        .pdf2jpg-container {
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(111, 138, 60, 0.3);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* =========================================
+           ESTACIÓN PRINCIPAL (2 COLUMNAS)
+           ========================================= */
+        .pdf-main-workspace {
+            flex: 1;
+            min-height: 0;
             display: flex;
             flex-direction: column;
-            gap: 30px;
         }
 
-        @media (min-width: 900px) {
-            .pdf2jpg-container {
-                flex-direction: row;
-                align-items: flex-start;
-            }
-        }
-
-        /* ZONA DE PREVISUALIZACIONES */
-        .pdf2jpg-preview {
+        .tool-section {
             flex: 1;
-            background: var(--bg-color);
-            border-radius: var(--radius-lg);
-            border: 1px inset var(--border);
-            padding: 20px;
-            min-height: 300px;
-        }
-
-        .pdf2jpg-preview h3 {
-            font-size: 1.05rem;
-            color: var(--text-main);
-            margin-bottom: 15px;
-        }
-
-        /* Cuadrícula de Imágenes generada por JS */
-        .image-grid {
+            min-height: 0;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 15px;
+            grid-template-columns: 1fr 340px;
+            gap: 16px;
+            animation: fadeIn 0.28s ease;
         }
 
-        .image-preview-item {
+        /* COLUMNA IZQUIERDA: MESA DE IMÁGENES */
+        .viewer-panel {
             background: var(--surface);
-            border-radius: var(--radius-md);
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
             border: 1px solid var(--border);
             display: flex;
             flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .viewer-toolbar {
+            padding: 11px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: var(--toolbar-bg);
+            flex-shrink: 0;
+        }
+
+        .viewer-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .viewer-status i {
+            color: var(--primary);
+        }
+
+        .toolbar-right-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-sm-danger {
+            background: var(--surface);
+            color: var(--danger);
+            border: 1px solid rgba(229, 62, 62, 0.35);
+            padding: 5px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.76rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+
+        .btn-sm-danger:hover {
+            background: var(--danger);
+            color: #ffffff;
+            border-color: var(--danger);
+        }
+
+        /* Tapete técnico de previsualización */
+        .pdf-mat-viewport {
+            flex: 1;
+            overflow-y: auto;
+            background-color: var(--mat-bg);
+            background-image:
+                linear-gradient(rgba(111, 138, 60, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(111, 138, 60, 0.07) 1px, transparent 1px),
+                radial-gradient(var(--mat-dot) 1px, transparent 1px);
+            background-size: 100px 100px, 100px 100px, 20px 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            position: relative;
+        }
+
+        .pdf-mat-viewport.dragover {
+            background-color: var(--primary-light);
+            outline: 3px dashed var(--primary);
+            outline-offset: -12px;
+        }
+
+        /* Dropzone Inicial */
+        .empty-dropzone {
+            margin: auto;
+            max-width: 520px;
+            width: 100%;
+            background: var(--surface);
+            backdrop-filter: blur(8px);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-xl);
+            padding: 42px 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            display: block;
+        }
+
+        .empty-dropzone:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .dropzone-icon-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 16px auto;
+            transition: var(--transition);
+        }
+
+        .empty-dropzone:hover .dropzone-icon-circle {
+            background: var(--primary);
+            color: #ffffff;
+            transform: scale(1.06);
+        }
+
+        .empty-dropzone h3 {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .empty-dropzone p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Estilos de la Cuadrícula Generada por image_converter.js */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            width: 100%;
+            align-content: start;
+        }
+
+        /* Coincide con la clase asignada en el archivo original (.image-preview-item) */
+        .image-preview-item {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
             transition: var(--transition);
             position: relative;
         }
 
         .image-preview-item:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
             border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
         }
 
         .image-preview-item img {
             width: 100%;
-            height: 120px;
-            object-fit: cover;
-            border-bottom: 1px solid var(--border);
+            height: 130px;
+            object-fit: contain;
+            background: var(--input-bg);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
         }
 
         .file-type-display {
-            padding: 8px;
-            text-align: center;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-main);
-            background: var(--surface);
+            text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        /* PANEL DE CONTROLES LATERAL */
-        .pdf2jpg-controls {
-            width: 100%;
-            max-width: 320px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        #addMoreContainer label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 12px;
-            border: 2px dashed var(--primary);
-            color: var(--primary);
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            background: var(--primary-light);
-            gap: 8px;
-        }
-
-        #addMoreContainer label:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* Controles de Formulario */
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .control-group label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        select {
-            width: 100%;
-            padding: 10px 14px;
-            border-radius: var(--radius-md);
-            border: 1.5px solid var(--border);
-            background: var(--bg-color);
-            color: var(--text-main);
-            font-size: 0.95rem;
-            outline: none;
-            transition: var(--transition);
-        }
-
-        select:focus {
-            border-color: var(--primary);
-        }
-
-        /* Botones Globales */
-        .pdf2jpg-btn {
-            width: 100%;
-            padding: 14px 20px;
-            border-radius: 50px;
-            border: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: var(--transition);
-            text-decoration: none;
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.2);
-        }
-
-        .pdf2jpg-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .pdf2jpg-btn:hover:not(:disabled) {
-            background: var(--primary-hover);
-            transform: translateY(-2px);
-        }
-
-        /* Barras de Progreso */
+        /* Progress Bars */
         .progress-wrapper {
             display: none;
-            margin-bottom: 10px;
+            flex-direction: column;
+            gap: 5px;
+            background: var(--primary-light);
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(111, 138, 60, 0.25);
+            margin-bottom: 12px;
         }
 
         .progress-text {
-            font-size: 0.85rem;
-            font-weight: 600;
+            font-size: 0.75rem;
+            font-weight: 700;
             color: var(--primary);
-            margin-bottom: 8px;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
         }
 
         .progress-container {
             width: 100%;
-            height: 8px;
-            background: var(--border);
+            height: 7px;
+            background: #cbd5e0;
             border-radius: 10px;
             overflow: hidden;
         }
@@ -353,15 +583,199 @@
             height: 100%;
             width: 0%;
             background: var(--primary);
-            transition: width 0.3s ease;
+            transition: width 0.2s ease;
         }
 
-        /* Status de conversión */
-        .pdf2jpg-status {
-            text-align: center;
-            font-size: 0.85rem;
+        /* =========================================
+           COLUMNA DERECHA: PANEL DE CONTROL
+           ========================================= */
+        .sidebar-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            background: var(--toolbar-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header h2 {
+            font-size: 0.94rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-header h2 i {
+            color: var(--primary);
+        }
+
+        .sidebar-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 13px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .config-section {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar-heading {
+            font-size: 0.73rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modern-input-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--input-bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 7px 11px;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .modern-input-group:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(111, 138, 60, 0.14);
+        }
+
+        .modern-input-group label {
+            font-size: 0.75rem;
+            color: var(--text-main);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .modern-select {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-align: right;
+            outline: none;
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .modern-select option {
+            color: var(--text-main);
+            background: var(--surface);
+        }
+
+        .helper-note {
+            font-size: 0.76rem;
             color: var(--text-muted);
-            font-weight: 500;
+            line-height: 1.5;
+            background: var(--primary-light);
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--primary);
+            text-align: center;
+        }
+
+        /* Pie de Exportación */
+        .sidebar-footer {
+            padding: 13px 16px;
+            border-top: 1px solid var(--border);
+            background: var(--toolbar-bg);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 11px 16px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.83rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.24);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 960px) {
+            body {
+                height: auto;
+                overflow: auto;
+            }
+
+            .tool-section {
+                grid-template-columns: 1fr;
+            }
+
+            .viewer-panel {
+                min-height: 480px;
+            }
         }
     </style>
 </head>
@@ -370,103 +784,249 @@
 
     <div class="container">
 
-        <div class="back-nav">
-            <a href="../../index.html"><i class="fas fa-arrow-left"></i> Volver al Portal</a>
-        </div>
+        <!-- CABECERA SUPERIOR COMPACTA -->
+        <header class="app-header">
+            <div class="header-left">
+                <a href="../../index.html" class="nav-pill-btn">
+                    <i class="fas fa-arrow-left"></i> Portal
+                </a>
 
-        <section class="top-banner">
-            <h1>Convertir Imagen</h1>
-            <p>Convierte tus imágenes a múltiples formatos y resoluciones de forma local.</p>
-        </section>
-
-        <main class="card">
-
-            <!-- Zona de Carga Inicial -->
-            <label for="inputImage" class="file-upload" id="dragDropArea">
-                <i class="fas fa-images"></i>
-                <span>Arrastra y suelta tus imágenes aquí, o haz click para seleccionar archivos</span>
-                <input type="file" id="inputImage" accept="image/*" multiple style="display:none;" />
-            </label>
-
-            <!-- Progreso de Carga -->
-            <div id="loadingProgressContainer" class="progress-wrapper">
-                <div id="loadingProgressText" class="progress-text">Cargando imágenes...</div>
-                <div class="progress-container">
-                    <div id="loadingProgressBar" class="progress-bar"></div>
+                <div class="header-title">
+                    <h1><i class="fas fa-images"></i> <span>Convertir Imagen</span></h1>
+                    <p>Convierte fotografías y diseños a múltiples formatos y perfiles localmente.</p>
                 </div>
             </div>
 
-            <!-- Contenedor Principal (Workspace) -->
-            <div class="pdf2jpg-container">
-
-                <!-- Vista Previa -->
-                <div class="pdf2jpg-preview">
-                    <h3>Previsualización de Imágenes:</h3>
-                    <div id="imagePreviewPages" class="image-grid"></div>
+            <div class="header-right">
+                <div class="header-badge">
+                    <i class="fas fa-bolt"></i>
+                    <span>Conversor Local</span>
                 </div>
 
-                <!-- Panel de Controles -->
-                <div class="pdf2jpg-controls">
+                <!-- Switch Modo Oscuro Sincronizado con localStorage -->
+                <label class="theme-switch" title="Cambiar tema">
+                    <input type="checkbox" class="theme-checkbox" id="themeToggleCheckbox">
+                    <span class="switch-slider">
+                        <i class="fas fa-sun icon-sun"></i>
+                        <i class="fas fa-moon icon-moon"></i>
+                        <span class="switch-knob"></span>
+                    </span>
+                </label>
+            </div>
+        </header>
 
-                    <div id="addMoreContainer">
-                        <label for="inputImage">
-                            <i class="fas fa-plus"></i> Agregar Imágenes
-                        </label>
-                    </div>
+        <main class="pdf-main-workspace">
 
-                    <div class="control-group">
-                        <label for="convertFormatSelect">Convertir a:</label>
-                        <select id="convertFormatSelect">
-                            <option value="jpeg">JPG</option>
-                            <option value="png">PNG</option>
-                            <option value="webp">WEBP</option>
-                            <option value="avif">AVIF</option>
-                            <option value="bmp">BMP</option>
-                            <option value="tiff">TIFF</option>
-                            <option value="heic">HEIC</option>
-                            <option value="ico">ICO</option>
-                        </select>
-                    </div>
+            <section class="tool-section">
 
-                    <div class="control-group">
-                        <label for="resolutionSelect">Resolución (DPI):</label>
-                        <select id="resolutionSelect">
-                            <option value="72">72 dpi</option>
-                            <option value="150">150 dpi</option>
-                            <option value="300" selected>300 dpi</option>
-                            <option value="600">600 dpi</option>
-                            <option value="1200">1200 dpi</option>
-                        </select>
-                    </div>
+                <!-- Panel Izquierdo: Mesa de Imágenes -->
+                <div class="viewer-panel">
+                    <div class="viewer-toolbar">
+                        <div class="viewer-status">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Imágenes a Convertir</span>
+                        </div>
 
-                    <div class="control-group">
-                        <label for="colorProfileSelect">Perfil de Color:</label>
-                        <select id="colorProfileSelect">
-                            <option value="rgb" selected>RGB</option>
-                            <option value="cmyk">CMYK</option>
-                        </select>
-                    </div>
-
-                    <!-- Progreso de Conversión -->
-                    <div id="progressContainerWrapper" class="progress-wrapper" style="display: none;">
-                        <div id="progressText" class="progress-text">Procesando imágenes...</div>
-                        <div class="progress-container" id="progressContainer">
-                            <div class="progress-bar" id="progressBar"></div>
+                        <div class="toolbar-right-actions">
+                            <input type="file" id="inputImage" accept="image/*" multiple style="display:none;" />
+                            <!-- El original busca inputImage y addMoreContainer. Mantenemos IDs funcionales. -->
+                            <div id="addMoreContainer" style="display: inline-flex;">
+                                <label for="inputImage" class="nav-pill-btn" style="margin:0;">
+                                    <i class="fa-solid fa-plus"></i> Añadir Imágenes
+                                </label>
+                            </div>
+                            <button type="button" class="btn-sm-danger" id="btnClearUi" onclick="location.reload()"
+                                style="display: none;">
+                                <i class="fas fa-trash-can"></i> Vaciar
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Este botón se reutiliza en el JS para Convertir y Descargar -->
-                    <button id="convertBtn" class="pdf2jpg-btn">Convertir</button>
-                    <a id="downloadBtn" class="pdf2jpg-btn" style="display: none;" download>Descargar</a>
+                    <div class="pdf-mat-viewport" id="matViewport">
 
-                    <div id="status" class="pdf2jpg-status"></div>
+                        <!-- Zona de carga inicial (Drag & Drop) -->
+                        <label for="inputImage" class="empty-dropzone" id="dragDropArea">
+                            <div class="dropzone-icon-circle">
+                                <i class="fas fa-file-import"></i>
+                            </div>
+                            <h3>Arrastra y suelta tus imágenes aquí</h3>
+                            <p>Convierte múltiples formatos incluyendo JPG, PNG, WEBP, AVIF y BMP controlando la
+                                resolución (DPI) y el perfil de color.</p>
+                        </label>
+
+                        <!-- Progreso Carga -->
+                        <div id="loadingProgressContainer" class="progress-wrapper">
+                            <div class="progress-text">
+                                <span>Cargando imágenes...</span>
+                                <span id="loadingProgressText">0%</span>
+                            </div>
+                            <div class="progress-container">
+                                <div id="loadingProgressBar" class="progress-bar"></div>
+                            </div>
+                        </div>
+
+                        <!-- Zona de Cuadrícula de Resultados -->
+                        <div id="imagePreviewPages" class="image-grid" style="display: none;"></div>
+                    </div>
                 </div>
-            </div>
+
+                <!-- Panel Derecho: Controles de Conversión -->
+                <aside class="sidebar-panel">
+                    <div class="sidebar-header">
+                        <h2><i class="fas fa-sliders"></i> Ajustes de Conversión</h2>
+                    </div>
+
+                    <div class="sidebar-body">
+
+                        <div class="config-section">
+                            <h3 class="sidebar-heading"><i class="fa-solid fa-gear"></i> Formato y Calidad</h3>
+
+                            <div class="modern-input-group">
+                                <label for="convertFormatSelect">Convertir a:</label>
+                                <select id="convertFormatSelect" class="modern-select">
+                                    <option value="jpeg">JPG</option>
+                                    <option value="png">PNG</option>
+                                    <option value="webp">WEBP</option>
+                                    <option value="avif">AVIF</option>
+                                    <option value="bmp">BMP</option>
+                                    <option value="tiff">TIFF</option>
+                                    <option value="heic">HEIC</option>
+                                    <option value="ico">ICO</option>
+                                </select>
+                            </div>
+
+                            <div class="modern-input-group">
+                                <label for="resolutionSelect">Resolución (DPI):</label>
+                                <select id="resolutionSelect" class="modern-select">
+                                    <option value="72">72 dpi</option>
+                                    <option value="150">150 dpi</option>
+                                    <option value="300" selected>300 dpi</option>
+                                    <option value="600">600 dpi</option>
+                                    <option value="1200">1200 dpi</option>
+                                </select>
+                            </div>
+
+                            <div class="modern-input-group">
+                                <label for="colorProfileSelect">Perfil de Color:</label>
+                                <select id="colorProfileSelect" class="modern-select">
+                                    <option value="rgb" selected>RGB</option>
+                                    <option value="cmyk">CMYK</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Progreso Conversión -->
+                        <div id="progressContainerWrapper" class="progress-wrapper">
+                            <div class="progress-text">
+                                <span>Procesando imágenes...</span>
+                                <span id="progressText">0%</span>
+                            </div>
+                            <div class="progress-container" id="progressContainer">
+                                <div class="progress-bar" id="progressBar"></div>
+                            </div>
+                        </div>
+
+                        <div id="status" class="helper-note" style="display:none; text-align:center;"></div>
+                    </div>
+
+                    <div class="sidebar-footer">
+                        <button id="convertBtn" class="btn-action btn-primary" disabled>
+                            <i class="fa-solid fa-bolt"></i> Convertir Imágenes
+                        </button>
+                        <a id="downloadBtn" class="btn-action btn-primary" style="display: none;" download>
+                            <i class="fa-solid fa-download"></i> Descargar Resultado
+                        </a>
+                    </div>
+                </aside>
+
+            </section>
 
         </main>
+
     </div>
 
-    <!-- Script de lógica -->
+    <!-- =========================================================================
+         SINCRONIZACIÓN DEL SWITCH DE TEMA EN LOCALSTORAGE Y UI
+         ========================================================================= -->
+    <script>
+        (function () {
+            const THEME_STORAGE_KEY = "eduardo_workspace_theme";
+            const ADMIN_THEME_KEY = "artivo-admin-theme";
+
+            function getStoredTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_STORAGE_KEY) || localStorage.getItem(ADMIN_THEME_KEY);
+                    if (saved === "dark" || saved === "light") return saved;
+                } catch (e) { }
+                return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            }
+
+            function syncThemeUI(theme, persist = true) {
+                const isDark = theme === "dark";
+                if (isDark) {
+                    document.documentElement.setAttribute("data-theme", "dark");
+                } else {
+                    document.documentElement.removeAttribute("data-theme");
+                }
+
+                const toggle = document.getElementById("themeToggleCheckbox");
+                if (toggle) toggle.checked = isDark;
+
+                if (persist) {
+                    try {
+                        const mode = isDark ? "dark" : "light";
+                        localStorage.setItem(THEME_STORAGE_KEY, mode);
+                        localStorage.setItem(ADMIN_THEME_KEY, mode);
+                    } catch (e) { }
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                syncThemeUI(getStoredTheme(), false);
+                const toggle = document.getElementById("themeToggleCheckbox");
+                if (toggle) {
+                    toggle.addEventListener("change", (e) => {
+                        syncThemeUI(e.target.checked ? "dark" : "light", true);
+                    });
+                }
+
+                // Ajustes de UI al Cargar Archivo
+                const inputImage = document.getElementById('inputImage');
+                const dropArea = document.getElementById('dragDropArea');
+                const btnClear = document.getElementById('btnClearUi');
+                const previewGrid = document.getElementById('imagePreviewPages');
+                const convertBtn = document.getElementById('convertBtn');
+                const progressStatus = document.getElementById('status');
+
+                inputImage.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        dropArea.style.display = 'none';
+                        previewGrid.style.display = 'grid';
+                        btnClear.style.display = 'inline-flex';
+                        convertBtn.disabled = false;
+                    }
+                });
+
+                // Observador para mostrar Status Text (original modifica display block en línea a veces)
+                const observer = new MutationObserver(() => {
+                    if (progressStatus.textContent.trim() !== '') {
+                        progressStatus.style.display = 'block';
+                    }
+                });
+                observer.observe(progressStatus, { childList: true, characterData: true, subtree: true });
+            });
+
+            window.addEventListener("storage", (e) => {
+                if (e.key === THEME_STORAGE_KEY || e.key === ADMIN_THEME_KEY) {
+                    if (e.newValue === "dark" || e.newValue === "light") {
+                        syncThemeUI(e.newValue, false);
+                    }
+                }
+            });
+        })();
+    </script>
+
+    <!-- Script de lógica de Conversión de Imagen (No requiere modificar IDs) -->
     <script src="image_converter.js"></script>
 </body>
 

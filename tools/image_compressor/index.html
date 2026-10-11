@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Optimizador de Imágenes | Eduardo Workspace</title>
+    <link rel="icon" href="data:,">
+
+    <!-- SCRIPT DE PROTECCIÓN DE ACCESO SILENCIOSO -->
+    <!-- NOTA: Comenta temporalmente este bloque si deseas probar el archivo localmente fuera del portal -->
+    <script>
+        if (!sessionStorage.getItem('secure_app_token')) {
+            document.documentElement.style.display = 'none';
+            window.location.replace("../../index.html");
+        }
+    </script>
+
+    <!-- Librería JSZip para descarga por lotes en .ZIP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- Fuente Poppins e Iconos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        /* VARIABLES DE AURO STUDIO */
+        :root {
+            --primary: #6F8A3C;
+            --primary-hover: #58702f;
+            --primary-light: #f2f5eb;
+            --bg-color: #f4f6f4;
+            --surface: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --success: #2f855a;
+            --success-light: #f0fff4;
+            --warning: #dd6b20;
+            --danger: #e53e3e;
+            --danger-light: #fff5f5;
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            --transition: all 0.22s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: url('../../assets/auro/bg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 14px 20px;
+        }
+
+        /* Scrollbars personalizados */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* =========================================
+           CABECERA SUPERIOR COMPACTA
+           ========================================= */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 11px 22px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            margin-bottom: 14px;
+            flex-shrink: 0;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-pill-btn {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.82rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 13px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-pill-btn:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .header-title h1 {
+            color: var(--primary);
+            font-size: 1.16rem;
+            font-weight: 700;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* Estadísticas Globales de Ahorro en Header */
+        .global-stats-bar {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.76rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .stat-item strong {
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .stat-saved-pill {
+            background: var(--primary);
+            color: #ffffff;
+            padding: 2px 10px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.73rem;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(111, 138, 60, 0.3);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* =========================================
+           ESTACIÓN PRINCIPAL (2 COLUMNAS)
+           ========================================= */
+        .compressor-workspace {
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: 1fr 415px;
+            gap: 16px;
+            animation: fadeIn 0.28s ease;
+        }
+
+        /* COLUMNA IZQUIERDA: MESA DE LOTES E INSPECTOR */
+        .viewer-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .viewer-toolbar {
+            padding: 11px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #fafbfa;
+            flex-shrink: 0;
+        }
+
+        .viewer-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .viewer-status i {
+            color: var(--primary);
+        }
+
+        .count-pill {
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+            background: var(--primary-light);
+            color: var(--primary-hover);
+            border: 1px solid rgba(111, 138, 60, 0.25);
+        }
+
+        .toolbar-right-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-sm-danger {
+            background: var(--surface);
+            color: var(--danger);
+            border: 1px solid #feb2b2;
+            padding: 5px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.76rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+
+        .btn-sm-danger:hover {
+            background: var(--danger-light);
+            border-color: var(--danger);
+        }
+
+        /* Área de trabajo con fondo técnico */
+        .batch-viewport {
+            flex: 1;
+            overflow-y: auto;
+            background-color: #e9ece9;
+            background-image:
+                linear-gradient(rgba(111, 138, 60, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(111, 138, 60, 0.07) 1px, transparent 1px),
+                radial-gradient(#cbd5e0 1px, transparent 1px);
+            background-size: 100px 100px, 100px 100px, 20px 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            position: relative;
+        }
+
+        .batch-viewport.drag-over {
+            background-color: var(--primary-light);
+            outline: 3px dashed var(--primary);
+            outline-offset: -12px;
+        }
+
+        /* Zona inicial Drag & Drop */
+        .empty-dropzone {
+            margin: auto;
+            max-width: 520px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(8px);
+            border: 2px dashed #cbd5e0;
+            border-radius: var(--radius-xl);
+            padding: 42px 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .empty-dropzone:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .dropzone-icon-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 16px auto;
+            transition: var(--transition);
+        }
+
+        .empty-dropzone:hover .dropzone-icon-circle {
+            background: var(--primary);
+            color: #ffffff;
+            transform: scale(1.06);
+        }
+
+        .empty-dropzone h3 {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .empty-dropzone p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .supported-formats-badges {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .format-tag {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 50px;
+        }
+
+        /* Grid de Tarjetas de Lote (Con altura protegida) */
+        .batch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
+            grid-auto-rows: max-content;
+            gap: 14px;
+            width: 100%;
+            align-content: start;
+        }
+
+        .image-batch-card {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            height: max-content;
+            position: relative;
+        }
+
+        .image-batch-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .card-thumb-wrapper {
+            height: 145px;
+            width: 100%;
+            flex-shrink: 0;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            position: relative;
+            background-color: #f8fafc;
+            background-image:
+                linear-gradient(45deg, #e2e8f0 25%, transparent 25%),
+                linear-gradient(-45deg, #e2e8f0 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #e2e8f0 75%),
+                linear-gradient(-45deg, transparent 75%, #e2e8f0 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .card-thumb-wrapper img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .thumb-overlay-actions {
+            position: absolute;
+            inset: 0;
+            background: rgba(25, 32, 28, 0.55);
+            backdrop-filter: blur(2px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .card-thumb-wrapper:hover .thumb-overlay-actions {
+            opacity: 1;
+        }
+
+        .overlay-pill-btn {
+            background: var(--surface);
+            color: var(--text-main);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+        }
+
+        .overlay-pill-btn:hover {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .savings-Floating-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            padding: 3px 9px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #ffffff;
+            background: var(--primary);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+        }
+
+        .savings-Floating-badge.increased {
+            background: var(--warning);
+        }
+
+        .card-remove-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            cursor: pointer;
+            z-index: 3;
+            transition: var(--transition);
+        }
+
+        .card-remove-btn:hover {
+            background: var(--danger);
+            color: #ffffff;
+            border-color: var(--danger);
+        }
+
+        .card-meta-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .card-filename {
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-dims-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .size-comparison-box {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 7px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.76rem;
+        }
+
+        .size-old {
+            color: var(--text-muted);
+            text-decoration: line-through;
+            font-weight: 500;
+        }
+
+        .size-arrow {
+            color: var(--primary);
+            font-size: 0.7rem;
+        }
+
+        .size-new {
+            color: var(--primary-hover);
+            font-weight: 700;
+            font-family: monospace;
+            font-size: 0.84rem;
+        }
+
+        .card-footer-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .card-btn {
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+
+        .card-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .card-btn.primary {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .card-btn.primary:hover {
+            background: var(--primary-hover);
+        }
+
+        /* =========================================
+           COLUMNA DERECHA: PANEL DE PARÁMETROS
+           ========================================= */
+        .sidebar-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            background: #fafbfa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header h2 {
+            font-size: 0.94rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-header h2 i {
+            color: var(--primary);
+        }
+
+        .sidebar-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .config-section {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-heading {
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-heading span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Botones de Presets Rápidos */
+        .presets-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .preset-chip {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 7px 9px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+            text-align: left;
+        }
+
+        .preset-chip i {
+            color: var(--primary);
+            font-size: 0.82rem;
+        }
+
+        .preset-chip:hover,
+        .preset-chip.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary-hover);
+        }
+
+        /* Controles de Formulario */
+        .control-row {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-label-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .value-badge {
+            background: var(--primary);
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 1px 8px;
+            border-radius: 50px;
+        }
+
+        /* Slider Estilizado */
+        .auro-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 5px;
+            background: #cbd5e0;
+            outline: none;
+            margin: 4px 0;
+        }
+
+        .auro-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2.5px solid #ffffff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        .auro-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        .modern-input-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 6px 11px;
+            transition: var(--transition);
+        }
+
+        .modern-input-group:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(111, 138, 60, 0.12);
+        }
+
+        .modern-input-group label {
+            font-size: 0.78rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .modern-input,
+        .modern-select-input {
+            background: transparent;
+            border: none;
+            color: var(--primary-hover);
+            font-size: 0.84rem;
+            font-weight: 700;
+            text-align: right;
+            outline: none;
+        }
+
+        .modern-select-input {
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
+        .two-col-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .unit-suffix {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-left: 4px;
+        }
+
+        /* Pie de Exportación */
+        .sidebar-footer {
+            padding: 14px 16px;
+            border-top: 1px solid var(--border);
+            background: #fafbfa;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 10px 16px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.84rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.24);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: var(--surface);
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        /* =========================================
+           MODAL COMPARADOR INTERACTIVO ANTES / DESPUÉS
+           ========================================= */
+        .custom-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(20, 26, 22, 0.72);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            padding: 20px;
+        }
+
+        .custom-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .compare-modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 960px;
+            height: 82vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+        }
+
+        .compare-header {
+            padding: 14px 22px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafbfa;
+            flex-shrink: 0;
+        }
+
+        .compare-header h3 {
+            font-size: 1rem;
+            color: var(--text-main);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .compare-header h3 i {
+            color: var(--primary);
+        }
+
+        .compare-stage {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+            background-color: #e2e8f0;
+            background-image:
+                linear-gradient(45deg, #cbd5e0 25%, transparent 25%),
+                linear-gradient(-45deg, #cbd5e0 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #cbd5e0 75%),
+                linear-gradient(-45deg, transparent 75%, #cbd5e0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .compare-layer {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .compare-layer img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        #compareBeforeLayer {
+            clip-path: inset(0 50% 0 0);
+            z-index: 2;
+        }
+
+        #compareAfterLayer {
+            z-index: 1;
+        }
+
+        .compare-divider {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 3px;
+            background: var(--primary);
+            z-index: 5;
+            transform: translateX(-50%);
+            cursor: ew-resize;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .compare-handle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid #ffffff;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+        }
+
+        .compare-tag {
+            position: absolute;
+            bottom: 18px;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            background: rgba(20, 26, 22, 0.82);
+            color: #ffffff;
+            backdrop-filter: blur(4px);
+            z-index: 6;
+            pointer-events: none;
+        }
+
+        .compare-tag.left {
+            left: 20px;
+        }
+
+        .compare-tag.right {
+            right: 20px;
+            background: rgba(111, 138, 60, 0.92);
+        }
+
+        /* Toast Flotante */
+        .global-toast {
+            position: fixed;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: #ffffff;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(111, 138, 60, 0.35);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: bottom 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .global-toast.show {
+            bottom: 24px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 980px) {
+            body {
+                height: auto;
+                overflow: auto;
+            }
+
+            .compressor-workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .viewer-panel {
+                min-height: 480px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- CABECERA SUPERIOR COMPACTA -->
+    <header class="app-header">
+        <div class="header-left">
+            <a href="../../index.html" class="nav-pill-btn">
+                <i class="fas fa-arrow-left"></i> Portal
+            </a>
+
+            <div class="header-title">
+                <h1><i class="fas fa-compress-arrows-alt"></i> <span>Optimizador y Compresor Pro</span></h1>
+                <p>Compresión inteligente por lotes sin pérdida visual, redimensionado y conversión sRGB</p>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <div class="global-stats-bar" id="globalStatsBar">
+                <div class="stat-item"><i class="fa-regular fa-images"></i> Lote: <strong id="statTotalCount">0</strong>
+                </div>
+                <div class="stat-item">Original: <strong id="statOrigSize">0 KB</strong></div>
+                <div class="stat-item">Final: <strong id="statNewSize">0 KB</strong></div>
+                <span class="stat-saved-pill" id="statSavedPercent">0% Ahorro</span>
+            </div>
+
+            <div class="header-badge">
+                <i class="fas fa-bolt"></i>
+                <span>Motor Local 100% Privado</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ESTACIÓN DE TRABAJO PRINCIPAL -->
+    <main class="compressor-workspace">
+
+        <!-- PANEL IZQUIERDO: COLA DE LOTES Y DROPZONE -->
+        <section class="viewer-panel">
+            <div class="viewer-toolbar">
+                <div class="viewer-status">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Mesa de Procesamiento por Lotes</span>
+                    <span class="count-pill" id="queueStatusPill">Esperando archivos</span>
+                </div>
+
+                <div class="toolbar-right-actions">
+                    <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/bmp" multiple
+                        style="display: none;">
+                    <button type="button" class="nav-pill-btn" id="btnAddMore">
+                        <i class="fa-solid fa-plus"></i> Agregar Imágenes
+                    </button>
+                    <button type="button" class="btn-sm-danger" id="btnClearAll" style="display: none;">
+                        <i class="fa-solid fa-trash-can"></i> Vaciar Lote
+                    </button>
+                </div>
+            </div>
+
+            <div class="batch-viewport" id="dropViewport">
+                <!-- Estado vacío: Drag & Drop -->
+                <div class="empty-dropzone" id="emptyDropzone">
+                    <div class="dropzone-icon-circle">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <h3>Arrastra tus imágenes aquí o haz clic para explorar</h3>
+                    <p>Procesa decenas de fotografías, diseños o catálogos al instante con control exacto de calidad,
+                        peso objetivo y dimensiones.</p>
+                    <div class="supported-formats-badges">
+                        <span class="format-tag">JPG / JPEG</span>
+                        <span class="format-tag">PNG Transparente</span>
+                        <span class="format-tag">WebP</span>
+                        <span class="format-tag">BMP</span>
+                    </div>
+                </div>
+
+                <!-- Grid de Imágenes Procesadas -->
+                <div class="batch-grid" id="batchGrid" style="display: none;"></div>
+            </div>
+        </section>
+
+        <!-- PANEL DERECHO: PARÁMETROS PERSONALIZABLES -->
+        <aside class="sidebar-panel">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-sliders"></i> Parámetros de Compresión</h2>
+            </div>
+
+            <div class="sidebar-body">
+
+                <!-- 1. PERFILES RÁPIDOS -->
+                <div class="config-section">
+                    <h3 class="sidebar-heading">
+                        <span><i class="fa-solid fa-wand-magic-sparkles"></i> Perfiles Rápidos</span>
+                    </h3>
+                    <div class="presets-grid">
+                        <button type="button" class="preset-chip active" data-preset="balanced">
+                            <i class="fa-solid fa-scale-balanced"></i> Equilibrado Pro
+                        </button>
+                        <button type="button" class="preset-chip" data-preset="web">
+                            <i class="fa-solid fa-globe"></i> Web / Catálogo
+                        </button>
+                        <button type="button" class="preset-chip" data-preset="high">
+                            <i class="fa-solid fa-gem"></i> Alta Fidelidad
+                        </button>
+                        <button type="button" class="preset-chip" data-preset="extreme">
+                            <i class="fa-solid fa-feather-pointed"></i> Peso Mínimo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. FORMATO Y CALIDAD -->
+                <div class="config-section">
+                    <h3 class="sidebar-heading">
+                        <span><i class="fa-solid fa-Sliders"></i> Formato y Calidad Visual</span>
+                    </h3>
+
+                    <div class="modern-input-group">
+                        <label for="outputFormat">Formato Salida:</label>
+                        <select id="outputFormat" class="modern-select-input"
+                            style="width: 175px; text-align: right; font-weight: 700; color: var(--primary-hover);">
+                            <option value="auto">Inteligente (WebP / Óptimo)</option>
+                            <option value="image/webp">WebP (Máximo Ahorro)</option>
+                            <option value="image/jpeg">JPEG (Universal)</option>
+                            <option value="image/png">PNG (Gráficos / Logos)</option>
+                            <option value="original">Mantener Formato Original</option>
+                        </select>
+                    </div>
+
+                    <div class="control-row" style="margin-top: 4px;">
+                        <div class="control-label-line">
+                            <span>Calidad de Compresión:</span>
+                            <span class="value-badge" id="qualityValueBadge">82%</span>
+                        </div>
+                        <input type="range" id="qualitySlider" class="auro-slider" min="5" max="100" value="82">
+                    </div>
+
+                    <div class="modern-input-group"
+                        title="Si defines un límite en KB, el motor ajustará automáticamente la calidad para no superar ese peso">
+                        <label for="targetKbInput"><i class="fa-solid fa-bullseye" style="color:var(--primary)"></i>
+                            Peso Máx. (Opcional):</label>
+                        <div>
+                            <input type="number" id="targetKbInput" class="modern-input" placeholder="Sin límite"
+                                min="10" max="10000" style="width: 90px;">
+                            <span class="unit-suffix">KB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. REDIMENSIONADO Y ESCALA -->
+                <div class="config-section">
+                    <h3 class="sidebar-heading">
+                        <span><i class="fa-solid fa-expand"></i> Dimensiones y Escala</span>
+                    </h3>
+
+                    <div class="modern-input-group">
+                        <label for="resizeMode">Modo de Tamaño:</label>
+                        <select id="resizeMode" class="modern-select-input"
+                            style="width: 165px; text-align: right; font-weight: 700; color: var(--primary-hover);">
+                            <option value="none">Original (100%)</option>
+                            <option value="max">Límite Máximo (px)</option>
+                            <option value="percent">Escalar por Porcentaje (%)</option>
+                        </select>
+                    </div>
+
+                    <!-- Controles para Límite Máximo en PX -->
+                    <div class="two-col-inputs" id="resizePxGroup" style="display: none;">
+                        <div class="modern-input-group">
+                            <label for="maxWidthInput">Ancho:</label>
+                            <div>
+                                <input type="number" id="maxWidthInput" class="modern-input" value="1920" min="50"
+                                    max="10000" style="width: 60px;">
+                                <span class="unit-suffix">px</span>
+                            </div>
+                        </div>
+                        <div class="modern-input-group">
+                            <label for="maxHeightInput">Alto:</label>
+                            <div>
+                                <input type="number" id="maxHeightInput" class="modern-input" value="1920" min="50"
+                                    max="10000" style="width: 60px;">
+                                <span class="unit-suffix">px</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Control para Porcentaje -->
+                    <div class="control-row" id="resizePercentGroup" style="display: none;">
+                        <div class="control-label-line">
+                            <span>Escala de Resolución:</span>
+                            <span class="value-badge" id="scalePercentBadge">75%</span>
+                        </div>
+                        <input type="range" id="scalePercentSlider" class="auro-slider" min="10" max="100" step="5"
+                            value="75">
+                    </div>
+                </div>
+
+                <!-- 4. ACABADO Y RENOMBRADO DE LOTE -->
+                <div class="config-section">
+                    <h3 class="sidebar-heading">
+                        <span><i class="fa-solid fa-signature"></i> Fondo y Nomenclatura</span>
+                    </h3>
+
+                    <div class="two-col-inputs">
+                        <div class="modern-input-group"
+                            title="Color de relleno cuando conviertes un PNG transparente a JPG">
+                            <label for="bgFillColor">Fondo JPG:</label>
+                            <input type="color" id="bgFillColor" value="#FFFFFF"
+                                style="border:none; width:28px; height:24px; cursor:pointer; background:transparent;">
+                        </div>
+
+                        <div class="modern-input-group">
+                            <label for="suffixInput">Sufijo:</label>
+                            <input type="text" id="suffixInput" class="modern-input" value="-opt" placeholder="-opt"
+                                style="width: 65px;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="sidebar-footer">
+                <button type="button" class="btn-action btn-outline" id="btnReprocessAll">
+                    <i class="fa-solid fa-arrows-rotate"></i> Aplicar Ajustes a Todo el Lote
+                </button>
+                <button type="button" class="btn-action btn-primary" id="btnDownloadZip">
+                    <i class="fa-solid fa-file-zipper"></i> Descargar Lote Completo (.ZIP)
+                </button>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- MODAL COMPARADOR INTERACTIVO ANTES / DESPUÉS -->
+    <div id="compareModal" class="custom-modal">
+        <div class="compare-modal-content">
+            <div class="compare-header">
+                <h3>
+                    <i class="fa-solid fa-eye"></i>
+                    <span id="compareModalTitle">Inspección Visual 1:1</span>
+                </h3>
+                <button type="button" class="nav-pill-btn" id="btnCloseCompare">
+                    <i class="fa-solid fa-xmark"></i> Cerrar Inspector
+                </button>
+            </div>
+
+            <div class="compare-stage" id="compareStage">
+                <div class="compare-layer" id="compareAfterLayer">
+                    <img id="compareAfterImg" src="" alt="Comprimida">
+                </div>
+                <div class="compare-layer" id="compareBeforeLayer">
+                    <img id="compareBeforeImg" src="" alt="Original">
+                </div>
+
+                <div class="compare-divider" id="compareDivider">
+                    <div class="compare-handle">
+                        <i class="fa-solid fa-arrows-left-right"></i>
+                    </div>
+                </div>
+
+                <div class="compare-tag left" id="compareTagLeft">ORIGINAL: 0 KB</div>
+                <div class="compare-tag right" id="compareTagRight">OPTIMIZADA: 0 KB</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST DE NOTIFICACIÓN -->
+    <div id="globalToast" class="global-toast">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toastMsg">Listo</span>
+    </div>
+
+    <!-- LÓGICA DEL COMPRESOR E INSPECTOR POR LOTES -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // Estado del lote
+            let batchItems = [];
+            let itemCounter = 0;
+            let debounceTimer = null;
+
+            // Referencias DOM
+            const fileInput = document.getElementById('fileInput');
+            const dropViewport = document.getElementById('dropViewport');
+            const emptyDropzone = document.getElementById('emptyDropzone');
+            const batchGrid = document.getElementById('batchGrid');
+            const btnAddMore = document.getElementById('btnAddMore');
+            const btnClearAll = document.getElementById('btnClearAll');
+            const queueStatusPill = document.getElementById('queueStatusPill');
+
+            // Controles de Configuración
+            const outputFormat = document.getElementById('outputFormat');
+            const qualitySlider = document.getElementById('qualitySlider');
+            const qualityValueBadge = document.getElementById('qualityValueBadge');
+            const targetKbInput = document.getElementById('targetKbInput');
+            const resizeMode = document.getElementById('resizeMode');
+            const resizePxGroup = document.getElementById('resizePxGroup');
+            const resizePercentGroup = document.getElementById('resizePercentGroup');
+            const maxWidthInput = document.getElementById('maxWidthInput');
+            const maxHeightInput = document.getElementById('maxHeightInput');
+            const scalePercentSlider = document.getElementById('scalePercentSlider');
+            const scalePercentBadge = document.getElementById('scalePercentBadge');
+            const bgFillColor = document.getElementById('bgFillColor');
+            const suffixInput = document.getElementById('suffixInput');
+
+            const btnReprocessAll = document.getElementById('btnReprocessAll');
+            const btnDownloadZip = document.getElementById('btnDownloadZip');
+
+            // Estadísticas Globales
+            const statTotalCount = document.getElementById('statTotalCount');
+            const statOrigSize = document.getElementById('statOrigSize');
+            const statNewSize = document.getElementById('statNewSize');
+            const statSavedPercent = document.getElementById('statSavedPercent');
+
+            // Modal Comparador
+            const compareModal = document.getElementById('compareModal');
+            const compareStage = document.getElementById('compareStage');
+            const compareBeforeLayer = document.getElementById('compareBeforeLayer');
+            const compareDivider = document.getElementById('compareDivider');
+            const compareBeforeImg = document.getElementById('compareBeforeImg');
+            const compareAfterImg = document.getElementById('compareAfterImg');
+            const compareTagLeft = document.getElementById('compareTagLeft');
+            const compareTagRight = document.getElementById('compareTagRight');
+            const compareModalTitle = document.getElementById('compareModalTitle');
+
+            // Utilidades de Formato
+            function formatBytes(bytes) {
+                if (bytes === 0) return '0 B';
+                const k = 1024;
+                const sizes = ['B', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(i > 1 ? 2 : 1)) + ' ' + sizes[i];
+            }
+
+            function showToast(msg) {
+                const toast = document.getElementById('globalToast');
+                document.getElementById('toastMsg').innerText = msg;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2800);
+            }
+
+            // =========================================
+            // 1. GESTIÓN DE ARCHIVOS Y DRAG & DROP
+            // =========================================
+            emptyDropzone.addEventListener('click', () => fileInput.click());
+            btnAddMore.addEventListener('click', () => fileInput.click());
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFiles(Array.from(e.target.files));
+                    fileInput.value = '';
+                }
+            });
+
+            ['dragenter', 'dragover'].forEach(evt => {
+                dropViewport.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropViewport.classList.add('drag-over');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(evt => {
+                dropViewport.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropViewport.classList.remove('drag-over');
+                });
+            });
+
+            dropViewport.addEventListener('drop', (e) => {
+                const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+                if (files.length > 0) handleFiles(files);
+            });
+
+            async function handleFiles(files) {
+                emptyDropzone.style.display = 'none';
+                batchGrid.style.display = 'grid';
+                btnClearAll.style.display = 'inline-flex';
+
+                queueStatusPill.textContent = `Procesando ${files.length} archivo(s)...`;
+
+                for (const file of files) {
+                    const id = ++itemCounter;
+                    const origUrl = URL.createObjectURL(file);
+                    const img = await loadImage(origUrl);
+
+                    const item = {
+                        id,
+                        file,
+                        name: file.name,
+                        origSize: file.size,
+                        origWidth: img.naturalWidth,
+                        origHeight: img.naturalHeight,
+                        origUrl,
+                        imgElement: img,
+                        compressedBlob: null,
+                        compressedUrl: null,
+                        newSize: 0,
+                        newWidth: img.naturalWidth,
+                        newHeight: img.naturalHeight,
+                        outputExt: 'webp'
+                    };
+
+                    batchItems.push(item);
+                    createCardElement(item);
+                    await compressSingleItem(item);
+                    updateCardUI(item);
+                    updateGlobalStats();
+                }
+
+                queueStatusPill.textContent = `${batchItems.length} imagen(es) listas`;
+                showToast(`${files.length} imagen(es) optimizadas`);
+            }
+
+            function loadImage(url) {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = () => resolve(img);
+                    img.onerror = reject;
+                    img.src = url;
+                });
+            }
+
+            // =========================================
+            // 2. MOTOR DE COMPRESIÓN Y PESO OBJETIVO
+            // =========================================
+            function getTargetDimensions(origW, origH) {
+                const mode = resizeMode.value;
+                let w = origW;
+                let h = origH;
+
+                if (mode === 'max') {
+                    const maxW = parseInt(maxWidthInput.value) || 1920;
+                    const maxH = parseInt(maxHeightInput.value) || 1920;
+                    if (w > maxW || h > maxH) {
+                        const ratio = Math.min(maxW / w, maxH / h);
+                        w = Math.round(w * ratio);
+                        h = Math.round(h * ratio);
+                    }
+                } else if (mode === 'percent') {
+                    const scale = (parseInt(scalePercentSlider.value) || 100) / 100;
+                    w = Math.max(1, Math.round(w * scale));
+                    h = Math.max(1, Math.round(h * scale));
+                }
+
+                return { width: w, height: h };
+            }
+
+            function resolveMimeType(originalType) {
+                const selected = outputFormat.value;
+                if (selected === 'auto') {
+                    return 'image/webp';
+                }
+                if (selected === 'original') {
+                    return originalType === 'image/png' || originalType === 'image/webp' ? originalType : 'image/jpeg';
+                }
+                return selected;
+            }
+
+            function getExtensionFromMime(mime) {
+                if (mime === 'image/webp') return 'webp';
+                if (mime === 'image/png') return 'png';
+                return 'jpg';
+            }
+
+            function canvasToBlob(canvas, mime, quality) {
+                return new Promise(resolve => canvas.toBlob(resolve, mime, quality));
+            }
+
+            async function compressSingleItem(item) {
+                const dims = getTargetDimensions(item.origWidth, item.origHeight);
+                item.newWidth = dims.width;
+                item.newHeight = dims.height;
+
+                const mime = resolveMimeType(item.file.type);
+                item.outputExt = getExtensionFromMime(mime);
+
+                const canvas = document.createElement('canvas');
+                canvas.width = dims.width;
+                canvas.height = dims.height;
+                const ctx = canvas.getContext('2d');
+
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+
+                // Si el formato destino es JPEG, pintar color de fondo para transparencias
+                if (mime === 'image/jpeg') {
+                    ctx.fillStyle = bgFillColor.value || '#FFFFFF';
+                    ctx.fillRect(0, 0, dims.width, dims.height);
+                }
+
+                ctx.drawImage(item.imgElement, 0, 0, dims.width, dims.height);
+
+                let baseQuality = (parseInt(qualitySlider.value) || 82) / 100;
+                const targetKb = parseFloat(targetKbInput.value);
+
+                // Si es PNG y se baja el deslizador de calidad, aplicar cuantización suave de canal para reducir peso sin perder nitidez
+                if (mime === 'image/png' && baseQuality < 0.95) {
+                    const imgData = ctx.getImageData(0, 0, dims.width, dims.height);
+                    const data = imgData.data;
+                    const step = Math.max(2, Math.round((1 - baseQuality) * 36));
+                    for (let i = 0; i < data.length; i += 4) {
+                        data[i] = Math.round(data[i] / step) * step;
+                        data[i + 1] = Math.round(data[i + 1] / step) * step;
+                        data[i + 2] = Math.round(data[i + 2] / step) * step;
+                    }
+                    ctx.putImageData(imgData, 0, 0);
+                }
+
+                let blob = await canvasToBlob(canvas, mime, baseQuality);
+
+                // Búsqueda binaria automática si el usuario definió un límite de KB
+                if (!isNaN(targetKb) && targetKb > 0 && mime !== 'image/png') {
+                    const targetBytes = targetKb * 1024;
+                    if (blob.size > targetBytes) {
+                        let minQ = 0.05;
+                        let maxQ = baseQuality;
+                        let bestBlob = blob;
+
+                        for (let iter = 0; iter < 6; iter++) {
+                            const midQ = (minQ + maxQ) / 2;
+                            const testBlob = await canvasToBlob(canvas, mime, midQ);
+                            bestBlob = testBlob;
+                            if (testBlob.size > targetBytes) {
+                                maxQ = midQ;
+                            } else {
+                                minQ = midQ;
+                            }
+                        }
+                        blob = bestBlob;
+                    }
+                }
+
+                // Si no hubo redimensionado, se mantuvo el formato original y el nuevo archivo pesa más, conservar el original intacto
+                if (
+                    resizeMode.value === 'none' &&
+                    (outputFormat.value === 'original' || mime === item.file.type) &&
+                    blob.size >= item.origSize &&
+                    isNaN(targetKb)
+                ) {
+                    blob = item.file;
+                    item.outputExt = item.name.split('.').pop().toLowerCase();
+                }
+
+                if (item.compressedUrl) URL.revokeObjectURL(item.compressedUrl);
+                item.compressedBlob = blob;
+                item.compressedUrl = URL.createObjectURL(blob);
+                item.newSize = blob.size;
+            }
+
+            // =========================================
+            // 3. RENDERIZADO DE TARJETAS Y ESTADÍSTICAS
+            // =========================================
+            function createCardElement(item) {
+                const card = document.createElement('div');
+                card.className = 'image-batch-card';
+                card.id = `batch-card-${item.id}`;
+
+                card.innerHTML = `
+                    <span class="savings-Floating-badge" id="badge-${item.id}">...</span>
+                    <button type="button" class="card-remove-btn" title="Quitar de la lista" data-remove="${item.id}">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+
+                    <div class="card-thumb-wrapper" data-compare="${item.id}">
+                        <img id="thumb-${item.id}" src="${item.origUrl}" alt="${item.name}">
+                        <div class="thumb-overlay-actions">
+                            <button type="button" class="overlay-pill-btn">
+                                <i class="fa-solid fa-eye"></i> Comparar Antes / Después
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-meta-info">
+                        <div class="card-filename" title="${item.name}">${item.name}</div>
+                        <div class="card-dims-row">
+                            <span id="dims-${item.id}">${item.origWidth} × ${item.origHeight} px</span>
+                            <span id="ext-${item.id}" style="text-transform:uppercase; font-weight:700; color:var(--primary)">WEBP</span>
+                        </div>
+                        <div class="size-comparison-box">
+                            <span class="size-old">${formatBytes(item.origSize)}</span>
+                            <i class="fa-solid fa-arrow-right size-arrow"></i>
+                            <span class="size-new" id="newsize-${item.id}">Calculando...</span>
+                        </div>
+                    </div>
+
+                    <div class="card-footer-actions">
+                        <button type="button" class="card-btn" data-compare="${item.id}">
+                            <i class="fa-solid fa-sliders"></i> Inspeccionar
+                        </button>
+                        <button type="button" class="card-btn primary" data-download="${item.id}">
+                            <i class="fa-solid fa-download"></i> Descargar
+                        </button>
+                    </div>
+                `;
+
+                card.querySelector(`[data-remove="${item.id}"]`).onclick = (e) => {
+                    e.stopPropagation();
+                    removeItem(item.id);
+                };
+
+                card.querySelectorAll(`[data-compare="${item.id}"]`).forEach(el => {
+                    el.onclick = () => openCompareModal(item.id);
+                });
+
+                card.querySelector(`[data-download="${item.id}"]`).onclick = () => {
+                    downloadSingleItem(item);
+                };
+
+                batchGrid.appendChild(card);
+            }
+
+            function updateCardUI(item) {
+                const badge = document.getElementById(`badge-${item.id}`);
+                const thumb = document.getElementById(`thumb-${item.id}`);
+                const dims = document.getElementById(`dims-${item.id}`);
+                const ext = document.getElementById(`ext-${item.id}`);
+                const newSizeEl = document.getElementById(`newsize-${item.id}`);
+
+                if (!badge) return;
+
+                thumb.src = item.compressedUrl;
+                dims.textContent = `${item.newWidth} × ${item.newHeight} px`;
+                ext.textContent = item.outputExt.toUpperCase();
+                newSizeEl.textContent = formatBytes(item.newSize);
+
+                const diff = item.origSize - item.newSize;
+                const pct = Math.round((diff / item.origSize) * 100);
+
+                if (pct >= 0) {
+                    badge.textContent = `-${pct}%`;
+                    badge.classList.remove('increased');
+                } else {
+                    badge.textContent = `+${Math.abs(pct)}%`;
+                    badge.classList.add('increased');
+                }
+            }
+
+            function updateGlobalStats() {
+                const count = batchItems.length;
+                const totalOrig = batchItems.reduce((acc, it) => acc + it.origSize, 0);
+                const totalNew = batchItems.reduce((acc, it) => acc + it.newSize, 0);
+
+                statTotalCount.textContent = count;
+                statOrigSize.textContent = formatBytes(totalOrig);
+                statNewSize.textContent = formatBytes(totalNew);
+
+                if (totalOrig > 0) {
+                    const savedPct = Math.max(0, Math.round(((totalOrig - totalNew) / totalOrig) * 100));
+                    statSavedPercent.textContent = `${savedPct}% Ahorro (${formatBytes(Math.max(0, totalOrig - totalNew))})`;
+                } else {
+                    statSavedPercent.textContent = '0% Ahorro';
+                }
+            }
+
+            function removeItem(id) {
+                const idx = batchItems.findIndex(it => it.id === id);
+                if (idx !== -1) {
+                    URL.revokeObjectURL(batchItems[idx].origUrl);
+                    if (batchItems[idx].compressedUrl) URL.revokeObjectURL(batchItems[idx].compressedUrl);
+                    batchItems.splice(idx, 1);
+                }
+                const card = document.getElementById(`batch-card-${id}`);
+                if (card) card.remove();
+
+                updateGlobalStats();
+
+                if (batchItems.length === 0) {
+                    batchGrid.style.display = 'none';
+                    emptyDropzone.style.display = 'block';
+                    btnClearAll.style.display = 'none';
+                    queueStatusPill.textContent = 'Esperando archivos';
+                } else {
+                    queueStatusPill.textContent = `${batchItems.length} imagen(es) listas`;
+                }
+            }
+
+            btnClearAll.addEventListener('click', () => {
+                batchItems.forEach(it => {
+                    URL.revokeObjectURL(it.origUrl);
+                    if (it.compressedUrl) URL.revokeObjectURL(it.compressedUrl);
+                });
+                batchItems = [];
+                batchGrid.innerHTML = '';
+                batchGrid.style.display = 'none';
+                emptyDropzone.style.display = 'block';
+                btnClearAll.style.display = 'none';
+                queueStatusPill.textContent = 'Esperando archivos';
+                updateGlobalStats();
+                showToast("Lote vaciado");
+            });
+
+            // =========================================
+            // 4. CONTROLES LATERALES Y REPROCESAMIENTO
+            // =========================================
+            async function reprocessBatch() {
+                if (batchItems.length === 0) return;
+                queueStatusPill.textContent = 'Actualizando lote...';
+                for (const item of batchItems) {
+                    await compressSingleItem(item);
+                    updateCardUI(item);
+                }
+                updateGlobalStats();
+                queueStatusPill.textContent = `${batchItems.length} imagen(es) listas`;
+            }
+
+            function triggerDebouncedReprocess() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => reprocessBatch(), 220);
+            }
+
+            qualitySlider.addEventListener('input', (e) => {
+                qualityValueBadge.textContent = `${e.target.value}%`;
+                document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+                triggerDebouncedReprocess();
+            });
+
+            scalePercentSlider.addEventListener('input', (e) => {
+                scalePercentBadge.textContent = `${e.target.value}%`;
+                triggerDebouncedReprocess();
+            });
+
+            resizeMode.addEventListener('change', () => {
+                resizePxGroup.style.display = resizeMode.value === 'max' ? 'grid' : 'none';
+                resizePercentGroup.style.display = resizeMode.value === 'percent' ? 'flex' : 'none';
+                reprocessBatch();
+            });
+
+            [outputFormat, targetKbInput, maxWidthInput, maxHeightInput, bgFillColor].forEach(el => {
+                el.addEventListener('change', () => {
+                    document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+                    reprocessBatch();
+                });
+            });
+
+            btnReprocessAll.addEventListener('click', () => {
+                reprocessBatch();
+                showToast("Parámetros aplicados a todo el lote");
+            });
+
+            // Perfiles Rápidos (Presets)
+            const PRESETS = {
+                balanced: { format: 'auto', quality: 82, resize: 'none', kb: '' },
+                web: { format: 'image/webp', quality: 78, resize: 'max', maxW: 1600, maxH: 1600, kb: '' },
+                high: { format: 'original', quality: 94, resize: 'none', kb: '' },
+                extreme: { format: 'image/webp', quality: 58, resize: 'max', maxW: 1280, maxH: 1280, kb: '' }
+            };
+
+            document.querySelectorAll('.preset-chip').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    const p = PRESETS[btn.dataset.preset];
+                    outputFormat.value = p.format;
+                    qualitySlider.value = p.quality;
+                    qualityValueBadge.textContent = `${p.quality}%`;
+                    resizeMode.value = p.resize;
+                    targetKbInput.value = p.kb;
+
+                    if (p.maxW) {
+                        maxWidthInput.value = p.maxW;
+                        maxHeightInput.value = p.maxH;
+                    }
+
+                    resizePxGroup.style.display = p.resize === 'max' ? 'grid' : 'none';
+                    resizePercentGroup.style.display = p.resize === 'percent' ? 'flex' : 'none';
+
+                    reprocessBatch();
+                    showToast(`Perfil "${btn.innerText.trim()}" aplicado`);
+                });
+            });
+
+            // =========================================
+            // 5. DESCARGA INDIVIDUAL Y LOTE .ZIP
+            // =========================================
+            function buildOutputFilename(item) {
+                const baseName = item.name.replace(/\.[^/.]+$/, "");
+                const suffix = suffixInput.value.trim();
+                return `${baseName}${suffix}.${item.outputExt}`;
+            }
+
+            function downloadSingleItem(item) {
+                if (!item.compressedUrl) return;
+                const link = document.createElement('a');
+                link.href = item.compressedUrl;
+                link.download = buildOutputFilename(item);
+                link.click();
+                showToast(`Descargado: ${link.download}`);
+            }
+
+            btnDownloadZip.addEventListener('click', async () => {
+                if (batchItems.length === 0) return showToast("Agrega imágenes primero");
+
+                if (batchItems.length === 1) {
+                    downloadSingleItem(batchItems[0]);
+                    return;
+                }
+
+                showToast("Empaquetando lote en archivo .ZIP...");
+                const zip = new JSZip();
+
+                batchItems.forEach(item => {
+                    if (item.compressedBlob) {
+                        zip.file(buildOutputFilename(item), item.compressedBlob);
+                    }
+                });
+
+                const zipBlob = await zip.generateAsync({ type: 'blob' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(zipBlob);
+                link.download = `Lote_Optimizado_Auro_${batchItems.length}_imgs.zip`;
+                link.click();
+                showToast("¡Archivo .ZIP descargado con éxito!");
+            });
+
+            // =========================================
+            // 6. INSPECTOR COMPARADOR ANTES / DESPUÉS
+            // =========================================
+            let isDraggingCompare = false;
+
+            function openCompareModal(id) {
+                const item = batchItems.find(it => it.id === id);
+                if (!item) return;
+
+                compareModalTitle.textContent = `${item.name} (${item.newWidth} × ${item.newHeight} px)`;
+                compareBeforeImg.src = item.origUrl;
+                compareAfterImg.src = item.compressedUrl;
+
+                const diff = item.origSize - item.newSize;
+                const pct = Math.round((diff / item.origSize) * 100);
+
+                compareTagLeft.textContent = `ORIGINAL: ${formatBytes(item.origSize)}`;
+                compareTagRight.textContent = `OPTIMIZADA: ${formatBytes(item.newSize)} (${pct >= 0 ? '-' + pct : '+' + Math.abs(pct)}%)`;
+
+                setComparePosition(50);
+                compareModal.classList.add('active');
+            }
+
+            function setComparePosition(percent) {
+                const clamped = Math.max(2, Math.min(98, percent));
+                compareDivider.style.left = `${clamped}%`;
+                compareBeforeLayer.style.clipPath = `inset(0 ${100 - clamped}% 0 0)`;
+            }
+
+            function handleCompareMove(e) {
+                if (!isDraggingCompare) return;
+                const rect = compareStage.getBoundingClientRect();
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const pct = ((clientX - rect.left) / rect.width) * 100;
+                setComparePosition(pct);
+            }
+
+            compareStage.addEventListener('mousedown', (e) => {
+                isDraggingCompare = true;
+                handleCompareMove(e);
+            });
+            compareStage.addEventListener('touchstart', (e) => {
+                isDraggingCompare = true;
+                handleCompareMove(e);
+            }, { passive: true });
+
+            window.addEventListener('mousemove', handleCompareMove);
+            window.addEventListener('touchmove', handleCompareMove, { passive: true });
+            window.addEventListener('mouseup', () => isDraggingCompare = false);
+            window.addEventListener('touchend', () => isDraggingCompare = false);
+
+            document.getElementById('btnCloseCompare').onclick = () => compareModal.classList.remove('active');
+            compareModal.addEventListener('click', (e) => {
+                if (e.target === compareModal) compareModal.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

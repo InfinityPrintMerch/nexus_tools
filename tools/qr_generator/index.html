@@ -1,0 +1,2363 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Generador QR Pro | Eduardo Workspace</title>
+    <link rel="icon" href="data:,">
+
+    <!-- PROTECCIÓN ALTA CON FIREBASE -->
+    <script type="module" src="../../js/auth-guard.js" data-tool-id="qr_generator"
+        data-login-url="../../index.html"></script>
+
+    <!-- Librerías de Generación QR y Exportación Vectorial / PDF -->
+    <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- Fuente Poppins e Iconos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        /* VARIABLES DE AURO STUDIO */
+        :root {
+            --primary: #6F8A3C;
+            --primary-hover: #58702f;
+            --primary-light: #f2f5eb;
+            --bg-color: #f4f6f4;
+            --surface: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --danger: #e53e3e;
+            --danger-hover: #c53030;
+            --danger-light: #fff5f5;
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            --transition: all 0.22s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: url('assets/auro/bg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 14px 20px;
+        }
+
+        /* Scrollbars limpios */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* CABECERA SUPERIOR */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 22px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            margin-bottom: 14px;
+            flex-shrink: 0;
+            gap: 15px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .back-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.84rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-color);
+            transition: var(--transition);
+        }
+
+        .back-nav a:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .header-title h1 {
+            color: var(--primary);
+            font-size: 1.18rem;
+            font-weight: 700;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 0.76rem;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(111, 138, 60, 0.3);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.76rem;
+            font-weight: 600;
+        }
+
+        /* ESTACIÓN DE TRABAJO DIVIDIDA */
+        .workspace-screen {
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: 1fr 480px;
+            gap: 16px;
+        }
+
+        /* COLUMNA IZQUIERDA: VISOR VECTORIAL EXACTO */
+        .viewer-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .viewer-toolbar {
+            padding: 11px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #fafbfa;
+            flex-shrink: 0;
+        }
+
+        .viewer-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .mode-badge {
+            font-size: 0.68rem;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(111, 138, 60, 0.3);
+        }
+
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 3px 6px;
+            border-radius: var(--radius-sm);
+        }
+
+        .zoom-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            cursor: pointer;
+            width: 26px;
+            height: 26px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.78rem;
+            transition: var(--transition);
+        }
+
+        .zoom-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .zoom-level {
+            font-size: 0.76rem;
+            font-weight: 600;
+            min-width: 46px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        /* Lienzo central perfectamente centrado */
+        .viewer-canvas-viewport {
+            flex: 1;
+            overflow: auto;
+            background: #e9ece9;
+            background-image: radial-gradient(#cbd5e0 1.2px, transparent 1.2px);
+            background-size: 20px 20px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        #composite-container {
+            position: relative;
+            width: 360px;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: width 0.18s ease;
+            flex-shrink: 0;
+        }
+
+        #qr-canvas {
+            width: 100%;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 22px;
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
+            border: 1px solid #dce2dc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Cuando tiene un marco activo, se muestra el SVG fusionado real */
+        #qr-canvas.in-frame {
+            background: transparent;
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.16));
+        }
+
+        #qr-canvas svg {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 68vh;
+            display: block;
+        }
+
+        .payload-preview-bar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 7px 16px;
+            border-radius: 50px;
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            max-width: 92%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .payload-preview-bar strong {
+            color: var(--primary);
+        }
+
+        /* COLUMNA DERECHA: PANEL POR SECCIONES */
+        .sidebar-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 13px 18px;
+            border-bottom: 1px solid var(--border);
+            background: #fafbfa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header h2 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-header h2 i {
+            color: var(--primary);
+        }
+
+        .reset-all-btn {
+            font-size: 0.74rem;
+            color: var(--danger);
+            background: var(--danger-light);
+            border: 1px solid rgba(229, 62, 62, 0.3);
+            padding: 5px 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+
+        .reset-all-btn:hover {
+            background: var(--danger);
+            color: #ffffff;
+        }
+
+        .sidebar-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Bloques de Acordeón Exclusivo */
+        .config-section {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            flex-shrink: 0;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .config-section.active-section {
+            border-color: var(--primary);
+            box-shadow: 0 4px 14px rgba(111, 138, 60, 0.08);
+        }
+
+        .accordion-header {
+            width: 100%;
+            padding: 13px 16px;
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: var(--text-main);
+            background: #fafbfa;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            cursor: pointer;
+            text-align: left;
+            transition: var(--transition);
+        }
+
+        .config-section.active-section .accordion-header {
+            background: var(--primary-light);
+            color: var(--primary-hover);
+            font-weight: 700;
+        }
+
+        .accordion-header:hover {
+            background: var(--primary-light);
+        }
+
+        .header-step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-num {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--border);
+            color: var(--text-main);
+            font-size: 0.74rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .config-section.active-section .step-num {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .accordion-header i.chevron {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            transition: transform 0.25s ease;
+        }
+
+        .config-section.active-section .accordion-header i.chevron {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+
+        .accordion-body {
+            display: none;
+            padding: 15px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .config-section.active-section .accordion-body {
+            display: block;
+            animation: fadeIn 0.22s ease;
+        }
+
+        /* Selector de Tipo de QR (Fondo Blanco) */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .svc-btn {
+            background: #ffffff;
+            border: 1.5px solid var(--border);
+            color: var(--text-muted);
+            padding: 8px 4px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .svc-btn i {
+            font-size: 0.95rem;
+        }
+
+        .svc-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .svc-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 3px 8px rgba(111, 138, 60, 0.22);
+        }
+
+        /* Formularios dinámicos */
+        .dynamic-form {
+            display: none;
+            background: var(--bg-color);
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .dynamic-form.active {
+            display: block;
+        }
+
+        .dt-input {
+            width: 100%;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 11px;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .dt-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(111, 138, 60, 0.12);
+        }
+
+        textarea.dt-input {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .mb-1 {
+            margin-bottom: 10px;
+        }
+
+        .mt-1 {
+            margin-top: 10px;
+        }
+
+        .small-lbl {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.71rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Plantillas Visuales (Fondo Blanco) */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 7px;
+            margin-bottom: 14px;
+        }
+
+        .template-card {
+            background: #ffffff;
+            border: 1.5px solid var(--border);
+            padding: 8px 6px;
+            text-align: center;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.73rem;
+            font-weight: 600;
+            color: var(--text-main);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .color-dot-preview {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        .template-card:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .template-card.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary-hover);
+        }
+
+        /* Galería de los 16 Marcos SVG en FONDO BLANCO PURO */
+        .frames-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            max-height: 240px;
+            overflow-y: auto;
+            padding: 6px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+        }
+
+        .frame-item-card {
+            background: #ffffff;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px 4px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .frame-thumb-box {
+            width: 52px;
+            height: 52px;
+            background: #ffffff;
+            border: 1px solid #edf2f7;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            overflow: hidden;
+        }
+
+        .frame-thumb-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .frame-item-card span {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.15;
+        }
+
+        .frame-item-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .frame-item-card.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            box-shadow: 0 2px 8px rgba(111, 138, 60, 0.18);
+        }
+
+        .frame-item-card.active .frame-thumb-box {
+            border-color: rgba(111, 138, 60, 0.35);
+        }
+
+        .frame-item-card.active span {
+            color: var(--primary-hover);
+            font-weight: 700;
+        }
+
+        /* Panel de Escala y Centrado Fino de QR_AREA */
+        .frame-calibrator-box {
+            display: none;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-left: 3.5px solid var(--primary);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            margin-top: 10px;
+        }
+
+        .calibrator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--primary-hover);
+        }
+
+        .calibrator-sliders {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .slider-group.full-row {
+            grid-column: span 2;
+        }
+
+        .slider-group label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .slider-group label strong {
+            color: var(--text-main);
+        }
+
+        .slider-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .mini-action-btn {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mini-action-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        /* Selectores de Colores (Fondo Blanco) */
+        .color-pickers {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .color-field {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 7px 11px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+        }
+
+        .color-field span {
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .color-field input[type="color"] {
+            border: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        /* Selectores de Formas (Fondo Blanco) */
+        .shape-grid-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 7px;
+            margin-bottom: 12px;
+        }
+
+        .shape-btn {
+            background: #ffffff;
+            border: 1.5px solid var(--border);
+            color: var(--text-muted);
+            padding: 8px 6px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.72rem;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            transition: var(--transition);
+        }
+
+        .shape-btn i {
+            font-size: 1rem;
+        }
+
+        .shape-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .shape-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+        }
+
+        /* Subida de Logo */
+        .logo-uploader {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dt-btn {
+            width: 100%;
+            padding: 8px 12px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .secondary-btn {
+            background: var(--primary-light);
+            border: 1.5px solid var(--primary);
+            color: var(--primary-hover);
+        }
+
+        .secondary-btn:hover {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .error-btn {
+            background: var(--danger-light);
+            color: var(--danger);
+            border: 1.5px solid rgba(229, 62, 62, 0.4);
+        }
+
+        .error-btn:hover {
+            background: var(--danger);
+            color: #ffffff;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--text-main);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            accent-color: var(--primary);
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+        }
+
+        /* PIE DE EXPORTACIÓN LIMPIO (2x2) */
+        .sidebar-footer {
+            padding: 13px 18px;
+            border-top: 1px solid var(--border);
+            background: #fafbfa;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            flex-shrink: 0;
+        }
+
+        .footer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .footer-header span.sub {
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+        }
+
+        .export-grid-clean {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .export-card-btn {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 9px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+            transition: var(--transition);
+        }
+
+        .export-card-btn .icon-box {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .export-card-btn .btn-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .export-card-btn .btn-info strong {
+            font-size: 0.8rem;
+            color: var(--text-main);
+        }
+
+        .export-card-btn .btn-info small {
+            font-size: 0.66rem;
+            color: var(--text-muted);
+        }
+
+        .export-card-btn:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .export-card-btn:hover .icon-box {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .export-card-btn.primary-export {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .export-card-btn.primary-export .icon-box {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .export-card-btn.primary-export .btn-info strong,
+        .export-card-btn.primary-export .btn-info small {
+            color: #ffffff;
+        }
+
+        .export-card-btn.primary-export:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Sandbox sin visibility:hidden para que el navegador calcule getBBox() con precisión del 100% */
+        #svg-bbox-sandbox {
+            position: fixed;
+            left: -20000px;
+            top: 0;
+            width: 1200px;
+            height: 1200px;
+            opacity: 0;
+            pointer-events: none;
+            z-index: -9999;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 960px) {
+            body {
+                height: auto;
+                overflow: auto;
+            }
+
+            .workspace-screen {
+                grid-template-columns: 1fr;
+            }
+
+            .viewer-panel {
+                height: 460px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sandbox activo fuera de pantalla para medir getBBox() tanto del QR como de #QR_AREA -->
+    <div id="svg-bbox-sandbox" aria-hidden="true"></div>
+
+    <!-- CABECERA SUPERIOR -->
+    <header class="app-header">
+        <div class="header-left">
+            <div class="back-nav">
+                <a href="../../index.html"><i class="fas fa-arrow-left"></i> Portal</a>
+            </div>
+            <div class="header-title">
+                <h1><i class="fas fa-qrcode"></i> Generador QR Pro</h1>
+                <p>Vectores auto-recortados al ras y centrados matemáticamente sobre tu capa #QR_AREA</p>
+            </div>
+        </div>
+
+        <div class="header-badge">
+            <i class="fas fa-crosshairs"></i>
+            <span id="frameStatusBadge">Auto-Crop & Centrado Exacto</span>
+        </div>
+    </header>
+
+    <!-- ESTACIÓN DE TRABAJO DIVIDIDA -->
+    <main class="workspace-screen">
+
+        <!-- PANEL IZQUIERDO: VISOR EN VIVO PERFECTAMENTE CENTRADO -->
+        <section class="viewer-panel">
+            <div class="viewer-toolbar">
+                <div class="viewer-status">
+                    <i class="fas fa-eye" style="color: var(--primary);"></i>
+                    <span>Vista Previa Vectorial Fusionada</span>
+                    <span class="mode-badge" id="previewModeTag">SVG 1:1</span>
+                </div>
+
+                <div class="zoom-controls">
+                    <button type="button" class="zoom-btn" id="zoomOutBtn" title="Alejar"><i
+                            class="fas fa-minus"></i></button>
+                    <span class="zoom-level" id="zoomLevelText">100%</span>
+                    <button type="button" class="zoom-btn" id="zoomInBtn" title="Acercar"><i
+                            class="fas fa-plus"></i></button>
+                    <button type="button" class="zoom-btn" id="zoomResetBtn" title="Ajustar al 100%"><i
+                            class="fas fa-expand"></i></button>
+                </div>
+            </div>
+
+            <div class="viewer-canvas-viewport">
+                <div id="composite-container">
+                    <div id="qr-canvas"></div>
+                </div>
+
+                <div class="payload-preview-bar">
+                    <strong>Contenido activo:</strong> <span id="livePayloadText">https://divinetools.local</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANEL DERECHO: MENÚ POR SECCIONES (1 ABIERTA A LA VEZ) -->
+        <aside class="sidebar-panel">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-sliders"></i> Configurar QR</h2>
+                <button type="button" class="reset-all-btn" id="resetAllBtn"
+                    title="Limpiar todos los estilos y volver al QR negro original">
+                    <i class="fas fa-rotate-left"></i> Limpiar Diseño
+                </button>
+            </div>
+
+            <div class="sidebar-body">
+
+                <!-- SECCIÓN 1: TIPO Y CONTENIDO DEL QR -->
+                <div class="config-section active-section">
+                    <button type="button" class="accordion-header">
+                        <div class="header-step">
+                            <span class="step-num">1</span>
+                            <span>Tipo de Dato y Contenido</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down chevron"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <label class="small-lbl">Selecciona la función del código QR</label>
+                        <div class="services-grid">
+                            <button type="button" class="svc-btn active" data-type="url"><i
+                                    class="fa-solid fa-link"></i> Web / URL</button>
+                            <button type="button" class="svc-btn" data-type="whatsapp"><i
+                                    class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+                            <button type="button" class="svc-btn" data-type="wifi"><i class="fa-solid fa-wifi"></i> Red
+                                WiFi</button>
+                            <button type="button" class="svc-btn" data-type="text"><i class="fa-solid fa-font"></i>
+                                Texto</button>
+                            <button type="button" class="svc-btn" data-type="vcard"><i
+                                    class="fa-solid fa-address-card"></i> Contacto</button>
+                            <button type="button" class="svc-btn" data-type="location"><i
+                                    class="fa-solid fa-location-dot"></i> Mapa GPS</button>
+                            <button type="button" class="svc-btn" data-type="phone"><i class="fa-solid fa-phone"></i>
+                                Llamada</button>
+                            <button type="button" class="svc-btn" data-type="email"><i class="fa-solid fa-envelope"></i>
+                                Correo</button>
+                            <button type="button" class="svc-btn" data-type="sms"><i
+                                    class="fa-solid fa-comment-sms"></i> SMS</button>
+                            <button type="button" class="svc-btn" data-type="social"><i
+                                    class="fa-solid fa-share-nodes"></i> Redes</button>
+                            <button type="button" class="svc-btn" data-type="event"><i
+                                    class="fa-solid fa-calendar-days"></i> Evento</button>
+                            <button type="button" class="svc-btn" data-type="bitcoin"><i
+                                    class="fa-brands fa-bitcoin"></i> Crypto</button>
+                        </div>
+
+                        <!-- Formularios dinámicos -->
+                        <div class="dynamic-form active" id="form-url">
+                            <label class="small-lbl">Enlace o Sitio Web</label>
+                            <input type="url" id="input-url" class="dt-input" placeholder="https://ejemplo.com"
+                                value="https://">
+                        </div>
+
+                        <div class="dynamic-form" id="form-text">
+                            <label class="small-lbl">Texto Libre</label>
+                            <textarea id="input-text" class="dt-input" placeholder="Escribe tu texto o mensaje aquí..."
+                                rows="3"></textarea>
+                        </div>
+
+                        <div class="dynamic-form" id="form-whatsapp">
+                            <label class="small-lbl">Mensaje Directo de WhatsApp</label>
+                            <input type="tel" id="wa-phone" class="dt-input mb-1"
+                                placeholder="Número con código de país (Ej: 5212461234567)">
+                            <textarea id="wa-msg" class="dt-input" placeholder="Mensaje predeterminado..."
+                                rows="2"></textarea>
+                        </div>
+
+                        <div class="dynamic-form" id="form-wifi">
+                            <label class="small-lbl">Datos de la Red WiFi</label>
+                            <input type="text" id="wifi-ssid" class="dt-input mb-1"
+                                placeholder="Nombre de la Red (SSID)">
+                            <div class="input-grid">
+                                <input type="text" id="wifi-pass" class="dt-input" placeholder="Contraseña">
+                                <select id="wifi-type" class="dt-input">
+                                    <option value="WPA">WPA / WPA2</option>
+                                    <option value="WEP">WEP</option>
+                                    <option value="nopass">Abierta (Sin clave)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="dynamic-form" id="form-vcard">
+                            <label class="small-lbl">Tarjeta de Contacto (VCard)</label>
+                            <div class="input-grid">
+                                <input type="text" id="vc-fn" class="dt-input" placeholder="Nombre">
+                                <input type="text" id="vc-ln" class="dt-input" placeholder="Apellidos">
+                                <input type="tel" id="vc-tel" class="dt-input" placeholder="Teléfono">
+                                <input type="email" id="vc-email" class="dt-input" placeholder="Email">
+                                <input type="text" id="vc-org" class="dt-input" placeholder="Empresa / Negocio"
+                                    style="grid-column: span 2;">
+                            </div>
+                        </div>
+
+                        <div class="dynamic-form" id="form-email">
+                            <label class="small-lbl">Correo Electrónico</label>
+                            <input type="email" id="input-email" class="dt-input mb-1" placeholder="correo@ejemplo.com">
+                            <input type="text" id="email-sub" class="dt-input" placeholder="Asunto del correo">
+                        </div>
+
+                        <div class="dynamic-form" id="form-phone">
+                            <label class="small-lbl">Número Telefónico</label>
+                            <input type="tel" id="input-phone" class="dt-input" placeholder="+52 246 123 4567">
+                        </div>
+
+                        <div class="dynamic-form" id="form-sms">
+                            <label class="small-lbl">Mensaje SMS</label>
+                            <input type="tel" id="sms-phone" class="dt-input mb-1" placeholder="Número de destino">
+                            <textarea id="sms-msg" class="dt-input" placeholder="Texto del mensaje..."
+                                rows="2"></textarea>
+                        </div>
+
+                        <div class="dynamic-form" id="form-location">
+                            <label class="small-lbl">Ubicación por Coordenadas</label>
+                            <div class="input-grid">
+                                <input type="text" id="loc-lat" class="dt-input" placeholder="Latitud (Ej: 19.4326)">
+                                <input type="text" id="loc-lng" class="dt-input" placeholder="Longitud (Ej: -99.1332)">
+                            </div>
+                        </div>
+
+                        <div class="dynamic-form" id="form-event">
+                            <label class="small-lbl">Evento de Calendario</label>
+                            <input type="text" id="ev-title" class="dt-input mb-1" placeholder="Nombre del Evento">
+                            <input type="text" id="ev-loc" class="dt-input mb-1" placeholder="Ubicación">
+                            <div class="input-grid">
+                                <div><label class="small-lbl">Inicio</label><input type="datetime-local" id="ev-start"
+                                        class="dt-input"></div>
+                                <div><label class="small-lbl">Fin</label><input type="datetime-local" id="ev-end"
+                                        class="dt-input"></div>
+                            </div>
+                        </div>
+
+                        <div class="dynamic-form" id="form-bitcoin">
+                            <label class="small-lbl">Dirección Bitcoin / Crypto</label>
+                            <input type="text" id="btc-addr" class="dt-input mb-1" placeholder="Dirección de Wallet">
+                            <input type="number" id="btc-amt" class="dt-input" placeholder="Monto (BTC)" step="any">
+                        </div>
+
+                        <div class="dynamic-form" id="form-social">
+                            <label class="small-lbl">Enlace a Red Social</label>
+                            <div class="input-grid">
+                                <select id="soc-plat" class="dt-input">
+                                    <option value="facebook">Facebook</option>
+                                    <option value="instagram">Instagram</option>
+                                    <option value="twitter">Twitter / X</option>
+                                    <option value="youtube">YouTube</option>
+                                </select>
+                                <input type="text" id="soc-user" class="dt-input" placeholder="Usuario (sin @)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN 2: PLANTILLAS Y COLORES -->
+                <div class="config-section">
+                    <button type="button" class="accordion-header">
+                        <div class="header-step">
+                            <span class="step-num">2</span>
+                            <span>Plantillas Rápidas y Colores</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down chevron"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <label class="small-lbl">Estilos Prediseñados (1 Clic)</label>
+                        <div class="templates-grid" id="template-selector">
+                            <div class="template-card active" data-tpl="classic">
+                                <span class="color-dot-preview" style="background: #000000;"></span>
+                                Clásico Negro
+                            </div>
+                            <div class="template-card" data-tpl="auro">
+                                <span class="color-dot-preview" style="background: #6F8A3C;"></span>
+                                Auro Studio
+                            </div>
+                            <div class="template-card" data-tpl="modern">
+                                <span class="color-dot-preview" style="background: #2b5cff;"></span>
+                                Azul Moderno
+                            </div>
+                            <div class="template-card" data-tpl="ninja">
+                                <span class="color-dot-preview"
+                                    style="background: linear-gradient(135deg, #222 50%, #e63946 50%);"></span>
+                                Ninja Rojo
+                            </div>
+                            <div class="template-card" data-tpl="social">
+                                <span class="color-dot-preview"
+                                    style="background: linear-gradient(45deg, #F58529, #DD2A7B, #8134AF);"></span>
+                                Instagram
+                            </div>
+                            <div class="template-card" data-tpl="rainbow">
+                                <span class="color-dot-preview"
+                                    style="background: linear-gradient(45deg, #ff007f, #7f00ff, #00d4ff);"></span>
+                                Neón Gradiente
+                            </div>
+                        </div>
+
+                        <label class="small-lbl">
+                            <span>Colores Personalizados</span>
+                            <small style="text-transform:none; font-weight:500;">(Desactiva degradados
+                                automáticamente)</small>
+                        </label>
+                        <div class="color-pickers">
+                            <div class="color-field"><span>Fondo</span><input type="color" id="col-bg" value="#ffffff">
+                            </div>
+                            <div class="color-field"><span>Puntos QR</span><input type="color" id="col-fg"
+                                    value="#000000"></div>
+                            <div class="color-field"><span>Marco Ojo</span><input type="color" id="col-eye-out"
+                                    value="#000000"></div>
+                            <div class="color-field"><span>Centro Ojo</span><input type="color" id="col-eye-in"
+                                    value="#000000"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN 3: FORMAS DEL CUERPO Y ESQUINAS -->
+                <div class="config-section">
+                    <button type="button" class="accordion-header">
+                        <div class="header-step">
+                            <span class="step-num">3</span>
+                            <span>Forma de Puntos y Esquinas (Ojos)</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down chevron"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <label class="small-lbl">Estilo de los Puntos del Cuerpo</label>
+                        <div class="shape-grid-cards" id="shape-body">
+                            <button type="button" class="shape-btn active" data-val="square"><i
+                                    class="fa-solid fa-border-all"></i> Cuadrado</button>
+                            <button type="button" class="shape-btn" data-val="dots"><i class="fa-solid fa-ellipsis"></i>
+                                Círculos</button>
+                            <button type="button" class="shape-btn" data-val="rounded"><i
+                                    class="fa-solid fa-circle"></i> Suave</button>
+                            <button type="button" class="shape-btn" data-val="extra-rounded"><i
+                                    class="fa-solid fa-circle-plus"></i> Redondo</button>
+                            <button type="button" class="shape-btn" data-val="classy"><i class="fa-solid fa-shapes"></i>
+                                Romboide</button>
+                            <button type="button" class="shape-btn" data-val="classy-rounded"><i
+                                    class="fa-solid fa-clover"></i> Elegante</button>
+                        </div>
+
+                        <label class="small-lbl">Marco Exterior de los 3 Ojos</label>
+                        <div class="shape-grid-cards" id="shape-eye-out">
+                            <button type="button" class="shape-btn active" data-val="square"><i
+                                    class="fa-regular fa-square"></i> Cuadrado</button>
+                            <button type="button" class="shape-btn" data-val="extra-rounded"><i
+                                    class="fa-regular fa-circle"></i> Redondeado</button>
+                            <button type="button" class="shape-btn" data-val="dot"><i
+                                    class="fa-solid fa-circle-notch"></i> Circular</button>
+                        </div>
+
+                        <label class="small-lbl">Punto Central de los 3 Ojos</label>
+                        <div class="shape-grid-cards" id="shape-eye-in"
+                            style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
+                            <button type="button" class="shape-btn active" data-val="square"><i
+                                    class="fa-solid fa-square"></i> Cuadrado</button>
+                            <button type="button" class="shape-btn" data-val="dot"><i class="fa-solid fa-circle"></i>
+                                Circular</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN 4: LOGOTIPO Y LOS 16 MARCOS SVG -->
+                <div class="config-section">
+                    <button type="button" class="accordion-header">
+                        <div class="header-step">
+                            <span class="step-num">4</span>
+                            <span>Logotipo Central y 16 Marcos SVG</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down chevron"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <label class="small-lbl">Incrustar Logotipo al Centro</label>
+                        <div class="logo-uploader mb-1">
+                            <input type="file" id="logo-input" accept="image/png, image/jpeg, image/svg+xml"
+                                style="display: none;">
+                            <button type="button" class="dt-btn secondary-btn"
+                                onclick="document.getElementById('logo-input').click()">
+                                <i class="fa-solid fa-upload"></i> Seleccionar Imagen / Logo
+                            </button>
+                            <button type="button" class="dt-btn error-btn" id="remove-logo"
+                                style="display: none; width: auto; padding: 8px 12px;">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+
+                        <label class="checkbox-wrapper mb-1">
+                            <input type="checkbox" id="logo-bg-remove" checked>
+                            <span>Despejar los puntos detrás del logotipo</span>
+                        </label>
+
+                        <label class="small-lbl mt-1">
+                            <span>Galería de Marcos (Marco_01 a Marco_16)</span>
+                            <small id="anchorDetectStatus"
+                                style="text-transform:none; color: var(--primary); font-weight:700;"></small>
+                        </label>
+
+                        <!-- Cuadrícula con los 16 marcos en fondo blanco limpio -->
+                        <div class="frames-gallery-grid" id="frame-selector">
+                            <div class="frame-item-card active" data-frame="none">
+                                <div class="frame-thumb-box">
+                                    <i class="fas fa-ban" style="font-size: 1.25rem; color: var(--primary);"></i>
+                                </div>
+                                <span>Sin Marco</span>
+                            </div>
+                            <!-- Los 16 marcos se inyectan dinámicamente aquí -->
+                        </div>
+
+                        <!-- Control de Escala y Desplazamiento Fino sobre QR_AREA -->
+                        <div class="frame-calibrator-box" id="frameCalibratorBox">
+                            <div class="calibrator-header">
+                                <span><i class="fas fa-maximize"></i> Ajuste sobre #QR_AREA (<span
+                                        id="calFrameName">Marco_01.svg</span>)</span>
+                                <button type="button" class="mini-action-btn" id="resetFramePadBtn"
+                                    title="Restaurar centrado y tamaño al 92%">
+                                    Restaurar
+                                </button>
+                            </div>
+
+                            <div class="calibrator-sliders">
+                                <div class="slider-group full-row">
+                                    <label>
+                                        <span>Tamaño del QR dentro de <strong>QR_AREA</strong>:</span>
+                                        <strong id="valQrScale">92%</strong>
+                                    </label>
+                                    <input type="range" id="qrScaleRange" min="65" max="100" step="0.5" value="92">
+                                </div>
+
+                                <div class="slider-group">
+                                    <label>Ajuste Centro X: <strong id="valShiftX">0%</strong></label>
+                                    <input type="range" id="qrShiftXRange" min="-20" max="20" step="0.5" value="0">
+                                </div>
+
+                                <div class="slider-group">
+                                    <label>Ajuste Centro Y: <strong id="valShiftY">0%</strong></label>
+                                    <input type="range" id="qrShiftYRange" min="-20" max="20" step="0.5" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- PIE DE DESCARGA LIMPIO Y ORDENADO (2x2) -->
+            <div class="sidebar-footer">
+                <div class="footer-header">
+                    <span><i class="fas fa-download" style="color: var(--primary);"></i> Exportar Código QR</span>
+                    <span class="sub">Fusión Vectorial Exacta 1:1</span>
+                </div>
+
+                <div class="export-grid-clean">
+                    <button type="button" class="export-card-btn primary-export" data-ext="png">
+                        <div class="icon-box"><i class="fa-solid fa-image"></i></div>
+                        <div class="btn-info">
+                            <strong>Descargar PNG</strong>
+                            <small>Alta Resolución (2000px)</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="export-card-btn" data-ext="svg">
+                        <div class="icon-box"><i class="fa-solid fa-bezier-curve"></i></div>
+                        <div class="btn-info">
+                            <strong>Vector SVG</strong>
+                            <small>Curvas 100% editables</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="export-card-btn" data-ext="pdf">
+                        <div class="icon-box"><i class="fa-solid fa-file-pdf"></i></div>
+                        <div class="btn-info">
+                            <strong>Documento PDF</strong>
+                            <small>Hoja lista para imprimir</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="export-card-btn" data-ext="eps">
+                        <div class="icon-box"><i class="fa-solid fa-scissors"></i></div>
+                        <div class="btn-info">
+                            <strong>Matriz EPS</strong>
+                            <small>Plotter y Serigrafía</small>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // =========================================================================
+            // DICCIONARIO DE LOS 16 MARCOS (Marco_01.svg al Marco_16.svg)
+            // =========================================================================
+            const defaultMarcosConfig = {
+                "Marco_01.svg": { label: "01. Scan Abajo", scale: 92, shiftX: 0, shiftY: 0, left: 11, top: 6, width: 78, height: 68 },
+                "Marco_02.svg": { label: "02. Globo Arriba", scale: 92, shiftX: 0, shiftY: 0, left: 14, top: 28, width: 72, height: 66 },
+                "Marco_03.svg": { label: "03. Globo Abajo", scale: 92, shiftX: 0, shiftY: 0, left: 14, top: 6, width: 72, height: 66 },
+                "Marco_04.svg": { label: "04. Watch Now", scale: 92, shiftX: 0, shiftY: 0, left: 14, top: 6, width: 72, height: 66 },
+                "Marco_05.svg": { label: "05. Sobre Carta", scale: 92, shiftX: 0, shiftY: 0, left: 16, top: 5, width: 68, height: 56 },
+                "Marco_06.svg": { label: "06. Scan Script", scale: 92, shiftX: 0, shiftY: 0, left: 15, top: 6, width: 70, height: 64 },
+                "Marco_07.svg": { label: "07. Flecha Scan", scale: 92, shiftX: 0, shiftY: 0, left: 23, top: 5, width: 70, height: 64 },
+                "Marco_08.svg": { label: "08. Clásico Bold", scale: 92, shiftX: 0, shiftY: 0, left: 12, top: 6, width: 76, height: 68 },
+                "Marco_09.svg": { label: "09. Bolsa Compra", scale: 92, shiftX: 0, shiftY: 0, left: 16, top: 24, width: 68, height: 52 },
+                "Marco_10.svg": { label: "10. Placa Dark", scale: 92, shiftX: 0, shiftY: 0, left: 15, top: 12, width: 70, height: 58 },
+                "Marco_11.svg": { label: "11. Café & Bolsa", scale: 92, shiftX: 0, shiftY: 0, left: 25, top: 23, width: 62, height: 52 },
+                "Marco_12.svg": { label: "12. Caja Regalo", scale: 92, shiftX: 0, shiftY: 0, left: 18, top: 43, width: 64, height: 52 },
+                "Marco_13.svg": { label: "13. Taza Café", scale: 92, shiftX: 0, shiftY: 0, left: 15, top: 24, width: 58, height: 50 },
+                "Marco_14.svg": { label: "14. Moto Envío", scale: 92, shiftX: 0, shiftY: 0, left: 4, top: 8, width: 48, height: 48 },
+                "Marco_15.svg": { label: "15. Gorro Chef", scale: 92, shiftX: 0, shiftY: 0, left: 20, top: 36, width: 60, height: 44 },
+                "Marco_16.svg": { label: "16. Etiqueta Scan", scale: 92, shiftX: 0, shiftY: 0, left: 12, top: 5, width: 76, height: 68 }
+            };
+
+            let marcosConfig = JSON.parse(JSON.stringify(defaultMarcosConfig));
+            try {
+                const saved = localStorage.getItem('eduardo_qr_frames_v3');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    Object.keys(parsed).forEach(k => {
+                        if (marcosConfig[k]) Object.assign(marcosConfig[k], parsed[k]);
+                    });
+                }
+            } catch (e) { }
+
+            const svgFramesCache = new Map();
+            const bboxSandbox = document.getElementById("svg-bbox-sandbox");
+
+            const qrState = {
+                data: "https://divinetools.local",
+                bgColor: "#ffffff",
+                fgColor: "#000000",
+                eyeOutColor: "#000000",
+                eyeInColor: "#000000",
+                gradient: null,
+                bodyType: "square",
+                eyeOutType: "square",
+                eyeInType: "square",
+                logoDataUrl: "",
+                hideBgDots: true
+            };
+
+            let currentService = 'url';
+            let currentFrame = 'none';
+            let currentZoom = 1.0;
+
+            const qrCanvasDom = document.getElementById("qr-canvas");
+            const compositeContainer = document.getElementById("composite-container");
+            const livePayloadText = document.getElementById("livePayloadText");
+            const previewModeTag = document.getElementById("previewModeTag");
+            const anchorDetectStatus = document.getElementById("anchorDetectStatus");
+
+            const colBgInput = document.getElementById("col-bg");
+            const colFgInput = document.getElementById("col-fg");
+            const colEyeOutInput = document.getElementById("col-eye-out");
+            const colEyeInInput = document.getElementById("col-eye-in");
+            const logoInput = document.getElementById("logo-input");
+            const removeLogoBtn = document.getElementById("remove-logo");
+            const logoBgCheck = document.getElementById("logo-bg-remove");
+
+            const frameSelectorGrid = document.getElementById("frame-selector");
+            const frameCalibratorBox = document.getElementById("frameCalibratorBox");
+            const calFrameName = document.getElementById("calFrameName");
+            const qrScaleRange = document.getElementById("qrScaleRange");
+            const qrShiftXRange = document.getElementById("qrShiftXRange");
+            const qrShiftYRange = document.getElementById("qrShiftYRange");
+            const valQrScale = document.getElementById("valQrScale");
+            const valShiftX = document.getElementById("valShiftX");
+            const valShiftY = document.getElementById("valShiftY");
+            const resetFramePadBtn = document.getElementById("resetFramePadBtn");
+
+            // =========================================================================
+            // PARSER SEGURO DE SVG (ELIMINA SCRIPTS DE LIVE SERVER Y EVITA <parsererror>)
+            // =========================================================================
+            function parseSvgSafely(rawSvgText) {
+                if (!rawSvgText || typeof rawSvgText !== 'string') return null;
+
+                const cleanedText = rawSvgText
+                    .replace(new RegExp("<!--\\s*Code injected by live-server\\s*-->[\\s\\S]*?<\\/script>", "gi"), '')
+                    .replace(new RegExp("<script\\b[^<]*(?:(?!<\\/script>)<[^<]*)*<\\/script>", "gi"), '')
+                    .trim();
+
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(cleanedText, "image/svg+xml");
+                const hasParserError = xmlDoc.querySelector("parsererror");
+
+                if (!hasParserError && xmlDoc.documentElement && xmlDoc.documentElement.tagName.toLowerCase() === 'svg') {
+                    return xmlDoc.documentElement;
+                }
+
+                const tpl = document.createElement('template');
+                tpl.innerHTML = cleanedText;
+                const svgEl = tpl.content.querySelector('svg');
+                if (svgEl) {
+                    if (!svgEl.getAttribute('xmlns')) {
+                        svgEl.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                    }
+                    return svgEl;
+                }
+
+                return null;
+            }
+
+            /**
+             * Recorta todo el margen o espacio vacío interno que deja qr-code-styling
+             * ajustando el viewBox del QR exactamente al ras de los puntos dibujados.
+             * Así el QR ocupa el 100% real de su propio viewBox y nunca queda pequeño ni descentrado.
+             */
+            function tightCropQrSvgNode(qrSvgNode, fallbackSize) {
+                bboxSandbox.innerHTML = '';
+                const clone = qrSvgNode.cloneNode(true);
+
+                // Si tiene un rectángulo de fondo transparente, lo quitamos temporalmente para medir solo los puntos reales del QR
+                clone.querySelectorAll('rect').forEach(r => {
+                    const fill = (r.getAttribute('fill') || '').toLowerCase();
+                    if (fill === 'transparent' || fill === 'none') {
+                        r.remove();
+                    }
+                });
+
+                bboxSandbox.appendChild(clone);
+                try {
+                    const bbox = clone.getBBox();
+                    if (bbox && bbox.width > 10 && bbox.height > 10) {
+                        // Fijar el viewBox exactamente al borde real de los puntos del QR
+                        qrSvgNode.setAttribute(
+                            'viewBox',
+                            `${bbox.x.toFixed(2)} ${bbox.y.toFixed(2)} ${bbox.width.toFixed(2)} ${bbox.height.toFixed(2)}`
+                        );
+                    } else if (!qrSvgNode.getAttribute('viewBox')) {
+                        qrSvgNode.setAttribute('viewBox', `0 0 ${fallbackSize} ${fallbackSize}`);
+                    }
+                } catch (e) {
+                    if (!qrSvgNode.getAttribute('viewBox')) {
+                        qrSvgNode.setAttribute('viewBox', `0 0 ${fallbackSize} ${fallbackSize}`);
+                    }
+                }
+                bboxSandbox.innerHTML = '';
+
+                // Eliminar atributos fijos width/height para que escale limpiamente cuando se incruste
+                qrSvgNode.removeAttribute('width');
+                qrSvgNode.removeAttribute('height');
+                qrSvgNode.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+                qrSvgNode.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            }
+
+            // =========================================================================
+            // 1. GENERAR GALERÍA VISUAL DE LOS 16 MARCOS (FONDO BLANCO LIMPIO)
+            // =========================================================================
+            Object.keys(marcosConfig).forEach(filename => {
+                const info = marcosConfig[filename];
+                const card = document.createElement('div');
+                card.className = 'frame-item-card';
+                card.dataset.frame = filename;
+                card.innerHTML = `
+                    <div class="frame-thumb-box">
+                        <img src="assets/qr/${filename}" alt="${info.label}" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\\'fas fa-qrcode\\' style=\\'color:#6F8A3C;font-size:1.2rem;\\'></i>';">
+                    </div>
+                    <span>${info.label}</span>
+                `;
+                frameSelectorGrid.appendChild(card);
+            });
+
+            // =========================================================================
+            // 2. MOTOR DE RENDERIZADO Y ANCLAJE EXACTO A #QR_AREA
+            // =========================================================================
+            function buildCleanQrOptions(sizePx = 1000, renderType = "svg", transparentBg = false) {
+                const dotsOptions = {
+                    type: qrState.bodyType,
+                    color: qrState.fgColor
+                };
+
+                if (qrState.gradient) {
+                    dotsOptions.gradient = JSON.parse(JSON.stringify(qrState.gradient));
+                }
+
+                const cleanOpts = {
+                    width: sizePx,
+                    height: sizePx,
+                    type: renderType,
+                    data: qrState.data,
+                    margin: transparentBg ? 0 : Math.round(sizePx * 0.04),
+                    qrOptions: {
+                        typeNumber: 0,
+                        mode: "Byte",
+                        errorCorrectionLevel: "H"
+                    },
+                    imageOptions: {
+                        hideBackgroundDots: qrState.hideBgDots,
+                        imageSize: 0.38,
+                        margin: Math.round(sizePx * 0.015)
+                    },
+                    dotsOptions: dotsOptions,
+                    backgroundOptions: {
+                        color: transparentBg ? "transparent" : qrState.bgColor
+                    },
+                    cornersSquareOptions: {
+                        type: qrState.eyeOutType,
+                        color: qrState.eyeOutColor
+                    },
+                    cornersDotOptions: {
+                        type: qrState.eyeInType,
+                        color: qrState.eyeInColor
+                    }
+                };
+
+                if (qrState.logoDataUrl) {
+                    cleanOpts.image = qrState.logoDataUrl;
+                }
+
+                return cleanOpts;
+            }
+
+            async function getFrameSvgText(frameFilename) {
+                if (svgFramesCache.has(frameFilename)) {
+                    return svgFramesCache.get(frameFilename);
+                }
+                const resp = await fetch(`assets/qr/${frameFilename}`);
+                if (!resp.ok) throw new Error(`No se encontró assets/qr/${frameFilename}`);
+                const text = await resp.text();
+                svgFramesCache.set(frameFilename, text);
+                return text;
+            }
+
+            /**
+             * Une matemáticamente el SVG del Marco y el SVG del QR:
+             * 1. Recorta el espacio muerto del QR (tightCropQrSvgNode).
+             * 2. Mide #QR_AREA directamente en su grupo original de Illustrator.
+             * 3. Inserta el QR justo encima de #QR_AREA dentro de su mismo grupo padre
+             *    para respetar cualquier transform/matrix del archivo SVG.
+             */
+            async function buildUnifiedSvgString(qrSizePx = 1000) {
+                const isFramed = currentFrame !== 'none';
+                const tempQr = new QRCodeStyling(buildCleanQrOptions(qrSizePx, "svg", isFramed));
+                const rawQrBlob = await tempQr.getRawData('svg');
+                const qrSvgText = await rawQrBlob.text();
+
+                const qrSvgNode = parseSvgSafely(qrSvgText);
+                if (!qrSvgNode) {
+                    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"></svg>`;
+                }
+
+                // Si NO hay marco seleccionado, devolvemos el SVG del QR puro
+                if (!isFramed) {
+                    if (!qrSvgNode.getAttribute('viewBox')) {
+                        qrSvgNode.setAttribute('viewBox', `0 0 ${qrSizePx} ${qrSizePx}`);
+                    }
+                    qrSvgNode.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+                    qrSvgNode.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                    anchorDetectStatus.textContent = '';
+                    return qrSvgNode.outerHTML;
+                }
+
+                // Recortar el QR exactamente al ras de sus esquinas para eliminar el margen fantasma de la librería
+                tightCropQrSvgNode(qrSvgNode, qrSizePx);
+
+                try {
+                    const frameText = await getFrameSvgText(currentFrame);
+                    const frameSvg = parseSvgSafely(frameText);
+
+                    if (!frameSvg) {
+                        throw new Error("El archivo del marco no es un SVG válido.");
+                    }
+
+                    // Asegurar que el SVG del marco tenga viewBox válido
+                    let w = 1000, h = 1000;
+                    const vbAttr = frameSvg.getAttribute('viewBox') || frameSvg.getAttribute('viewbox');
+                    if (vbAttr) {
+                        const vb = vbAttr.trim().split(/[\s,]+/);
+                        w = parseFloat(vb[2]) || 1000;
+                        h = parseFloat(vb[3]) || 1000;
+                        frameSvg.setAttribute('viewBox', `${vb[0] || 0} ${vb[1] || 0} ${w} ${h}`);
+                    } else if (frameSvg.getAttribute('width') && frameSvg.getAttribute('height')) {
+                        w = parseFloat(frameSvg.getAttribute('width')) || 1000;
+                        h = parseFloat(frameSvg.getAttribute('height')) || 1000;
+                        frameSvg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+                    } else {
+                        frameSvg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+                    }
+                    frameSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+                    // Montar el frameSvg real en el sandbox activo para medir #QR_AREA en su propio sistema de coordenadas local
+                    bboxSandbox.innerHTML = '';
+                    bboxSandbox.appendChild(frameSvg);
+
+                    const anchorEl = frameSvg.querySelector(
+                        '#QR_AREA, [id^="QR_AREA"], #qr_area, [data-name="QR_AREA"], [data-name="qr_area"]'
+                    );
+
+                    const cfg = marcosConfig[currentFrame] || { scale: 92, shiftX: 0, shiftY: 0, left: 12, top: 10, width: 76, height: 68 };
+                    const scaleFactor = (cfg.scale !== undefined ? cfg.scale : 92) / 100;
+                    const shiftXPct = (cfg.shiftX || 0) / 100;
+                    const shiftYPct = (cfg.shiftY || 0) / 100;
+
+                    if (anchorEl) {
+                        const b = anchorEl.getBBox();
+                        const boxX = b.x;
+                        const boxY = b.y;
+                        const boxW = b.width;
+                        const boxH = b.height;
+
+                        // Pintar el fondo de #QR_AREA con el color de fondo elegido (blanco por defecto)
+                        anchorEl.style.fill = qrState.bgColor || '#ffffff';
+                        anchorEl.setAttribute('fill', qrState.bgColor || '#ffffff');
+
+                        // El lado del QR se adapta al lado menor de QR_AREA multiplicado por el porcentaje de escala (ej. 92%)
+                        const minSide = Math.min(boxW, boxH);
+                        const finalQrSize = minSide * scaleFactor;
+
+                        // Centrado matemático exacto dentro de QR_AREA + compensación fina X/Y si el usuario mueve los sliders
+                        const finalQrX = boxX + (boxW - finalQrSize) / 2 + (boxW * shiftXPct);
+                        const finalQrY = boxY + (boxH - finalQrSize) / 2 + (boxH * shiftYPct);
+
+                        qrSvgNode.setAttribute('x', finalQrX.toFixed(2));
+                        qrSvgNode.setAttribute('y', finalQrY.toFixed(2));
+                        qrSvgNode.setAttribute('width', finalQrSize.toFixed(2));
+                        qrSvgNode.setAttribute('height', finalQrSize.toFixed(2));
+
+                        // ¡CLAVE!: Insertar el QR como hermano justo después de #QR_AREA dentro de su mismo grupo (<g>)
+                        // Así hereda exactamente cualquier transform/translate que Illustrator haya aplicado al grupo
+                        if (anchorEl.parentNode) {
+                            anchorEl.parentNode.insertBefore(qrSvgNode, anchorEl.nextSibling);
+                        } else {
+                            frameSvg.appendChild(qrSvgNode);
+                        }
+
+                        anchorDetectStatus.textContent = '✓ Centrado a #QR_AREA';
+                    } else {
+                        // Respaldo si el archivo no tiene un objeto llamado QR_AREA
+                        const boxX = w * (cfg.left / 100);
+                        const boxY = h * (cfg.top / 100);
+                        const boxW = w * (cfg.width / 100);
+                        const boxH = h * (cfg.height / 100);
+
+                        const minSide = Math.min(boxW, boxH);
+                        const finalQrSize = minSide * scaleFactor;
+                        const finalQrX = boxX + (boxW - finalQrSize) / 2 + (boxW * shiftXPct);
+                        const finalQrY = boxY + (boxH - finalQrSize) / 2 + (boxH * shiftYPct);
+
+                        qrSvgNode.setAttribute('x', finalQrX.toFixed(2));
+                        qrSvgNode.setAttribute('y', finalQrY.toFixed(2));
+                        qrSvgNode.setAttribute('width', finalQrSize.toFixed(2));
+                        qrSvgNode.setAttribute('height', finalQrSize.toFixed(2));
+
+                        frameSvg.appendChild(qrSvgNode);
+                        anchorDetectStatus.textContent = 'Sin capa #QR_AREA (Modo Libre)';
+                    }
+
+                    const resultHtml = frameSvg.outerHTML;
+                    bboxSandbox.innerHTML = '';
+                    return resultHtml;
+
+                } catch (err) {
+                    bboxSandbox.innerHTML = '';
+                    console.warn("Aviso al cargar el marco SVG:", err);
+                    anchorDetectStatus.textContent = '⚠ Marco no encontrado';
+                    return qrSvgNode.outerHTML;
+                }
+            }
+
+            let renderToken = 0;
+            async function renderCleanQR() {
+                const myToken = ++renderToken;
+                const unifiedSvgString = await buildUnifiedSvgString(800);
+                if (myToken !== renderToken) return;
+
+                qrCanvasDom.classList.toggle('in-frame', currentFrame !== 'none');
+                qrCanvasDom.innerHTML = unifiedSvgString;
+            }
+
+            // ==========================================
+            // 3. ACORDEÓN EXCLUSIVO (1 SECCIÓN ABIERTA)
+            // ==========================================
+            const configSections = document.querySelectorAll('.config-section');
+            configSections.forEach(section => {
+                const headerBtn = section.querySelector('.accordion-header');
+                headerBtn.addEventListener('click', () => {
+                    const isAlreadyOpen = section.classList.contains('active-section');
+                    configSections.forEach(sec => sec.classList.remove('active-section'));
+                    if (!isAlreadyOpen) {
+                        section.classList.add('active-section');
+                    }
+                });
+            });
+
+            // ==========================================
+            // 4. CONTROLES DE ZOOM DEL VISOR
+            // ==========================================
+            const zoomOutBtn = document.getElementById('zoomOutBtn');
+            const zoomInBtn = document.getElementById('zoomInBtn');
+            const zoomResetBtn = document.getElementById('zoomResetBtn');
+            const zoomLevelText = document.getElementById('zoomLevelText');
+
+            function applyZoom() {
+                zoomLevelText.textContent = `${Math.round(currentZoom * 100)}%`;
+                compositeContainer.style.width = `${Math.round(360 * currentZoom)}px`;
+            }
+
+            zoomInBtn.addEventListener('click', () => {
+                currentZoom = Math.min(2.2, +(currentZoom + 0.15).toFixed(2));
+                applyZoom();
+            });
+
+            zoomOutBtn.addEventListener('click', () => {
+                currentZoom = Math.max(0.5, +(currentZoom - 0.15).toFixed(2));
+                applyZoom();
+            });
+
+            zoomResetBtn.addEventListener('click', () => {
+                currentZoom = 1.0;
+                applyZoom();
+            });
+
+            // ==========================================
+            // 5. CAMBIO DE TIPO DE SERVICIO Y DATOS
+            // ==========================================
+            document.querySelectorAll('.svc-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.svc-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentService = btn.dataset.type;
+                    document.querySelectorAll('.dynamic-form').forEach(f => f.classList.remove('active'));
+                    document.getElementById(`form-${currentService}`).classList.add('active');
+                    updatePayloadData();
+                });
+            });
+
+            function updatePayloadData() {
+                let payload = "";
+                switch (currentService) {
+                    case 'url':
+                        payload = document.getElementById('input-url').value;
+                        break;
+                    case 'text':
+                        payload = document.getElementById('input-text').value;
+                        break;
+                    case 'whatsapp':
+                        payload = `https://wa.me/${document.getElementById('wa-phone').value.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(document.getElementById('wa-msg').value)}`;
+                        break;
+                    case 'wifi':
+                        payload = `WIFI:T:${document.getElementById('wifi-type').value};S:${document.getElementById('wifi-ssid').value};P:${document.getElementById('wifi-pass').value};;`;
+                        break;
+                    case 'vcard':
+                        const fn = document.getElementById('vc-fn').value;
+                        const ln = document.getElementById('vc-ln').value;
+                        payload = `BEGIN:VCARD\nVERSION:3.0\nN:${ln};${fn};;;\nFN:${fn} ${ln}\nORG:${document.getElementById('vc-org').value}\nTEL;TYPE=CELL:${document.getElementById('vc-tel').value}\nEMAIL:${document.getElementById('vc-email').value}\nEND:VCARD`;
+                        break;
+                    case 'email':
+                        payload = `mailto:${document.getElementById('input-email').value}?subject=${encodeURIComponent(document.getElementById('email-sub').value)}`;
+                        break;
+                    case 'phone':
+                        payload = `tel:${document.getElementById('input-phone').value}`;
+                        break;
+                    case 'sms':
+                        payload = `smsto:${document.getElementById('sms-phone').value}:${document.getElementById('sms-msg').value}`;
+                        break;
+                    case 'location':
+                        payload = `geo:${document.getElementById('loc-lat').value},${document.getElementById('loc-lng').value}`;
+                        break;
+                    case 'event':
+                        payload = `BEGIN:VEVENT\nSUMMARY:${document.getElementById('ev-title').value}\nLOCATION:${document.getElementById('ev-loc').value}\nDTSTART:${document.getElementById('ev-start').value.replace(/[-:]/g, '') + '00Z'}\nDTEND:${document.getElementById('ev-end').value.replace(/[-:]/g, '') + '00Z'}\nEND:VEVENT`;
+                        break;
+                    case 'bitcoin':
+                        payload = `bitcoin:${document.getElementById('btc-addr').value}?amount=${document.getElementById('btc-amt').value}`;
+                        break;
+                    case 'social':
+                        const bases = {
+                            facebook: "https://facebook.com/",
+                            twitter: "https://twitter.com/",
+                            youtube: "https://youtube.com/",
+                            instagram: "https://instagram.com/"
+                        };
+                        payload = bases[document.getElementById('soc-plat').value] + document.getElementById('soc-user').value;
+                        break;
+                }
+
+                if (!payload.trim() || payload.endsWith(":") || payload.endsWith("?text=") || payload === "https://") {
+                    payload = "https://divinetools.local";
+                }
+
+                livePayloadText.textContent = payload.replace(/\n/g, ' ');
+                qrState.data = payload;
+                renderCleanQR();
+            }
+
+            document.querySelectorAll('.dt-input').forEach(inp => {
+                inp.addEventListener('input', updatePayloadData);
+            });
+
+            // ==========================================
+            // 6. PLANTILLAS Y COLORES
+            // ==========================================
+            function syncUIWithState() {
+                colBgInput.value = qrState.bgColor;
+                colFgInput.value = qrState.fgColor;
+                colEyeOutInput.value = qrState.eyeOutColor;
+                colEyeInInput.value = qrState.eyeInColor;
+
+                document.querySelectorAll('#shape-body .shape-btn').forEach(b => {
+                    b.classList.toggle('active', b.dataset.val === qrState.bodyType);
+                });
+                document.querySelectorAll('#shape-eye-out .shape-btn').forEach(b => {
+                    b.classList.toggle('active', b.dataset.val === qrState.eyeOutType);
+                });
+                document.querySelectorAll('#shape-eye-in .shape-btn').forEach(b => {
+                    b.classList.toggle('active', b.dataset.val === qrState.eyeInType);
+                });
+            }
+
+            document.querySelectorAll('#template-selector .template-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('#template-selector .template-card').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+
+                    const tpl = card.dataset.tpl;
+                    qrState.bgColor = "#ffffff";
+                    qrState.fgColor = "#000000";
+                    qrState.eyeOutColor = "#000000";
+                    qrState.eyeInColor = "#000000";
+                    qrState.gradient = null;
+                    qrState.bodyType = "square";
+                    qrState.eyeOutType = "square";
+                    qrState.eyeInType = "square";
+
+                    if (tpl === 'auro') {
+                        qrState.fgColor = "#6F8A3C";
+                        qrState.eyeOutColor = "#58702f";
+                        qrState.eyeInColor = "#6F8A3C";
+                        qrState.bodyType = "rounded";
+                        qrState.eyeOutType = "extra-rounded";
+                        qrState.eyeInType = "dot";
+                    } else if (tpl === 'modern') {
+                        qrState.fgColor = "#2b5cff";
+                        qrState.eyeOutColor = "#1a3b99";
+                        qrState.eyeInColor = "#2b5cff";
+                        qrState.bodyType = "rounded";
+                        qrState.eyeOutType = "extra-rounded";
+                        qrState.eyeInType = "dot";
+                    } else if (tpl === 'ninja') {
+                        qrState.fgColor = "#222222";
+                        qrState.eyeOutColor = "#e63946";
+                        qrState.eyeInColor = "#222222";
+                        qrState.bodyType = "classy";
+                        qrState.eyeOutType = "extra-rounded";
+                        qrState.eyeInType = "square";
+                    } else if (tpl === 'social') {
+                        qrState.fgColor = "#DD2A7B";
+                        qrState.eyeOutColor = "#111111";
+                        qrState.eyeInColor = "#DD2A7B";
+                        qrState.bodyType = "rounded";
+                        qrState.eyeOutType = "extra-rounded";
+                        qrState.eyeInType = "dot";
+                        qrState.gradient = {
+                            type: "linear",
+                            rotation: 0,
+                            colorStops: [
+                                { offset: 0, color: "#F58529" },
+                                { offset: 0.5, color: "#DD2A7B" },
+                                { offset: 1, color: "#8134AF" }
+                            ]
+                        };
+                    } else if (tpl === 'rainbow') {
+                        qrState.fgColor = "#7f00ff";
+                        qrState.eyeOutColor = "#111111";
+                        qrState.eyeInColor = "#ff007f";
+                        qrState.bodyType = "classy-rounded";
+                        qrState.eyeOutType = "extra-rounded";
+                        qrState.eyeInType = "dot";
+                        qrState.gradient = {
+                            type: "linear",
+                            rotation: Math.PI / 4,
+                            colorStops: [
+                                { offset: 0, color: "#ff007f" },
+                                { offset: 0.5, color: "#7f00ff" },
+                                { offset: 1, color: "#00d4ff" }
+                            ]
+                        };
+                    }
+
+                    syncUIWithState();
+                    renderCleanQR();
+                });
+            });
+
+            [colBgInput, colFgInput, colEyeOutInput, colEyeInInput].forEach(input => {
+                input.addEventListener('input', () => {
+                    qrState.bgColor = colBgInput.value;
+                    qrState.fgColor = colFgInput.value;
+                    qrState.eyeOutColor = colEyeOutInput.value;
+                    qrState.eyeInColor = colEyeInInput.value;
+                    qrState.gradient = null;
+                    document.querySelectorAll('#template-selector .template-card').forEach(c => c.classList.remove('active'));
+                    renderCleanQR();
+                });
+            });
+
+            // ==========================================
+            // 7. FORMAS DEL CUERPO Y OJOS
+            // ==========================================
+            document.querySelectorAll('.shape-grid-cards').forEach(group => {
+                const btns = group.querySelectorAll('.shape-btn');
+                btns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        btns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        const val = btn.dataset.val;
+                        if (group.id === 'shape-body') qrState.bodyType = val;
+                        if (group.id === 'shape-eye-out') qrState.eyeOutType = val;
+                        if (group.id === 'shape-eye-in') qrState.eyeInType = val;
+                        renderCleanQR();
+                    });
+                });
+            });
+
+            // ==========================================
+            // 8. LOGOTIPO Y SELECCIÓN DE LOS 16 MARCOS
+            // ==========================================
+            logoInput.addEventListener('change', e => {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = ev => {
+                        qrState.logoDataUrl = ev.target.result;
+                        removeLogoBtn.style.display = "inline-flex";
+                        renderCleanQR();
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+
+            removeLogoBtn.addEventListener('click', () => {
+                qrState.logoDataUrl = "";
+                logoInput.value = "";
+                removeLogoBtn.style.display = "none";
+                renderCleanQR();
+            });
+
+            logoBgCheck.addEventListener('change', e => {
+                qrState.hideBgDots = e.target.checked;
+                renderCleanQR();
+            });
+
+            frameSelectorGrid.querySelectorAll('.frame-item-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    frameSelectorGrid.querySelectorAll('.frame-item-card').forEach(b => b.classList.remove('active'));
+                    card.classList.add('active');
+                    currentFrame = card.dataset.frame;
+
+                    if (currentFrame === 'none') {
+                        frameCalibratorBox.style.display = 'none';
+                        previewModeTag.textContent = 'SVG 1:1';
+                    } else {
+                        frameCalibratorBox.style.display = 'block';
+                        calFrameName.textContent = currentFrame;
+                        previewModeTag.textContent = currentFrame;
+
+                        const cfg = marcosConfig[currentFrame];
+                        const sc = cfg.scale !== undefined ? cfg.scale : 92;
+                        const sx = cfg.shiftX || 0;
+                        const sy = cfg.shiftY || 0;
+
+                        qrScaleRange.value = sc;
+                        qrShiftXRange.value = sx;
+                        qrShiftYRange.value = sy;
+
+                        valQrScale.textContent = `${sc}%`;
+                        valShiftX.textContent = `${sx}%`;
+                        valShiftY.textContent = `${sy}%`;
+                    }
+
+                    renderCleanQR();
+                });
+            });
+
+            // Sliders de Tamaño (%) y Compensación de Centro (X/Y) por marco
+            [qrScaleRange, qrShiftXRange, qrShiftYRange].forEach(slider => {
+                slider.addEventListener('input', () => {
+                    if (currentFrame === 'none' || !marcosConfig[currentFrame]) return;
+
+                    const sc = parseFloat(qrScaleRange.value);
+                    const sx = parseFloat(qrShiftXRange.value);
+                    const sy = parseFloat(qrShiftYRange.value);
+
+                    marcosConfig[currentFrame].scale = sc;
+                    marcosConfig[currentFrame].shiftX = sx;
+                    marcosConfig[currentFrame].shiftY = sy;
+
+                    valQrScale.textContent = `${sc}%`;
+                    valShiftX.textContent = `${sx}%`;
+                    valShiftY.textContent = `${sy}%`;
+
+                    try {
+                        localStorage.setItem('eduardo_qr_frames_v3', JSON.stringify(marcosConfig));
+                    } catch (e) { }
+
+                    renderCleanQR();
+                });
+            });
+
+            resetFramePadBtn.addEventListener('click', () => {
+                if (currentFrame === 'none' || !marcosConfig[currentFrame]) return;
+                marcosConfig[currentFrame].scale = 92;
+                marcosConfig[currentFrame].shiftX = 0;
+                marcosConfig[currentFrame].shiftY = 0;
+
+                qrScaleRange.value = 92;
+                qrShiftXRange.value = 0;
+                qrShiftYRange.value = 0;
+
+                valQrScale.textContent = '92%';
+                valShiftX.textContent = '0%';
+                valShiftY.textContent = '0%';
+
+                try {
+                    localStorage.setItem('eduardo_qr_frames_v3', JSON.stringify(marcosConfig));
+                } catch (e) { }
+
+                renderCleanQR();
+            });
+
+            // Botón de Limpiar Todo el Diseño
+            document.getElementById('resetAllBtn').addEventListener('click', () => {
+                qrState.bgColor = "#ffffff";
+                qrState.fgColor = "#000000";
+                qrState.eyeOutColor = "#000000";
+                qrState.eyeInColor = "#000000";
+                qrState.gradient = null;
+                qrState.bodyType = "square";
+                qrState.eyeOutType = "square";
+                qrState.eyeInType = "square";
+                qrState.logoDataUrl = "";
+                qrState.hideBgDots = true;
+
+                logoInput.value = "";
+                removeLogoBtn.style.display = "none";
+                logoBgCheck.checked = true;
+
+                document.querySelectorAll('#template-selector .template-card').forEach(c => c.classList.remove('active'));
+                document.querySelector('#template-selector [data-tpl="classic"]').classList.add('active');
+                frameSelectorGrid.querySelector('[data-frame="none"]').click();
+
+                syncUIWithState();
+                renderCleanQR();
+            });
+
+            // ==========================================
+            // 9. EXPORTACIÓN EXACTA (PNG, SVG, PDF, EPS)
+            // ==========================================
+            function downloadBlob(blob, filename) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            async function svgStringToPngDataUrl(svgString, targetWidthPx = 2000) {
+                return new Promise((resolve, reject) => {
+                    const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const img = new Image();
+                    img.onload = () => {
+                        const ratio = (img.height && img.width) ? (img.height / img.width) : 1;
+                        const canvas = document.createElement('canvas');
+                        canvas.width = targetWidthPx;
+                        canvas.height = Math.round(targetWidthPx * ratio);
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        URL.revokeObjectURL(url);
+                        resolve({
+                            dataUrl: canvas.toDataURL('image/png'),
+                            ratio: ratio
+                        });
+                    };
+                    img.onerror = err => {
+                        URL.revokeObjectURL(url);
+                        reject(err);
+                    };
+                    img.src = url;
+                });
+            }
+
+            document.querySelectorAll('.export-card-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const ext = btn.dataset.ext;
+                    const filename = `QR_Pro_${Date.now()}`;
+
+                    if (ext === 'eps') {
+                        if (currentFrame !== 'none') {
+                            alert("Nota técnica: El formato EPS exportará la matriz pura del código QR para asegurar un corte limpio en plotter o serigrafía.");
+                        }
+                        exportBaseEps(filename);
+                        return;
+                    }
+
+                    const finalSvgString = await buildUnifiedSvgString(1200);
+
+                    if (ext === 'svg') {
+                        const svgBlob = new Blob([finalSvgString], { type: 'image/svg+xml;charset=utf-8' });
+                        downloadBlob(svgBlob, `${filename}.svg`);
+                    } else if (ext === 'png') {
+                        const { dataUrl } = await svgStringToPngDataUrl(finalSvgString, 2000);
+                        const a = document.createElement('a');
+                        a.href = dataUrl;
+                        a.download = `${filename}.png`;
+                        a.click();
+                    } else if (ext === 'pdf') {
+                        const { dataUrl, ratio } = await svgStringToPngDataUrl(finalSvgString, 2000);
+                        const { jsPDF } = window.jspdf;
+                        const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "letter" });
+                        const printW = 130;
+                        const printH = Math.min(180, 130 * ratio);
+                        const posX = (215.9 - printW) / 2;
+                        const posY = 40;
+                        doc.addImage(dataUrl, 'PNG', posX, posY, printW, printH);
+                        doc.setFontSize(10);
+                        doc.text("Generado en Eduardo Workspace", 108, posY + printH + 12, { align: "center" });
+                        doc.save(`${filename}.pdf`);
+                    }
+                });
+            });
+
+            function exportBaseEps(filename) {
+                const qrc = new QRCode(document.createElement('div'), {
+                    text: qrState.data,
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+                const model = qrc._oQRCode;
+                const size = model.moduleCount;
+                let epsContent = `%!PS-Adobe-3.0 EPSF-3.0\n%%BoundingBox: 0 0 ${size * 10} ${size * 10}\n%%EndComments\n`;
+                epsContent += `/b {newpath moveto 10 0 rlineto 0 10 rlineto -10 0 rlineto closepath fill} def\n`;
+                epsContent += `0 0 0 setrgbcolor\n`;
+
+                for (let row = 0; row < size; row++) {
+                    for (let col = 0; col < size; col++) {
+                        if (model.isDark(row, col)) {
+                            epsContent += `${col * 10} ${(size - row - 1) * 10} b\n`;
+                        }
+                    }
+                }
+                epsContent += `showpage\n%%EOF`;
+
+                const blob = new Blob([epsContent], { type: 'application/postscript' });
+                downloadBlob(blob, `${filename}.eps`);
+            }
+
+            // Render inicial
+            renderCleanQR();
+        });
+    </script>
+</body>
+
+</html>

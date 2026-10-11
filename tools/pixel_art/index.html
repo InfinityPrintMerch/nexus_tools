@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pixel Art Studio | Eduardo Workspace</title>
+    <link rel="icon" href="data:,">
+
+    <!-- PRE-CARGA INMEDIATA DEL TEMA EN CACHÉ -->
+    <script>
+        (function () {
+            try {
+                const cachedTheme = localStorage.getItem('eduardo_workspace_theme') ||
+                    localStorage.getItem('artivo-admin-theme') ||
+                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                if (cachedTheme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) { }
+        })();
+    </script>
+
+    <!-- Librerías requeridas -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gifshot/0.3.2/gifshot.min.js"></script>
+
+    <!-- Fuente Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* =========================================
+           VARIABLES (MODO CLARO)
+           ========================================= */
+        :root {
+            --primary: #6F8A3C;
+            --primary-hover: #58702f;
+            --primary-light: #f2f5eb;
+            --bg-color: #f4f6f4;
+            --surface: #ffffff;
+            --toolbar-bg: #fafbfa;
+            --input-bg: #ffffff;
+            --banner-bg: rgba(255, 255, 255, 0.95);
+            --banner-border: rgba(255, 255, 255, 0.6);
+            --border: #e2e8f0;
+            --mat-bg: #e9ece9;
+            --checker-1: #e0e0e0;
+            --checker-2: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --danger: #e53e3e;
+            --switch-bg: #e2e8f0;
+            --switch-knob: #ffffff;
+
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            --transition: all 0.2s ease;
+        }
+
+        /* =========================================
+           VARIABLES MODO OSCURO
+           ========================================= */
+        [data-theme="dark"] {
+            --primary: #84a348;
+            --primary-hover: #96b559;
+            --primary-light: rgba(132, 163, 72, 0.16);
+            --bg-color: #0f1419;
+            --surface: #182026;
+            --toolbar-bg: #141b20;
+            --input-bg: #11171c;
+            --banner-bg: rgba(24, 32, 38, 0.92);
+            --banner-border: rgba(255, 255, 255, 0.07);
+            --border: #283540;
+            --mat-bg: #12181d;
+            --checker-1: #1f2933;
+            --checker-2: #323f4b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --danger: #fc8181;
+            --switch-bg: #283540;
+            --switch-knob: #84a348;
+            --shadow-sm: 0 4px 10px -1px rgba(0, 0, 0, 0.35);
+            --shadow-md: 0 12px 28px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        html,
+        body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            padding: 14px 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            user-select: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 8px;
+        }
+
+        [data-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        /* TEMA SWITCH Y BOTONES */
+        .theme-switch {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            width: 60px;
+            height: 32px;
+            flex-shrink: 0;
+            margin: 0;
+        }
+
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .switch-slider {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: var(--switch-bg);
+            border-radius: 50px;
+            border: 1.5px solid var(--border);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7px;
+        }
+
+        .switch-slider .icon-sun {
+            color: #f59e0b;
+            font-size: 12px;
+            z-index: 1;
+        }
+
+        .switch-slider .icon-moon {
+            color: #94a3b8;
+            font-size: 12px;
+            z-index: 1;
+        }
+
+        [data-theme="dark"] .switch-slider .icon-moon {
+            color: #ffffff;
+        }
+
+        .switch-knob {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 23px;
+            height: 23px;
+            background-color: var(--switch-knob);
+            border-radius: 50%;
+            transition: transform 0.32s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+        }
+
+        .theme-switch input:checked+.switch-slider .switch-knob {
+            transform: translateX(27px);
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--banner-bg);
+            backdrop-filter: blur(10px);
+            padding: 11px 22px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--banner-border);
+            margin-bottom: 14px;
+            flex-shrink: 0;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-pill-btn {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.82rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 13px;
+            border-radius: var(--radius-sm);
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .nav-pill-btn:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .header-title h1 {
+            color: var(--primary);
+            font-size: 1.16rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-top: 2px;
+        }
+
+        /* ESPACIO DE TRABAJO */
+        .pdf-main-workspace {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tool-section {
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 16px;
+        }
+
+        /* PANEL IZQUIERDO (LIENZO Y FRAMES) */
+        .viewer-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .viewer-toolbar {
+            padding: 10px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--toolbar-bg);
+            flex-shrink: 0;
+        }
+
+        .tools-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .tool-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .tool-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .tool-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .toolbar-divider {
+            width: 1px;
+            height: 24px;
+            background: var(--border);
+            margin: 0 6px;
+        }
+
+        /* ÁREA DE DIBUJO CON PAN Y ZOOM */
+        .canvas-area {
+            flex: 1;
+            min-height: 0;
+            position: relative;
+            overflow: hidden;
+            background-color: var(--mat-bg);
+            cursor: crosshair;
+        }
+
+        .canvas-area.tool-pan {
+            cursor: grab;
+        }
+
+        .canvas-area.tool-pan:active {
+            cursor: grabbing;
+        }
+
+        /* Wrapper sin bordes físicos para no descuadrar la cuadrícula */
+        .canvas-wrapper {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            background-color: var(--checker-2);
+            /* Sombra interna para simular borde sin afectar el tamaño */
+            box-shadow: 0 0 0 1px var(--border), 0 4px 25px rgba(0, 0, 0, 0.25);
+            transform-origin: top left;
+        }
+
+        canvas#pixelCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            position: relative;
+            z-index: 2;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+
+        /* Papel Cebolla */
+        canvas#onionCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+            opacity: 0.4;
+            pointer-events: none;
+            display: none;
+        }
+
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+            background-image:
+                linear-gradient(to right, rgba(128, 128, 128, 0.4) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(128, 128, 128, 0.4) 1px, transparent 1px);
+            background-position: 0 0;
+        }
+
+        /* LÍNEA DE TIEMPO (FRAMES) */
+        .frames-strip {
+            height: 90px;
+            border-top: 1px solid var(--border);
+            background: var(--toolbar-bg);
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            gap: 10px;
+            overflow-x: auto;
+            flex-shrink: 0;
+        }
+
+        .frame-thumb-container {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--checker-2);
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .frame-thumb-container.active {
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .frame-thumb-container canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            image-rendering: pixelated;
+            border-radius: 4px;
+        }
+
+        .frame-num {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            background: var(--primary);
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: bold;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        .delete-frame-btn {
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            background: var(--danger);
+            color: #fff;
+            border: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 0.6rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .frame-thumb-container:hover .delete-frame-btn {
+            display: flex;
+        }
+
+        .add-frame-btn {
+            width: 60px;
+            height: 60px;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .add-frame-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        /* PANEL DERECHO (AJUSTES) */
+        .sidebar-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .sidebar-header {
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            background: var(--toolbar-bg);
+            flex-shrink: 0;
+        }
+
+        .sidebar-header h2 {
+            font-size: 0.94rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-body {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding: 13px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .config-section {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar-heading {
+            font-size: 0.73rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Controles Modernos */
+        .modern-input-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--input-bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 7px 11px;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .modern-input-group label {
+            font-size: 0.75rem;
+            color: var(--text-main);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .num-input {
+            width: 50px;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        /* Color y Paleta */
+        .color-picker-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        input[type="color"] {
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            background: transparent;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+        }
+
+        .current-color-hex {
+            font-family: monospace;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .palette {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+        }
+
+        .palette-color {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .palette-color:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="range"] {
+            flex: 1;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .range-val {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            width: 25px;
+            text-align: right;
+        }
+
+        /* Footer y Botones */
+        .sidebar-footer {
+            padding: 13px 16px;
+            border-top: 1px solid var(--border);
+            background: var(--toolbar-bg);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 11px 16px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.83rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.24);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-light);
+        }
+
+        .btn-sm-text {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 5px 10px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-sm-text:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        @media (max-width: 960px) {
+
+            html,
+            body {
+                height: auto;
+                overflow: auto;
+            }
+
+            .tool-section {
+                grid-template-columns: 1fr;
+            }
+
+            .viewer-panel {
+                min-height: 600px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- CABECERA -->
+        <header class="app-header">
+            <div class="header-left">
+                <a href="../../index.html" class="nav-pill-btn"><i class="fas fa-arrow-left"></i> Portal</a>
+                <div class="header-title">
+                    <h1><i class="fa-solid fa-gamepad"></i> <span>Pixel Studio Pro</span></h1>
+                    <p>Dibuja, anima y exporta en formato PNG, GIF o MP4.</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <label class="theme-switch" title="Cambiar tema">
+                    <input type="checkbox" class="theme-checkbox" id="themeToggleCheckbox">
+                    <span class="switch-slider">
+                        <i class="fas fa-sun icon-sun"></i>
+                        <i class="fas fa-moon icon-moon"></i>
+                        <span class="switch-knob"></span>
+                    </span>
+                </label>
+            </div>
+        </header>
+
+        <main class="pdf-main-workspace">
+            <section class="tool-section">
+                <!-- PANEL IZQUIERDO: LIENZO Y FRAMES -->
+                <div class="viewer-panel">
+                    <div class="viewer-toolbar">
+                        <div class="tools-group">
+                            <button class="tool-btn active" id="tool-pencil" title="Lápiz (P)"><i
+                                    class="fas fa-pencil-alt"></i></button>
+                            <button class="tool-btn" id="tool-eraser" title="Borrador (E)"><i
+                                    class="fas fa-eraser"></i></button>
+                            <button class="tool-btn" id="tool-fill" title="Relleno (F)"><i
+                                    class="fas fa-fill-drip"></i></button>
+                            <button class="tool-btn" id="tool-picker" title="Cuentagotas (I)"><i
+                                    class="fas fa-eye-dropper"></i></button>
+                            <div class="toolbar-divider"></div>
+                            <button class="tool-btn" id="tool-pan" title="Mover Lienzo (Espacio)"><i
+                                    class="fas fa-hand-paper"></i></button>
+                            <button class="tool-btn" id="btn-zoom-in" title="Acercar"><i
+                                    class="fas fa-search-plus"></i></button>
+                            <button class="tool-btn" id="btn-zoom-out" title="Alejar"><i
+                                    class="fas fa-search-minus"></i></button>
+                        </div>
+                        <div class="tools-group">
+                            <button class="tool-btn" id="btn-undo" title="Deshacer (Ctrl+Z)"><i
+                                    class="fas fa-undo"></i></button>
+                            <button class="tool-btn" id="btn-redo" title="Rehacer (Ctrl+Y)"><i
+                                    class="fas fa-redo"></i></button>
+                            <div class="toolbar-divider"></div>
+
+                            <!-- Botón Papel Cebolla -->
+                            <button class="nav-pill-btn" id="btn-toggle-onion" title="Papel Cebolla"
+                                style="opacity: 0.5;"><i class="fas fa-layer-group"></i></button>
+
+                            <button class="nav-pill-btn" id="btn-toggle-grid" title="Ocultar/Mostrar Rejilla"><i
+                                    class="fas fa-border-all"></i></button>
+                            <button class="nav-pill-btn" id="btn-clear"
+                                style="color: var(--danger); border-color: var(--danger);"
+                                title="Limpiar Frame actual"><i class="fas fa-trash-can"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="canvas-area" id="canvasArea">
+                        <div class="canvas-wrapper" id="canvasWrapper">
+                            <canvas id="onionCanvas"></canvas>
+                            <canvas id="pixelCanvas"></canvas>
+                            <div class="grid-overlay" id="gridOverlay"></div>
+                        </div>
+                    </div>
+
+                    <div class="frames-strip" id="framesStrip">
+                        <!-- Thumbs inyectados dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- PANEL DERECHO: AJUSTES -->
+                <aside class="sidebar-panel">
+                    <div class="sidebar-header">
+                        <h2><i class="fas fa-sliders"></i> Propiedades</h2>
+                    </div>
+
+                    <div class="sidebar-body">
+                        <!-- DIMENSIONES DEL LIENZO -->
+                        <div class="config-section">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3 class="sidebar-heading" style="border:none; padding:0;"><i
+                                        class="fas fa-expand"></i> Dimensiones</h3>
+                                <button id="btnApplySize" class="btn-sm-text">Aplicar</button>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <div class="modern-input-group" style="flex:1;">
+                                    <label>Ancho</label>
+                                    <input type="number" id="inputWidth" class="num-input" value="32" min="1" max="256">
+                                </div>
+                                <div class="modern-input-group" style="flex:1;">
+                                    <label>Alto</label>
+                                    <input type="number" id="inputHeight" class="num-input" value="32" min="1"
+                                        max="256">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- COLOR Y PALETA -->
+                        <div class="config-section">
+                            <h3 class="sidebar-heading"><i class="fas fa-palette"></i> Color</h3>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="colorPicker" value="#000000">
+                                <span class="current-color-hex" id="colorHex">#000000</span>
+                            </div>
+                            <div class="palette" id="colorPalette"></div>
+                        </div>
+
+                        <!-- ANIMACIÓN -->
+                        <div class="config-section">
+                            <h3 class="sidebar-heading"><i class="fas fa-film"></i> Animación</h3>
+                            <div class="modern-input-group" style="padding: 10px;">
+                                <label>FPS</label>
+                                <input type="range" id="fpsRange" min="1" max="24" value="8">
+                                <span class="range-val" id="fpsVal">8</span>
+                            </div>
+                            <button id="btnPlayPause" class="btn-action btn-outline" style="margin-top: 5px;">
+                                <i class="fas fa-play"></i> Reproducir Animación
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-footer">
+                        <button id="btnExportPng" class="btn-action btn-outline">
+                            <i class="fa-solid fa-image"></i> Exportar Imagen (PNG)
+                        </button>
+                        <button id="btnExportGif" class="btn-action btn-primary">
+                            <i class="fa-solid fa-file-image"></i> Exportar Animación (GIF)
+                        </button>
+                        <button id="btnExportVideo" class="btn-action btn-primary">
+                            <i class="fa-solid fa-file-video"></i> Exportar Video (MP4)
+                        </button>
+                    </div>
+                </aside>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // ==========================================
+        // GESTIÓN DEL TEMA OSCURO
+        // ==========================================
+        const THEME_KEY = "eduardo_workspace_theme";
+        function syncThemeUI(theme, persist = true) {
+            const isDark = theme === "dark";
+            if (isDark) document.documentElement.setAttribute("data-theme", "dark");
+            else document.documentElement.removeAttribute("data-theme");
+            document.getElementById("themeToggleCheckbox").checked = isDark;
+            if (persist) try { localStorage.setItem(THEME_KEY, isDark ? "dark" : "light"); } catch (e) { }
+            updateCanvasTransform(); // Refrescar colores del tablero
+        }
+        document.addEventListener("DOMContentLoaded", () => {
+            const saved = localStorage.getItem(THEME_KEY) || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+            syncThemeUI(saved, false);
+            document.getElementById("themeToggleCheckbox").addEventListener("change", (e) => {
+                syncThemeUI(e.target.checked ? "dark" : "light", true);
+            });
+            initApp();
+        });
+
+        // ==========================================
+        // VARIABLES GLOBALES
+        // ==========================================
+        let canvasW = 32;
+        let canvasH = 32;
+        let zoom = 16;
+        let panX = 0;
+        let panY = 0;
+
+        let frames = [];
+        let currentFrameIndex = 0;
+
+        let isPlaying = false;
+        let playInterval;
+        let fps = 8;
+
+        let onionSkinEnabled = false;
+
+        let currentColor = "#000000";
+        let currentTool = "pencil";
+        let isDrawing = false;
+        let isPanning = false;
+
+        // DOM Elements
+        const canvasArea = document.getElementById('canvasArea');
+        const canvasWrapper = document.getElementById('canvasWrapper');
+        const canvas = document.getElementById('pixelCanvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const onionCanvas = document.getElementById('onionCanvas');
+        const onionCtx = onionCanvas.getContext('2d', { willReadFrequently: true });
+
+        const gridOverlay = document.getElementById('gridOverlay');
+        const framesStrip = document.getElementById('framesStrip');
+
+        // Paleta base retro
+        const paletteColors = [
+            "#000000", "#1D2B53", "#7E2553", "#008751", "#AB5236", "#5F574F",
+            "#C2C3C7", "#FFF1E8", "#FF004D", "#FFA300", "#FFEC27", "#00E436",
+            "#29ADFF", "#83769C", "#FF77A8", "#FFCCAA", "#FFFFFF", "#transparent"
+        ];
+
+        // ==========================================
+        // INICIALIZACIÓN
+        // ==========================================
+        function initApp() {
+            // Generar paleta
+            const paletteContainer = document.getElementById('colorPalette');
+            paletteColors.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'palette-color';
+                if (c === '#transparent') {
+                    div.style.background = 'repeating-linear-gradient(45deg, #ccc 0px, #ccc 5px, #fff 5px, #fff 10px)';
+                    div.title = "Borrador rápido";
+                } else {
+                    div.style.background = c;
+                }
+                div.addEventListener('click', () => {
+                    if (c === '#transparent') { setTool('eraser'); }
+                    else { setColor(c); if (currentTool === 'eraser') setTool('pencil'); }
+                });
+                paletteContainer.appendChild(div);
+            });
+
+            // Dimensiones personalizadas
+            document.getElementById('btnApplySize').addEventListener('click', () => {
+                const w = parseInt(document.getElementById('inputWidth').value);
+                const h = parseInt(document.getElementById('inputHeight').value);
+                if (w > 0 && h > 0) {
+                    if (confirm("Aplicar nuevo tamaño borrará el lienzo actual. ¿Continuar?")) {
+                        canvasW = w; canvasH = h;
+                        resetProject();
+                    }
+                }
+            });
+
+            document.getElementById('colorPicker').addEventListener('input', (e) => setColor(e.target.value));
+
+            // Botones de Herramientas
+            ['pencil', 'eraser', 'fill', 'picker', 'pan'].forEach(tool => {
+                document.getElementById(`tool-${tool}`).addEventListener('click', () => setTool(tool));
+            });
+
+            // Zoom
+            document.getElementById('btn-zoom-in').addEventListener('click', () => { zoom += 2; updateCanvasTransform(); });
+            document.getElementById('btn-zoom-out').addEventListener('click', () => { zoom = Math.max(1, zoom - 2); updateCanvasTransform(); });
+            canvasArea.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                if (e.deltaY < 0) zoom += 1; else zoom -= 1;
+                zoom = Math.max(1, Math.min(zoom, 100));
+                updateCanvasTransform();
+            });
+
+            // Deshacer / Rehacer
+            document.getElementById('btn-undo').addEventListener('click', undo);
+            document.getElementById('btn-redo').addEventListener('click', redo);
+
+            window.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
+                if (e.ctrlKey && e.key === 'y') { e.preventDefault(); redo(); }
+                if (e.key.toLowerCase() === 'p') setTool('pencil');
+                if (e.key.toLowerCase() === 'e') setTool('eraser');
+                if (e.key.toLowerCase() === 'f') setTool('fill');
+                if (e.key.toLowerCase() === 'i') setTool('picker');
+                if (e.key === ' ') { setTool('pan'); }
+            });
+
+            // Opciones de Visualización
+            document.getElementById('btn-toggle-onion').addEventListener('click', (e) => {
+                onionSkinEnabled = !onionSkinEnabled;
+                e.currentTarget.style.opacity = onionSkinEnabled ? '1' : '0.5';
+                updateOnionSkin();
+            });
+
+            document.getElementById('btn-clear').addEventListener('click', () => {
+                if (confirm("¿Limpiar fotograma actual?")) {
+                    saveHistoryState();
+                    ctx.clearRect(0, 0, canvasW, canvasH);
+                    updateCurrentFrameData();
+                    renderFramesStrip();
+                }
+            });
+
+            document.getElementById('btn-toggle-grid').addEventListener('click', (e) => {
+                const isHidden = gridOverlay.style.display === 'none';
+                gridOverlay.style.display = isHidden ? 'block' : 'none';
+                e.currentTarget.style.opacity = isHidden ? '1' : '0.5';
+            });
+
+            // Eventos de Paneo y Dibujo
+            canvasArea.addEventListener('mousedown', handleMouseDown);
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
+
+            // Animación
+            document.getElementById('fpsRange').addEventListener('input', (e) => {
+                fps = e.target.value; document.getElementById('fpsVal').innerText = fps;
+                if (isPlaying) { togglePlay(); togglePlay(); }
+            });
+            document.getElementById('btnPlayPause').addEventListener('click', togglePlay);
+
+            // Exportación
+            document.getElementById('btnExportPng').addEventListener('click', exportToPng);
+            document.getElementById('btnExportGif').addEventListener('click', exportToGif);
+            document.getElementById('btnExportVideo').addEventListener('click', exportToVideo);
+
+            resetProject();
+        }
+
+        // ==========================================
+        // PAN Y ZOOM (Ajuste Pixel-Perfect)
+        // ==========================================
+        function updateCanvasTransform() {
+            canvasWrapper.style.width = `${canvasW * zoom}px`;
+            canvasWrapper.style.height = `${canvasH * zoom}px`;
+
+            canvasWrapper.style.transform = `translate(calc(-50% + ${panX}px), calc(-50% + ${panY}px))`;
+
+            gridOverlay.style.backgroundSize = `${zoom}px ${zoom}px`;
+
+            const checkerSize = zoom * 2;
+            canvasWrapper.style.backgroundImage = `conic-gradient(var(--checker-1) 90deg, var(--checker-2) 90deg 180deg, var(--checker-1) 180deg 270deg, var(--checker-2) 270deg)`;
+            canvasWrapper.style.backgroundSize = `${checkerSize}px ${checkerSize}px`;
+        }
+
+        function centerCanvas() {
+            panX = 0; panY = 0;
+            const containerW = canvasArea.clientWidth - 40;
+            const containerH = canvasArea.clientHeight - 40;
+            zoom = Math.max(2, Math.floor(Math.min(containerW / canvasW, containerH / canvasH)));
+            updateCanvasTransform();
+        }
+
+        // ==========================================
+        // DIBUJO Y HERRAMIENTAS
+        // ==========================================
+        function setColor(hex) {
+            currentColor = hex;
+            document.getElementById('colorPicker').value = hex;
+            document.getElementById('colorHex').innerText = hex.toUpperCase();
+        }
+
+        function setTool(tool) {
+            currentTool = tool;
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tool-${tool}`).classList.add('active');
+
+            canvasArea.className = 'canvas-area';
+            if (tool === 'pan') canvasArea.classList.add('tool-pan');
+        }
+
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvasW / rect.width;
+            const scaleY = canvasH / rect.height;
+            let x = Math.floor((e.clientX - rect.left) * scaleX);
+            let y = Math.floor((e.clientY - rect.top) * scaleY);
+            return { x, y };
+        }
+
+        function handleMouseDown(e) {
+            if (isPlaying) return;
+
+            if (currentTool === 'pan' || e.button === 1 || e.key === ' ') {
+                isPanning = true;
+                return;
+            }
+
+            if (e.button === 0) {
+                saveHistoryState();
+                isDrawing = true;
+                const pos = getMousePos(e);
+                applyTool(pos.x, pos.y);
+            }
+        }
+
+        function handleMouseMove(e) {
+            if (isPanning) {
+                panX += e.movementX; panY += e.movementY;
+                updateCanvasTransform();
+                return;
+            }
+
+            if (!isDrawing || isPlaying) return;
+
+            const pos = getMousePos(e);
+            if (currentTool === 'pencil' || currentTool === 'eraser') {
+                applyTool(pos.x, pos.y);
+            }
+        }
+
+        function handleMouseUp(e) {
+            isPanning = false;
+            if (isDrawing) {
+                isDrawing = false;
+                updateCurrentFrameData();
+                renderFramesStrip();
+            }
+        }
+
+        function applyTool(x, y) {
+            if (x < 0 || x >= canvasW || y < 0 || y >= canvasH) return;
+
+            if (currentTool === 'pencil') {
+                ctx.fillStyle = currentColor;
+                ctx.fillRect(x, y, 1, 1);
+            } else if (currentTool === 'eraser') {
+                ctx.clearRect(x, y, 1, 1);
+            } else if (currentTool === 'picker') {
+                pickColor(x, y);
+                isDrawing = false;
+            } else if (currentTool === 'fill') {
+                floodFill(x, y, currentColor);
+                isDrawing = false;
+            }
+        }
+
+        function pickColor(x, y) {
+            const data = ctx.getImageData(x, y, 1, 1).data;
+            if (data[3] === 0) return;
+            const hex = "#" + ((1 << 24) + (data[0] << 16) + (data[1] << 8) + data[2]).toString(16).slice(1);
+            setColor(hex);
+            setTool('pencil');
+        }
+
+        // ==========================================
+        // RELLENO PERFECTO 4-WAY SIN HUECOS
+        // ==========================================
+        function hexToRgb(hex) {
+            const bigint = parseInt(hex.slice(1), 16);
+            return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+        }
+
+        function floodFill(startX, startY, fillHex) {
+            const imgData = ctx.getImageData(0, 0, canvasW, canvasH);
+            const data = imgData.data;
+
+            const startPos = (startY * canvasW + startX) * 4;
+            const rStart = data[startPos], gStart = data[startPos + 1], bStart = data[startPos + 2], aStart = data[startPos + 3];
+            const fillRgb = hexToRgb(fillHex);
+
+            const isTransparent = (aStart === 0);
+
+            if (!isTransparent && rStart === fillRgb.r && gStart === fillRgb.g && bStart === fillRgb.b && aStart === 255) return;
+
+            const stack = [[startX, startY]];
+
+            while (stack.length) {
+                const [x, y] = stack.pop();
+                const pos = (y * canvasW + x) * 4;
+
+                if (x < 0 || x >= canvasW || y < 0 || y >= canvasH) continue;
+
+                let match = false;
+                if (isTransparent) {
+                    match = (data[pos + 3] === 0);
+                } else {
+                    match = (data[pos] === rStart && data[pos + 1] === gStart && data[pos + 2] === bStart && data[pos + 3] === aStart);
+                }
+
+                if (match) {
+                    data[pos] = fillRgb.r; data[pos + 1] = fillRgb.g; data[pos + 2] = fillRgb.b; data[pos + 3] = 255;
+                    stack.push([x + 1, y]);
+                    stack.push([x - 1, y]);
+                    stack.push([x, y + 1]);
+                    stack.push([x, y - 1]);
+                }
+            }
+            ctx.putImageData(imgData, 0, 0);
+        }
+
+        // ==========================================
+        // PAPEL CEBOLLA (ONION SKIN)
+        // ==========================================
+        function updateOnionSkin() {
+            if (!onionSkinEnabled || currentFrameIndex === 0 || isPlaying) {
+                onionCanvas.style.display = 'none';
+                return;
+            }
+            onionCanvas.style.display = 'block';
+            onionCtx.clearRect(0, 0, canvasW, canvasH);
+            // Dibujamos el frame directamente anterior en el canvas transparente inferior
+            onionCtx.putImageData(frames[currentFrameIndex - 1].imageData, 0, 0);
+        }
+
+        // ==========================================
+        // GESTIÓN DE FRAMES E HISTORIAL (UNDO/REDO)
+        // ==========================================
+        function resetProject() {
+            canvas.width = canvasW; canvas.height = canvasH;
+            onionCanvas.width = canvasW; onionCanvas.height = canvasH;
+
+            frames = [];
+            currentFrameIndex = 0;
+            ctx.clearRect(0, 0, canvasW, canvasH);
+
+            frames.push({
+                imageData: ctx.getImageData(0, 0, canvasW, canvasH),
+                undoStack: [],
+                redoStack: []
+            });
+
+            centerCanvas();
+            renderFramesStrip();
+            updateOnionSkin();
+        }
+
+        function saveHistoryState() {
+            const frame = frames[currentFrameIndex];
+            const clone = ctx.getImageData(0, 0, canvasW, canvasH);
+            frame.undoStack.push(clone);
+            if (frame.undoStack.length > 40) frame.undoStack.shift();
+            frame.redoStack = [];
+        }
+
+        function undo() {
+            const frame = frames[currentFrameIndex];
+            if (frame.undoStack.length > 0) {
+                const current = ctx.getImageData(0, 0, canvasW, canvasH);
+                frame.redoStack.push(current);
+                const previous = frame.undoStack.pop();
+                ctx.putImageData(previous, 0, 0);
+                updateCurrentFrameData();
+                renderFramesStrip();
+            }
+        }
+
+        function redo() {
+            const frame = frames[currentFrameIndex];
+            if (frame.redoStack.length > 0) {
+                const current = ctx.getImageData(0, 0, canvasW, canvasH);
+                frame.undoStack.push(current);
+                const next = frame.redoStack.pop();
+                ctx.putImageData(next, 0, 0);
+                updateCurrentFrameData();
+                renderFramesStrip();
+            }
+        }
+
+        function updateCurrentFrameData() {
+            frames[currentFrameIndex].imageData = ctx.getImageData(0, 0, canvasW, canvasH);
+        }
+
+        function loadFrameToCanvas(index) {
+            currentFrameIndex = index;
+            ctx.putImageData(frames[index].imageData, 0, 0);
+            updateStripActiveState();
+            updateOnionSkin();
+        }
+
+        function addNewFrame() {
+            const newImageData = ctx.getImageData(0, 0, canvasW, canvasH);
+            frames.splice(currentFrameIndex + 1, 0, {
+                imageData: newImageData,
+                undoStack: [],
+                redoStack: []
+            });
+            currentFrameIndex++;
+            loadFrameToCanvas(currentFrameIndex);
+            renderFramesStrip();
+        }
+
+        function deleteFrame(index) {
+            if (frames.length <= 1) {
+                saveHistoryState();
+                ctx.clearRect(0, 0, canvasW, canvasH);
+                updateCurrentFrameData();
+            } else {
+                frames.splice(index, 1);
+                if (currentFrameIndex >= frames.length) currentFrameIndex = frames.length - 1;
+                loadFrameToCanvas(currentFrameIndex);
+            }
+            renderFramesStrip();
+        }
+
+        function renderFramesStrip() {
+            const container = document.getElementById('framesStrip');
+            container.innerHTML = '';
+
+            frames.forEach((frameObj, index) => {
+                const thumbDiv = document.createElement('div');
+                thumbDiv.className = `frame-thumb-container ${index === currentFrameIndex ? 'active' : ''}`;
+
+                const thumbCanvas = document.createElement('canvas');
+                thumbCanvas.width = canvasW;
+                thumbCanvas.height = canvasH;
+                thumbCanvas.getContext('2d').putImageData(frameObj.imageData, 0, 0);
+
+                const num = document.createElement('div');
+                num.className = 'frame-num';
+                num.innerText = index + 1;
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'delete-frame-btn';
+                delBtn.innerHTML = '<i class="fas fa-times"></i>';
+                delBtn.addEventListener('click', (e) => { e.stopPropagation(); deleteFrame(index); });
+
+                thumbDiv.appendChild(thumbCanvas);
+                thumbDiv.appendChild(num);
+                thumbDiv.appendChild(delBtn);
+
+                thumbDiv.addEventListener('click', () => { if (!isPlaying) loadFrameToCanvas(index); });
+                container.appendChild(thumbDiv);
+            });
+
+            const addBtn = document.createElement('button');
+            addBtn.className = 'add-frame-btn';
+            addBtn.title = 'Añadir Fotograma';
+            addBtn.innerHTML = '<i class="fas fa-plus"></i>';
+            addBtn.addEventListener('click', addNewFrame);
+            container.appendChild(addBtn);
+        }
+
+        function updateStripActiveState() {
+            document.querySelectorAll('.frame-thumb-container').forEach((el, idx) => {
+                el.classList.toggle('active', idx === currentFrameIndex);
+            });
+        }
+
+        function togglePlay() {
+            if (frames.length <= 1) { alert("Añade más fotogramas para animar."); return; }
+            const btn = document.getElementById('btnPlayPause');
+
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                btn.innerHTML = '<i class="fas fa-pause"></i> Detener Animación';
+                btn.classList.add('btn-primary'); btn.classList.remove('btn-outline');
+                updateOnionSkin(); // Ocultar papel cebolla al reproducir
+                playInterval = setInterval(() => {
+                    const next = (currentFrameIndex + 1) % frames.length;
+                    loadFrameToCanvas(next);
+                }, 1000 / fps);
+            } else {
+                btn.innerHTML = '<i class="fas fa-play"></i> Reproducir Animación';
+                btn.classList.remove('btn-primary'); btn.classList.add('btn-outline');
+                clearInterval(playInterval);
+                updateOnionSkin(); // Mostrar nuevamente si estaba activado
+            }
+        }
+
+        // ==========================================
+        // EXPORTACIÓN
+        // ==========================================
+        function getScaledExportCanvas(imgData, targetSize = 512) {
+            const scale = Math.max(1, Math.floor(targetSize / Math.max(canvasW, canvasH)));
+            const eCanvas = document.createElement('canvas');
+            eCanvas.width = canvasW * scale;
+            eCanvas.height = canvasH * scale;
+            const eCtx = eCanvas.getContext('2d');
+            eCtx.imageSmoothingEnabled = false;
+
+            const tCanvas = document.createElement('canvas');
+            tCanvas.width = canvasW; tCanvas.height = canvasH;
+            tCanvas.getContext('2d').putImageData(imgData, 0, 0);
+
+            eCtx.drawImage(tCanvas, 0, 0, eCanvas.width, eCanvas.height);
+            return eCanvas;
+        }
+
+        function exportToPng() {
+            const eCanvas = getScaledExportCanvas(frames[currentFrameIndex].imageData);
+            const a = document.createElement('a');
+            a.href = eCanvas.toDataURL('image/png');
+            a.download = 'pixel_frame.png';
+            a.click();
+        }
+
+        function exportToGif() {
+            if (frames.length === 0) return;
+            const btn = document.getElementById('btnExportGif');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
+            btn.disabled = true;
+
+            let dataUrls = [];
+            frames.forEach(f => {
+                const eCanvas = getScaledExportCanvas(f.imageData, 512);
+                const ctx = eCanvas.getContext('2d');
+                ctx.globalCompositeOperation = "destination-over";
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, eCanvas.width, eCanvas.height);
+                dataUrls.push(eCanvas.toDataURL('image/png'));
+            });
+
+            gifshot.createGIF({
+                images: dataUrls, interval: 1 / fps, gifWidth: 512, gifHeight: 512, numWorkers: 2
+            }, function (obj) {
+                if (!obj.error) {
+                    const a = document.createElement('a');
+                    a.href = obj.image; a.download = 'pixel_animation.gif'; a.click();
+                } else { alert("Error creando el GIF"); }
+                btn.innerHTML = '<i class="fa-solid fa-file-image"></i> Exportar Animación (GIF)';
+                btn.disabled = false;
+            });
+        }
+
+        function exportToVideo() {
+            if (frames.length === 0) return;
+            const btn = document.getElementById('btnExportVideo');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Grabando...';
+            btn.disabled = true;
+
+            const baseSize = 512;
+            const eCanvas = document.createElement('canvas');
+            eCanvas.width = baseSize; eCanvas.height = baseSize;
+            const eCtx = eCanvas.getContext('2d');
+            eCtx.imageSmoothingEnabled = false;
+
+            const tCanvas = document.createElement('canvas');
+            tCanvas.width = canvasW; tCanvas.height = canvasH;
+            const tCtx = tCanvas.getContext('2d');
+
+            const stream = eCanvas.captureStream(fps);
+            let mediaRecorder;
+            try { mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' }); }
+            catch (e) { mediaRecorder = new MediaRecorder(stream); }
+
+            let chunks = [];
+            mediaRecorder.ondataavailable = e => chunks.push(e.data);
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(chunks, { type: mediaRecorder.mimeType });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob); a.download = 'pixel_animation.webm'; a.click();
+                btn.innerHTML = '<i class="fa-solid fa-file-video"></i> Exportar Video (MP4)';
+                btn.disabled = false;
+            };
+
+            mediaRecorder.start();
+            let i = 0;
+            function drawNext() {
+                if (i >= frames.length) { setTimeout(() => mediaRecorder.stop(), 200); return; }
+                tCtx.putImageData(frames[i].imageData, 0, 0);
+                eCtx.fillStyle = "#ffffff"; eCtx.fillRect(0, 0, baseSize, baseSize);
+                eCtx.drawImage(tCanvas, 0, 0, baseSize, baseSize);
+                i++;
+                setTimeout(drawNext, 1000 / fps);
+            }
+            drawNext();
+        }
+    </script>
+</body>
+
+</html>

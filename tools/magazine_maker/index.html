@@ -5,20 +5,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Magazine Maker | Eduardo Workspace</title>
+    <link rel="icon" href="data:,">
 
-    <!-- SCRIPT DE PROTECCIÓN DE ACCESO SILENCIOSO -->
+    <!-- 1. PRE-CARGA INMEDIATA DEL TEMA EN CACHÉ (EVITA PARPADEO BLANCO) -->
     <script>
-        if (!sessionStorage.getItem('secure_app_token')) {
-            document.documentElement.style.display = 'none';
-            window.location.replace("../../index.html");
-        }
+        (function () {
+            try {
+                const cachedTheme = localStorage.getItem('eduardo_workspace_theme') ||
+                    localStorage.getItem('artivo-admin-theme') ||
+                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                if (cachedTheme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) { }
+        })();
     </script>
 
-    <!-- Librerías PDF -->
-    <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+    <!-- 2. GUARDIÁN DE SEGURIDAD DE ALTO GRADO (FIREBASE AUTH + FIRESTORE) -->
+    <script type="module" src="../../js/auth-guard.js" data-tool-id="magazine_maker"
+        data-login-url="../../index.html"></script>
+
+    <!-- Librerías PDF.js y pdf-lib -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.worker.min.js';
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     </script>
 
     <!-- Fuente Poppins e Iconos -->
@@ -29,25 +40,85 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
-        /* VARIABLES DE AURO STUDIO */
+        /* =========================================
+           VARIABLES DE AURO STUDIO (MODO CLARO)
+           ========================================= */
         :root {
             --primary: #6F8A3C;
             --primary-hover: #58702f;
             --primary-light: #f2f5eb;
+            --border-focus: #6F8A3C;
+
             --bg-color: #f4f6f4;
+            --bg-overlay: rgba(244, 246, 244, 0);
             --surface: #ffffff;
+            --toolbar-bg: #fafbfa;
+            --input-bg: #ffffff;
+            --banner-bg: rgba(255, 255, 255, 0.95);
+            --banner-border: rgba(255, 255, 255, 0.6);
+            --card-border: #e2e8f0;
+            --preview-well: #f1f5f9;
+
+            --mat-bg: #e9ece9;
+            --mat-line: rgba(111, 138, 60, 0.07);
+            --mat-dot: #cbd5e0;
+
             --text-main: #2d3748;
             --text-muted: #718096;
             --border: #e2e8f0;
             --danger: #e53e3e;
-            --danger-hover: #c53030;
             --danger-light: #fff5f5;
+            --warning: #dd6b20;
+            --warning-light: #fffaf0;
+
+            --switch-bg: #e2e8f0;
+            --switch-knob: #ffffff;
+
             --radius-xl: 20px;
             --radius-lg: 16px;
             --radius-md: 12px;
+            --radius-sm: 8px;
             --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
+            --transition: all 0.22s ease;
+        }
+
+        /* =========================================
+           VARIABLES MODO OSCURO
+           ========================================= */
+        [data-theme="dark"] {
+            --primary: #84a348;
+            --primary-hover: #96b559;
+            --primary-light: rgba(132, 163, 72, 0.16);
+            --border-focus: #84a348;
+
+            --bg-color: #0f1419;
+            --bg-overlay: rgba(15, 20, 25, 0.88);
+            --surface: #182026;
+            --toolbar-bg: #141b20;
+            --input-bg: #11171c;
+            --banner-bg: rgba(24, 32, 38, 0.92);
+            --banner-border: rgba(255, 255, 255, 0.07);
+            --card-border: #283540;
+            --preview-well: #11171c;
+
+            --mat-bg: #12181d;
+            --mat-line: rgba(132, 163, 72, 0.07);
+            --mat-dot: #26323d;
+
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #283540;
+            --danger: #fc8181;
+            --danger-light: rgba(229, 62, 62, 0.15);
+            --warning: #f6ad55;
+            --warning-light: rgba(221, 107, 32, 0.16);
+
+            --switch-bg: #283540;
+            --switch-knob: #84a348;
+
+            --shadow-sm: 0 4px 10px -1px rgba(0, 0, 0, 0.35);
+            --shadow-md: 0 12px 28px -5px rgba(0, 0, 0, 0.5);
         }
 
         * {
@@ -60,200 +131,1071 @@
         body {
             background-color: var(--bg-color);
             background-image: url('../../assets/auro/bg.png');
-            /* Ajusta la ruta a tu imagen de fondo si es necesario */
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             color: var(--text-main);
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            padding: 14px 20px;
+            position: relative;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        .container {
-            width: 100%;
-            max-width: 900px;
-            margin: 20px auto;
-            flex: 1;
+        /* Capa para atenuar la imagen de fondo en modo oscuro */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: var(--bg-overlay);
+            pointer-events: none;
+            z-index: 0;
+            transition: background 0.3s ease;
         }
 
-        /* BANNER SUPERIOR */
-        .top-banner {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 20px 30px;
-            border-radius: var(--radius-xl);
-            margin-bottom: 24px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            text-align: center;
+        /* Scrollbars personalizados */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
         }
 
-        .top-banner h1 {
-            color: var(--primary);
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 8px;
         }
 
-        .top-banner p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 8px;
         }
 
-        /* TARJETA PRINCIPAL */
-        .card {
-            background: var(--surface);
-            border-radius: var(--radius-xl);
-            padding: 40px;
-            box-shadow: var(--shadow-md);
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            text-align: center;
+        [data-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: #334155;
         }
 
-        /* ZONA DE DRAG & DROP */
-        .file-upload {
-            border: 2px dashed var(--border);
-            background: var(--primary-light);
-            padding: 50px 20px;
-            border-radius: var(--radius-lg);
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 25px;
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
         }
 
-        .file-upload.dragover,
-        .file-upload:hover {
-            border-color: var(--primary);
-            background: #e4efe0;
-            transform: translateY(-2px);
-        }
-
-        .file-upload i {
-            color: var(--primary);
-            font-size: 40px;
-        }
-
-        .file-upload span {
-            font-weight: 500;
-            color: var(--text-main);
-            font-size: 1.1rem;
-        }
-
-        /* BOTONES */
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 14px 28px;
-            border-radius: 50px;
-            border: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
+        /* =========================================
+           SWITCH DE MODO OSCURO
+           ========================================= */
+        .theme-switch {
+            position: relative;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: var(--transition);
-            text-decoration: none;
+            cursor: pointer;
+            width: 60px;
+            height: 32px;
+            flex-shrink: 0;
+            margin: 0;
         }
 
-        .btn:disabled {
-            opacity: 0.6;
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .switch-slider {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: var(--switch-bg);
+            border-radius: 50px;
+            border: 1.5px solid var(--border);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .switch-slider .icon-sun {
+            color: #f59e0b;
+            font-size: 12px;
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        .switch-slider .icon-moon {
+            color: #94a3b8;
+            font-size: 12px;
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        [data-theme="dark"] .switch-slider .icon-moon {
+            color: #ffffff;
+        }
+
+        .switch-knob {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 23px;
+            height: 23px;
+            background-color: var(--switch-knob);
+            border-radius: 50%;
+            transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+        }
+
+        .theme-switch input:checked+.switch-slider .switch-knob {
+            transform: translateX(27px);
+        }
+
+        .theme-switch:hover .switch-slider {
+            border-color: var(--primary);
+        }
+
+        /* =========================================
+           CABECERA SUPERIOR COMPACTA
+           ========================================= */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--banner-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 11px 22px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--banner-border);
+            margin-bottom: 14px;
+            flex-shrink: 0;
+            gap: 15px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-pill-btn {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.82rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 13px;
+            border-radius: var(--radius-sm);
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-pill-btn:hover:not(:disabled) {
+            color: var(--primary);
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .nav-pill-btn:disabled {
+            opacity: 0.45;
             cursor: not-allowed;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.2);
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(111, 138, 60, 0.3);
-        }
-
-        .btn-outline {
-            background: transparent;
+        .header-title h1 {
             color: var(--primary);
-            border: 1.5px solid var(--primary);
-        }
-
-        .btn-outline:hover {
-            background: var(--primary-light);
-            transform: translateY(-2px);
-        }
-
-        .btn-danger {
-            background: transparent;
-            color: var(--danger);
-            border: 1.5px solid var(--danger);
-        }
-
-        .btn-danger:hover {
-            background: var(--danger-light);
-            color: var(--danger-hover);
-            border-color: var(--danger-hover);
-        }
-
-        /* SECCIÓN DE PREVISUALIZACIÓN */
-        #previewSection {
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid var(--border);
-            text-align: left;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        #previewSection h3 {
-            font-size: 1.1rem;
-            color: var(--text-main);
-            margin-bottom: 20px;
+            font-size: 1.16rem;
+            font-weight: 700;
+            line-height: 1.2;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        #previewContainer {
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .header-right {
             display: flex;
+            align-items: center;
+            gap: 12px;
             flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            background: var(--bg-color);
+        }
+
+        /* Selector de Vista (Mesa de Páginas / Vista Previa de Pliegos) */
+        .tool-tabs {
+            display: inline-flex;
+            background: var(--input-bg);
+            border: 1.5px solid var(--border);
+            border-radius: 50px;
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 15px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(111, 138, 60, 0.25);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(111, 138, 60, 0.3);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* =========================================
+           ESTACIÓN PRINCIPAL (2 COLUMNAS)
+           ========================================= */
+        .pdf-main-workspace {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tool-section {
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 16px;
+            animation: fadeIn 0.28s ease;
+        }
+
+        /* COLUMNA IZQUIERDA: MESA DE PÁGINAS Y PREVISUALIZACIÓN */
+        .viewer-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .viewer-toolbar {
+            padding: 11px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: var(--toolbar-bg);
+            flex-shrink: 0;
+        }
+
+        .viewer-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-main);
+            flex-wrap: wrap;
+        }
+
+        .viewer-status i {
+            color: var(--primary);
+        }
+
+        .count-pill {
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(111, 138, 60, 0.25);
+        }
+
+        .count-pill.warning {
+            background: var(--warning-light);
+            color: var(--warning);
+            border-color: rgba(221, 107, 32, 0.35);
+        }
+
+        .toolbar-right-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm-danger {
+            background: var(--surface);
+            color: var(--danger);
+            border: 1px solid rgba(229, 62, 62, 0.35);
+            padding: 5px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.76rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+
+        .btn-sm-danger:hover {
+            background: var(--danger);
+            color: #ffffff;
+            border-color: var(--danger);
+        }
+
+        /* Tapete técnico de previsualización */
+        .pdf-mat-viewport {
+            flex: 1;
+            overflow-y: auto;
+            background-color: var(--mat-bg);
+            background-image:
+                linear-gradient(var(--mat-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--mat-line) 1px, transparent 1px),
+                radial-gradient(var(--mat-dot) 1px, transparent 1px);
+            background-size: 100px 100px, 100px 100px, 20px 20px;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            position: relative;
+        }
+
+        .pdf-mat-viewport.dragover {
+            background-color: var(--primary-light);
+            outline: 3px dashed var(--primary);
+            outline-offset: -12px;
+        }
+
+        /* Dropzone Inicial */
+        .empty-dropzone {
+            margin: auto;
+            max-width: 520px;
+            width: 100%;
+            background: var(--surface);
+            backdrop-filter: blur(8px);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-xl);
+            padding: 42px 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            display: block;
+        }
+
+        .empty-dropzone.dragover,
+        .empty-dropzone:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .dropzone-icon-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 16px auto;
+            transition: var(--transition);
+        }
+
+        .empty-dropzone:hover .dropzone-icon-circle,
+        .empty-dropzone.dragover .dropzone-icon-circle {
+            background: var(--primary);
+            color: #ffffff;
+            transform: scale(1.06);
+        }
+
+        .empty-dropzone h3 {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .empty-dropzone p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Grid de Tarjetas de Páginas (Drag & Drop) */
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            grid-auto-rows: max-content;
+            gap: 15px;
+            width: 100%;
+            align-content: start;
+        }
+
+        .file-card {
+            background: var(--surface);
+            border: 1.5px solid var(--card-border);
             border-radius: var(--radius-lg);
-            border: 1px inset var(--border);
+            padding: 11px;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            height: max-content;
+            position: relative;
+            user-select: none;
+        }
+
+        .file-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .file-card.dragging {
+            opacity: 0.4;
+            border: 2px dashed var(--primary);
+        }
+
+        .file-card.drag-target {
+            border: 2px dashed var(--primary);
+            background: var(--primary-light);
+        }
+
+        .file-card.is-cover-page {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .file-card.is-blank-page {
+            border-style: dashed;
+            border-color: var(--text-muted);
+        }
+
+        .preview-box {
+            height: 175px;
+            width: 100%;
+            flex-shrink: 0;
+            background: var(--preview-well);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            padding: 10px;
+            cursor: grab;
+        }
+
+        .preview-box img,
+        .preview-box canvas {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            pointer-events: none;
+            background: #ffffff;
+        }
+
+        .blank-sheet-visual {
+            width: 72%;
+            height: 90%;
+            background: var(--surface);
+            border: 1.5px dashed var(--border);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            font-weight: 600;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+            pointer-events: none;
+        }
+
+        .blank-sheet-visual i {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+        }
+
+        .order-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: var(--primary);
+            color: #ffffff;
+            min-width: 26px;
+            height: 25px;
+            padding: 0 8px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            font-weight: 700;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+            z-index: 4;
+        }
+
+        .role-tag {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            background: rgba(15, 20, 25, 0.85);
+            color: #ffffff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            z-index: 4;
+        }
+
+        .role-tag.cover {
+            background: var(--primary);
+        }
+
+        .card-remove-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.74rem;
+            cursor: pointer;
+            z-index: 5;
+            transition: var(--transition);
+        }
+
+        .card-remove-btn:hover {
+            background: var(--danger);
+            color: #ffffff;
+            border-color: var(--danger);
+        }
+
+        .card-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-title-wrap {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .card-filename {
+            font-size: 0.79rem;
+            font-weight: 700;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-subtext {
+            font-size: 0.69rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .reorder-btns {
+            display: flex;
+            gap: 3px;
+            flex-shrink: 0;
+        }
+
+        .mini-icon-btn {
+            width: 25px;
+            height: 25px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.68rem;
+            transition: var(--transition);
+        }
+
+        .mini-icon-btn:hover:not(:disabled) {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .mini-icon-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        /* Tarjeta para añadir página en blanco al final del Grid */
+        .add-more-card {
+            border: 2px dashed var(--border);
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            min-height: 240px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 16px;
+            text-align: center;
+        }
+
+        .add-more-card i {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .add-more-card span {
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .add-more-card:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* Contenedor de Previsualización de Pliegos */
+        #previewSection {
+            width: 100%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        #previewContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-auto-rows: max-content;
+            gap: 16px;
+            width: 100%;
+            align-content: start;
+        }
+
+        .spread-preview-card {
+            background: var(--surface);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .spread-preview-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .spread-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .spread-rot-badge {
+            font-size: 0.68rem;
+            padding: 2px 8px;
+            border-radius: 50px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
         }
 
         #previewContainer canvas {
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            max-width: 100%;
+            width: 100%;
             height: auto;
-            transition: transform 0.3s;
+            background: #ffffff;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            display: block;
+            margin: 0 auto;
         }
 
-        #previewContainer canvas:hover {
-            transform: scale(1.02);
+        /* =========================================
+           COLUMNA DERECHA: PANEL DE CONTROL
+           ========================================= */
+        .sidebar-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            background: var(--toolbar-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header h2 {
+            font-size: 0.94rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-header h2 i {
+            color: var(--primary);
+        }
+
+        .sidebar-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 13px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .config-section {
+            background: var(--toolbar-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .sidebar-heading {
+            font-size: 0.73rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat-summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 7px 11px;
+            font-size: 0.78rem;
+            gap: 10px;
+        }
+
+        .stat-summary-row span {
+            color: var(--text-muted);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .stat-summary-row strong {
+            color: var(--primary);
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-align: right;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .modern-input-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--input-bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 6px 10px;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .modern-input-group:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(111, 138, 60, 0.14);
+        }
+
+        .modern-input-group label {
+            font-size: 0.75rem;
+            color: var(--text-main);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .modern-input {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            font-size: 0.79rem;
+            font-weight: 700;
+            width: 100%;
+            text-align: right;
+            outline: none;
+        }
+
+        .modern-input option {
+            background: var(--surface);
+            color: var(--text-main);
+        }
+
+        .custom-dims-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        /* Tarjetas de Modo (Portada) */
+        .download-mode-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .mode-card {
+            background: var(--input-bg);
+            border: 1.5px solid var(--border);
+            padding: 9px 8px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            font-size: 0.73rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .mode-card input {
+            display: none;
+        }
+
+        .mode-card i {
+            font-size: 1.05rem;
+            color: var(--primary);
+        }
+
+        .mode-card:hover {
+            border-color: var(--primary);
+        }
+
+        .mode-card.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .mini-action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 7px;
+        }
+
+        .btn-mini-tool {
+            background: var(--input-bg);
+            color: var(--primary);
+            border: 1.5px solid rgba(111, 138, 60, 0.35);
+            border-radius: var(--radius-sm);
+            padding: 7px 10px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .btn-mini-tool:hover:not(:disabled) {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .btn-mini-tool:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .helper-note {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            line-height: 1.42;
+            background: var(--primary-light);
+            padding: 8px 10px;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--primary);
+        }
+
+        /* Pie de Exportación */
+        .sidebar-footer {
+            padding: 12px 15px;
+            border-top: 1px solid var(--border);
+            background: var(--toolbar-bg);
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            flex-shrink: 0;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 10px 16px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.83rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.24);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled,
+        .btn-outline:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-outline {
+            background: var(--surface);
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+        }
+
+        .btn-outline:hover:not(:disabled) {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        /* Toast Flotante */
+        .global-toast {
+            position: fixed;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: #ffffff;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(111, 138, 60, 0.35);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: bottom 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .global-toast.show {
+            bottom: 24px;
         }
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(10px);
+                transform: translateY(6px);
             }
 
             to {
@@ -262,73 +1204,355 @@
             }
         }
 
-        /* Botón de regreso */
-        .back-nav {
-            margin-bottom: 20px;
-        }
+        @media (max-width: 960px) {
+            body {
+                height: auto;
+                overflow: auto;
+            }
 
-        .back-nav a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: var(--transition);
-        }
+            .tool-section {
+                grid-template-columns: 1fr;
+            }
 
-        .back-nav a:hover {
-            color: var(--primary);
+            .viewer-panel {
+                min-height: 480px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="container">
+    <!-- CABECERA SUPERIOR COMPACTA -->
+    <header class="app-header">
+        <div class="header-left">
+            <a href="../../index.html" class="nav-pill-btn">
+                <i class="fas fa-arrow-left"></i> Portal
+            </a>
 
-        <div class="back-nav">
-            <a href="../../index.html"><i class="fas fa-arrow-left"></i> Volver al Portal</a>
+            <div class="header-title">
+                <h1><i class="fas fa-book-open"></i> <span>Magazine Maker Pro</span></h1>
+                <p>Imposición editorial de revista / cuadernillo con control de pliego, portada y páginas en blanco</p>
+            </div>
         </div>
 
-        <section class="top-banner">
-            <h1>Magazine Maker</h1>
-            <p>Genera un archivo PDF listo para imprimir en formato de Revista / Cuadernillo</p>
+        <div class="header-right">
+            <nav class="tool-tabs">
+                <button type="button" class="tab-btn active" id="tabPagesBtn" data-view="pages">
+                    <i class="fa-solid fa-grip"></i> 1. Ordenar Páginas
+                </button>
+                <button type="button" class="tab-btn" id="tabSpreadsBtn" data-view="spreads">
+                    <i class="fa-solid fa-book-open-reader"></i> 2. Vista Previa Pliegos
+                </button>
+            </nav>
+
+            <div class="header-badge">
+                <i class="fas fa-rotate"></i>
+                <span>Giro 270° / 90° Intacto</span>
+            </div>
+
+            <!-- Switch Modo Oscuro Sincronizado con localStorage -->
+            <label class="theme-switch" title="Cambiar tema">
+                <input type="checkbox" class="theme-checkbox" id="themeToggleCheckbox">
+                <span class="switch-slider">
+                    <i class="fas fa-sun icon-sun"></i>
+                    <i class="fas fa-moon icon-moon"></i>
+                    <span class="switch-knob"></span>
+                </span>
+            </label>
+        </div>
+    </header>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="pdf-main-workspace">
+
+        <section class="tool-section">
+
+            <!-- Panel Izquierdo: Mesa de Páginas y Previsualización de Pliegos -->
+            <div class="viewer-panel">
+                <div class="viewer-toolbar">
+                    <div class="viewer-status">
+                        <i class="fas fa-layer-group"></i>
+                        <span id="viewerDocTitle">Mesa de Imposición Editorial</span>
+                        <span class="count-pill" id="magazineStatusPill">Sin documento</span>
+                        <span class="count-pill" id="multipleStatusPill" style="display: none;">Múltiplo de 4</span>
+                    </div>
+
+                    <div class="toolbar-right-actions">
+                        <input type="file" id="inputPDF" accept="application/pdf" style="display: none;" />
+                        <button type="button" class="nav-pill-btn" id="btnQuickBlank" style="display: none;">
+                            <i class="fa-solid fa-file-circle-plus"></i> + Pág. en Blanco
+                        </button>
+                        <button type="button" class="nav-pill-btn"
+                            onclick="document.getElementById('inputPDF').click()">
+                            <i class="fa-solid fa-folder-open"></i> Seleccionar PDF
+                        </button>
+                        <button type="button" class="btn-sm-danger" id="cargarOtroBtn" style="display: none;">
+                            <i class="fas fa-trash-can"></i> Descartar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pdf-mat-viewport" id="matViewport">
+                    <!-- Zona de carga inicial (Drag & Drop) -->
+                    <label for="inputPDF" class="empty-dropzone" id="dragDropArea">
+                        <div class="dropzone-icon-circle">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h3 id="fileNameText">Arrastra y suelta tu PDF aquí</h3>
+                        <p>Adapta páginas de cualquier medida al pliego, inserta páginas en blanco para múltiplos de 4,
+                            aísla la portada y reordena páginas arrastrándolas.</p>
+                    </label>
+
+                    <!-- VISTA 1: Mesa Interactiva de Páginas (Drag & Drop) -->
+                    <div class="preview-grid" id="pageSequenceGrid" style="display: none;"></div>
+
+                    <!-- VISTA 2: Sección de Previsualización de Pliegos Impresos -->
+                    <div id="previewSection" style="display: none;">
+                        <div id="previewContainer" aria-live="polite"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Derecho: Configuración Editorial -->
+            <aside class="sidebar-panel">
+                <div class="sidebar-header">
+                    <h2><i class="fas fa-sliders"></i> Configuración de Impresión</h2>
+                </div>
+
+                <div class="sidebar-body">
+
+                    <!-- 1. TAMAÑO DE PLIEGO Y PÁGINA -->
+                    <div class="config-section">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-expand"></i> 1. Tamaño de Pliego y Página</h3>
+
+                        <div class="modern-input-group">
+                            <label for="sheetSizeSelect">Pliego (Hoja):</label>
+                            <select id="sheetSizeSelect" class="modern-input" style="cursor:pointer;">
+                                <option value="tabloide" selected>Tabloide (43.18 × 27.94 cm / 17×11")</option>
+                                <option value="tabloide_rebasado">Tabloide Rebasado (45.72 × 30.48 cm / 18×12")</option>
+                                <option value="super_tabloide">Súper Tabloide (48.26 × 33.02 cm / 19×13")</option>
+                                <option value="carta">Carta Horizontal (27.94 × 21.59 cm / 11×8.5")</option>
+                                <option value="oficio">Oficio Horizontal (35.56 × 21.59 cm / 14×8.5")</option>
+                                <option value="custom">Personalizado (cm)...</option>
+                            </select>
+                        </div>
+
+                        <!-- Dimensiones personalizadas del Pliego en cm -->
+                        <div class="custom-dims-grid" id="customSheetDims" style="display: none;">
+                            <div class="modern-input-group">
+                                <label for="customSheetWidthCm">Ancho (cm):</label>
+                                <input type="number" id="customSheetWidthCm" class="modern-input" value="43.18"
+                                    step="0.1" min="5">
+                            </div>
+                            <div class="modern-input-group">
+                                <label for="customSheetHeightCm">Alto (cm):</label>
+                                <input type="number" id="customSheetHeightCm" class="modern-input" value="27.94"
+                                    step="0.1" min="5">
+                            </div>
+                        </div>
+
+                        <div class="modern-input-group">
+                            <label for="pageSizeSelect">Tamaño Página:</label>
+                            <select id="pageSizeSelect" class="modern-input" style="cursor:pointer;">
+                                <option value="auto" selected>Automático (Mitad exacta del pliego)</option>
+                                <option value="carta">Carta (21.59 × 27.94 cm / 8.5×11")</option>
+                                <option value="media_carta">Media Carta (13.97 × 21.59 cm / 5.5×8.5")</option>
+                                <option value="medio_oficio">Medio Oficio (17.78 × 21.59 cm / 7×8.5")</option>
+                                <option value="a4">A4 (21.0 × 29.7 cm)</option>
+                                <option value="a5">A5 (14.8 × 21.0 cm)</option>
+                                <option value="custom">Personalizado (cm)...</option>
+                            </select>
+                        </div>
+
+                        <!-- Dimensiones personalizadas de Página en cm -->
+                        <div class="custom-dims-grid" id="customPageDims" style="display: none;">
+                            <div class="modern-input-group">
+                                <label for="customPageWidthCm">Ancho (cm):</label>
+                                <input type="number" id="customPageWidthCm" class="modern-input" value="21.59"
+                                    step="0.1" min="3">
+                            </div>
+                            <div class="modern-input-group">
+                                <label for="customPageHeightCm">Alto (cm):</label>
+                                <input type="number" id="customPageHeightCm" class="modern-input" value="27.94"
+                                    step="0.1" min="3">
+                            </div>
+                        </div>
+
+                        <div class="modern-input-group">
+                            <label for="pageScaleMode">Adaptación:</label>
+                            <select id="pageScaleMode" class="modern-input" style="cursor:pointer;">
+                                <option value="stretch" selected>Ajustar exacto al tamaño de página</option>
+                                <option value="contain">Escalar proporcional (sin deformar)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 2. PÁGINAS EN BLANCO Y MÚLTIPLOS DE 4 -->
+                    <div class="config-section">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-file-circle-plus"></i> 2. Páginas en Blanco
+                        </h3>
+
+                        <div class="modern-input-group">
+                            <label for="blankInsertPos">Dónde insertar:</label>
+                            <select id="blankInsertPos" class="modern-input" style="cursor:pointer;">
+                                <option value="before_last" selected>Antes de Contraportada (Penúltima)</option>
+                                <option value="end">Al final del documento</option>
+                                <option value="after_first">Después de Portada (Pág. 2)</option>
+                                <option value="start">Al principio del documento</option>
+                                <option value="custom">En posición específica...</option>
+                            </select>
+                        </div>
+
+                        <div class="modern-input-group" id="customBlankPosGroup" style="display: none;">
+                            <label for="customBlankIndex">Insertar en pág. #:</label>
+                            <input type="number" id="customBlankIndex" class="modern-input" value="2" min="1" step="1">
+                        </div>
+
+                        <div class="mini-action-grid">
+                            <button type="button" class="btn-mini-tool" id="btnAddBlankPage" disabled>
+                                <i class="fa-solid fa-plus"></i> Agregar 1 Blanca
+                            </button>
+                            <button type="button" class="btn-mini-tool" id="btnAutoMultiple4" disabled>
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Completar Múlt. 4
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 3. AISLAR PORTADA (PRIMERA Y ÚLTIMA PÁGINA) -->
+                    <div class="config-section">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-book-bookmark"></i> 3. Portada (1ra y Última
+                            Pág.)</h3>
+
+                        <div class="download-mode-grid">
+                            <label class="mode-card active" id="cardCoverNormal">
+                                <input type="radio" name="cover-mode" value="normal" checked>
+                                <i class="fa-solid fa-book-open"></i>
+                                <span>Con Contenido<br><small>(Normal)</small></span>
+                            </label>
+                            <label class="mode-card" id="cardCoverIsolated">
+                                <input type="radio" name="cover-mode" value="blank_back">
+                                <i class="fa-solid fa-clone"></i>
+                                <span>Aislar Portada<br><small>(Vuelta en Blanco)</small></span>
+                            </label>
+                        </div>
+
+                        <div id="coverOptionsContainer" style="display: none; flex-direction: column; gap: 8px;">
+                            <div class="modern-input-group">
+                                <label for="coverBackType">Pliego Portada:</label>
+                                <select id="coverBackType" class="modern-input" style="cursor:pointer;">
+                                    <option value="duplex_blank" selected>Frente impreso + Vuelta en blanco</option>
+                                    <option value="single_sheet">Solo 1 tabloide frente (sin hoja vuelta)</option>
+                                </select>
+                            </div>
+                            <div class="helper-note">
+                                <i class="fa-solid fa-circle-info"></i> <strong>Portada Aislada:</strong> La primera y
+                                última página se colocan juntas en el primer tabloide, dejando su vuelta en blanco. El
+                                resto del contenido inicia en el siguiente pliego.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. RESUMEN DEL LOTE -->
+                    <div class="config-section">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-chart-pie"></i> Resumen de Imposición</h3>
+                        <div class="stat-summary-row">
+                            <span>Secuencia actual:</span>
+                            <strong id="statTotalPages">0 páginas</strong>
+                        </div>
+                        <div class="stat-summary-row">
+                            <span>Estado del proceso:</span>
+                            <strong id="statProcessState">En espera</strong>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="sidebar-footer">
+                    <button type="button" class="btn-action btn-primary" id="procesarBtn" style="display: none;"
+                        disabled>
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Procesar PDF
+                    </button>
+
+                    <a id="descargar" class="btn-action btn-primary" style="display: none;"
+                        download="revista_procesada.pdf">
+                        <i class="fas fa-download"></i> Descargar Revista
+                    </a>
+
+                    <button type="button" class="btn-action btn-outline" id="descargarPortadaBtn"
+                        style="display: none;">
+                        <i class="fa-solid fa-file-export"></i> Descargar Solo Portada
+                    </button>
+                </div>
+            </aside>
+
         </section>
 
-        <main class="card">
+    </main>
 
-            <!-- Zona de carga de archivo -->
-            <label for="inputPDF" class="file-upload" id="dragDropArea">
-                <i class="fas fa-file-pdf"></i>
-                <span id="fileNameText">Arrastra y suelta tu PDF aquí, o haz clic para seleccionar</span>
-                <input type="file" id="inputPDF" accept="application/pdf" style="display: none;" />
-            </label>
-
-            <!-- Botones de Acción -->
-            <div class="action-buttons">
-                <button class="btn btn-primary" id="procesarBtn" style="display:none">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> Procesar PDF
-                </button>
-                <a id="descargar" class="btn btn-primary" style="display:none" download="">
-                    <i class="fas fa-download"></i> Descargar Revista
-                </a>
-                <button class="btn btn-danger" id="cargarOtroBtn" style="display:none">
-                    <i class="fas fa-trash-can"></i> Descartar y Cargar Otro
-                </button>
-            </div>
-
-            <!-- Previsualización -->
-            <div id="previewSection" style="display: none;">
-                <h3><i class="fas fa-eye" style="color: var(--primary);"></i> Vista Previa del Documento</h3>
-                <div id="previewContainer" aria-live="polite"></div>
-            </div>
-
-        </main>
+    <!-- TOAST DE NOTIFICACIÓN -->
+    <div id="globalToast" class="global-toast">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toastMsg">Listo</span>
     </div>
 
-    <!-- Script separado -->
+    <!-- =========================================================================
+         SINCRONIZACIÓN DEL SWITCH DE TEMA EN LOCALSTORAGE
+         ========================================================================= -->
+    <script>
+        (function () {
+            const THEME_STORAGE_KEY = "eduardo_workspace_theme";
+            const ADMIN_THEME_KEY = "artivo-admin-theme";
+
+            function getStoredTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_STORAGE_KEY) || localStorage.getItem(ADMIN_THEME_KEY);
+                    if (saved === "dark" || saved === "light") return saved;
+                } catch (e) { }
+                return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            }
+
+            function syncThemeUI(theme, persist = true) {
+                const isDark = theme === "dark";
+                if (isDark) {
+                    document.documentElement.setAttribute("data-theme", "dark");
+                } else {
+                    document.documentElement.removeAttribute("data-theme");
+                }
+
+                const toggle = document.getElementById("themeToggleCheckbox");
+                if (toggle) toggle.checked = isDark;
+
+                if (persist) {
+                    try {
+                        const mode = isDark ? "dark" : "light";
+                        localStorage.setItem(THEME_STORAGE_KEY, mode);
+                        localStorage.setItem(ADMIN_THEME_KEY, mode);
+                    } catch (e) { }
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                syncThemeUI(getStoredTheme(), false);
+                const toggle = document.getElementById("themeToggleCheckbox");
+                if (toggle) {
+                    toggle.addEventListener("change", (e) => {
+                        syncThemeUI(e.target.checked ? "dark" : "light", true);
+                    });
+                }
+            });
+
+            window.addEventListener("storage", (e) => {
+                if (e.key === THEME_STORAGE_KEY || e.key === ADMIN_THEME_KEY) {
+                    if (e.newValue === "dark" || e.newValue === "light") {
+                        syncThemeUI(e.newValue, false);
+                    }
+                }
+            });
+        })();
+    </script>
+
+    <!-- Script principal intacto -->
     <script src="magazine.js"></script>
 </body>
 

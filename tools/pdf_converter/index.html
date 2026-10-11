@@ -4,330 +4,1245 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PDF a JPG | Eduardo Workspace</title>
+    <title>Conversor Universal PDF & Office | Eduardo Workspace</title>
+    <link rel="icon" href="data:,">
 
-    <!-- SCRIPT DE PROTECCIÓN DE ACCESO SILENCIOSO -->
+    <!-- 1. PRE-CARGA INMEDIATA DEL TEMA EN CACHÉ (EVITA DESTELLO BLANCO) -->
     <script>
-        if (!sessionStorage.getItem('secure_app_token')) {
-            document.documentElement.style.display = 'none';
-            window.location.replace("../../index.html");
-        }
+        (function () {
+            try {
+                const cachedTheme = localStorage.getItem('eduardo_workspace_theme') ||
+                    localStorage.getItem('artivo-admin-theme') ||
+                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                if (cachedTheme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) { }
+        })();
     </script>
 
-    <!-- Librerías requeridas -->
-    <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- 2. GUARDIÁN DE SEGURIDAD CENTRALIZADO (FIREBASE AUTH + FIRESTORE) -->
+    <!-- Detecta automáticamente la carpeta de la herramienta o el ID para bloquear el acceso a intrusos -->
+    <script type="module" src="../../js/auth-guard.js" data-tool-id="pdf_converter"
+        data-login-url="../../index.html"></script>
 
-    <!-- Fuente Poppins -->
+    <!-- Librerías de Procesamiento Documental y Renderizado Fiel Office -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Renderizador fiel de Word DOCX -->
+    <script src="https://unpkg.com/docx-preview@0.1.20/dist/docx-preview.js"></script>
+    <!-- Generador de presentaciones PowerPoint PPTX -->
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+    <!-- Lector y escritor de Hojas de Cálculo Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <!-- Fuente Poppins para la Interfaz e Iconos -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
-        /* VARIABLES DE AURO STUDIO */
+        /* =========================================
+           VARIABLES DE AURO STUDIO (MODO CLARO)
+           ========================================= */
         :root {
             --primary: #6F8A3C;
             --primary-hover: #58702f;
             --primary-light: #f2f5eb;
+            --border-focus: #6F8A3C;
+
             --bg-color: #f4f6f4;
+            --bg-overlay: rgba(244, 246, 244, 0);
             --surface: #ffffff;
+            --toolbar-bg: #fafbfa;
+            --input-bg: #ffffff;
+            --banner-bg: rgba(255, 255, 255, 0.95);
+            --banner-border: rgba(255, 255, 255, 0.6);
+            --card-border: #e2e8f0;
+
+            --mat-bg: #e9ece9;
+            --mat-line: rgba(111, 138, 60, 0.07);
+            --mat-dot: #cbd5e0;
+
             --text-main: #2d3748;
             --text-muted: #718096;
             --border: #e2e8f0;
+            --danger: #e53e3e;
+            --danger-light: #fff5f5;
+
+            --word-color: #2b579a;
+            --ppt-color: #d24726;
+            --excel-color: #217346;
+            --img-color: #d97706;
+
+            --switch-bg: #e2e8f0;
+            --switch-knob: #ffffff;
+
             --radius-xl: 20px;
             --radius-lg: 16px;
             --radius-md: 12px;
+            --radius-sm: 8px;
             --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
+            --transition: all 0.22s ease;
+        }
+
+        /* =========================================
+           VARIABLES MODO OSCURO
+           ========================================= */
+        [data-theme="dark"] {
+            --primary: #84a348;
+            --primary-hover: #96b559;
+            --primary-light: rgba(132, 163, 72, 0.16);
+            --border-focus: #84a348;
+
+            --bg-color: #0f1419;
+            --bg-overlay: rgba(15, 20, 25, 0.88);
+            --surface: #182026;
+            --toolbar-bg: #141b20;
+            --input-bg: #11171c;
+            --banner-bg: rgba(24, 32, 38, 0.92);
+            --banner-border: rgba(255, 255, 255, 0.07);
+            --card-border: #283540;
+
+            --mat-bg: #12181d;
+            --mat-line: rgba(132, 163, 72, 0.07);
+            --mat-dot: #26323d;
+
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #283540;
+            --danger: #fc8181;
+            --danger-light: rgba(229, 62, 62, 0.15);
+
+            --word-color: #60a5fa;
+            --ppt-color: #fb923c;
+            --excel-color: #4ade80;
+            --img-color: #fbbf24;
+
+            --switch-bg: #283540;
+            --switch-knob: #84a348;
+
+            --shadow-sm: 0 4px 10px -1px rgba(0, 0, 0, 0.35);
+            --shadow-md: 0 12px 28px -5px rgba(0, 0, 0, 0.5);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        /* IMPORTANTE: Aplicar Poppins solo a la UI y NO forzarla dentro de los documentos Word o PowerPoint */
+        body,
+        button,
+        input,
+        select,
+        textarea {
             font-family: 'Poppins', sans-serif;
         }
 
         body {
             background-color: var(--bg-color);
             background-image: url('../../assets/auro/bg.png');
-            /* Ajusta la ruta a tu imagen de fondo si es necesario */
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             color: var(--text-main);
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            padding: 14px 20px;
+            position: relative;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        .container {
+        /* Capa para atenuar la imagen de fondo en modo oscuro */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: var(--bg-overlay);
+            pointer-events: none;
+            z-index: 0;
+            transition: background 0.3s ease;
+        }
+
+        /* Ocultar la herramienta hasta que Firebase confirme acceso (Guardián) */
+        body:not(.auth-verified) .converter-main-workspace,
+        body:not(.auth-verified) .app-header {
+            display: none !important;
+        }
+
+        /* Scrollbars personalizados */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 8px;
+        }
+
+        [data-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* =========================================
+           SWITCH DE MODO OSCURO
+           ========================================= */
+        .theme-switch {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            width: 60px;
+            height: 32px;
+            flex-shrink: 0;
+            margin: 0;
+        }
+
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .switch-slider {
+            position: relative;
             width: 100%;
-            max-width: 1200px;
-            margin: 20px auto;
-            flex: 1;
+            height: 100%;
+            background-color: var(--switch-bg);
+            border-radius: 50px;
+            border: 1.5px solid var(--border);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
         }
 
-        /* BANNER Y NAVEGACIÓN */
-        .back-nav {
-            margin-bottom: 20px;
+        .switch-slider .icon-sun {
+            color: #f59e0b;
+            font-size: 12px;
+            transition: var(--transition);
+            z-index: 1;
         }
 
-        .back-nav a {
+        .switch-slider .icon-moon {
+            color: #94a3b8;
+            font-size: 12px;
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        [data-theme="dark"] .switch-slider .icon-moon {
+            color: #ffffff;
+        }
+
+        .switch-knob {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 23px;
+            height: 23px;
+            background-color: var(--switch-knob);
+            border-radius: 50%;
+            transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+        }
+
+        .theme-switch input:checked+.switch-slider .switch-knob {
+            transform: translateX(27px);
+        }
+
+        .theme-switch:hover .switch-slider {
+            border-color: var(--primary);
+        }
+
+        /* =========================================
+           CABECERA SUPERIOR COMPACTA
+           ========================================= */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--banner-bg);
+            backdrop-filter: blur(10px);
+            padding: 11px 22px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--banner-border);
+            margin-bottom: 14px;
+            flex-shrink: 0;
+            gap: 15px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-pill-btn {
             color: var(--text-muted);
             text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
+            font-weight: 600;
+            font-size: 0.82rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 13px;
+            border-radius: var(--radius-sm);
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .nav-pill-btn:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .header-title h1 {
+            color: var(--primary);
+            font-size: 1.16rem;
+            font-weight: 700;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* Selector de Dirección Principal */
+        .tool-tabs {
+            display: inline-flex;
+            background: var(--input-bg);
+            border: 1.5px solid var(--border);
+            border-radius: 50px;
+            padding: 3px;
+            gap: 3px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 16px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(111, 138, 60, 0.25);
+        }
+
+        .invert-direction-btn {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(111, 138, 60, 0.3);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .invert-direction-btn:hover {
+            background: var(--primary);
+            color: #ffffff;
+            transform: rotate(180deg);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(111, 138, 60, 0.3);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* =========================================
+           ESTACIÓN PRINCIPAL (2 COLUMNAS)
+           ========================================= */
+        .converter-main-workspace {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+
+        .mode-section {
+            flex: 1;
+            min-height: 0;
+            display: none;
+            grid-template-columns: 1fr 415px;
+            gap: 16px;
+            animation: fadeIn 0.28s ease;
+        }
+
+        .mode-section.active {
+            display: grid;
+        }
+
+        /* COLUMNA IZQUIERDA: MESA DE ARCHIVOS Y PREVISUALIZACIÓN */
+        .viewer-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .viewer-toolbar {
+            padding: 11px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: var(--toolbar-bg);
+            flex-shrink: 0;
+        }
+
+        .viewer-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .viewer-status i {
+            color: var(--primary);
+        }
+
+        .count-pill {
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(111, 138, 60, 0.25);
+        }
+
+        .toolbar-right-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-sm-danger {
+            background: var(--surface);
+            color: var(--danger);
+            border: 1px solid rgba(229, 62, 62, 0.35);
+            padding: 5px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.76rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+
+        .btn-sm-danger:hover {
+            background: var(--danger);
+            color: #ffffff;
+            border-color: var(--danger);
+        }
+
+        /* Sub-pestañas para Modo 2 */
+        .source-type-tabs {
+            display: flex;
+            gap: 7px;
+            padding: 10px 18px;
+            background: var(--toolbar-bg);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .src-tab-btn {
+            background: var(--input-bg);
+            border: 1.5px solid var(--border);
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 6px;
             transition: var(--transition);
         }
 
-        .back-nav a:hover {
-            color: var(--primary);
-        }
-
-        .top-banner {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 20px 30px;
-            border-radius: var(--radius-xl);
-            margin-bottom: 24px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            text-align: center;
-        }
-
-        .top-banner h1 {
-            color: var(--primary);
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .top-banner p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        /* TARJETA PRINCIPAL */
-        .card {
-            background: var(--surface);
-            border-radius: var(--radius-xl);
-            padding: 40px;
-            box-shadow: var(--shadow-md);
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* ZONA DE DRAG & DROP INICIAL */
-        .file-upload {
-            border: 2px dashed var(--border);
-            background: var(--primary-light);
-            padding: 60px 20px;
-            border-radius: var(--radius-lg);
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            text-align: center;
-        }
-
-        .file-upload.dragover,
-        .file-upload:hover {
+        .src-tab-btn:hover {
             border-color: var(--primary);
-            background: #e4efe0;
-        }
-
-        .file-upload i {
             color: var(--primary);
-            font-size: 45px;
         }
 
-        .file-upload span {
-            font-weight: 500;
-            color: var(--text-main);
-            font-size: 1.1rem;
+        .src-tab-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 3px 8px rgba(111, 138, 60, 0.22);
         }
 
-        /* CONTENEDOR DE TRABAJO (Oculto al inicio) */
-        .pdf2jpg-container {
+        .src-tab-btn.active i {
+            color: #ffffff !important;
+        }
+
+        /* Tapete técnico de previsualización */
+        .mat-viewport {
+            flex: 1;
+            overflow-y: auto;
+            background-color: var(--mat-bg);
+            background-image:
+                linear-gradient(rgba(111, 138, 60, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(111, 138, 60, 0.07) 1px, transparent 1px),
+                radial-gradient(var(--mat-dot) 1px, transparent 1px);
+            background-size: 100px 100px, 100px 100px, 20px 20px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 30px;
-        }
-
-        @media (min-width: 900px) {
-            .pdf2jpg-container {
-                flex-direction: row;
-                align-items: flex-start;
-            }
-        }
-
-        /* ZONA DE PREVISUALIZACIONES */
-        .pdf2jpg-preview {
-            flex: 1;
-            background: var(--bg-color);
-            border-radius: var(--radius-lg);
-            border: 1px inset var(--border);
-            padding: 20px;
-            min-height: 300px;
+            min-height: 0;
             position: relative;
         }
 
-        #pdfPreviewPages {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 20px;
+        .mat-viewport.drag-over {
+            background-color: var(--primary-light);
+            outline: 3px dashed var(--primary);
+            outline-offset: -12px;
         }
 
-        /* Estilos inyectados por JS para las tarjetas de PDF */
-        .pdf-wrapper {
+        /* Dropzone Inicial */
+        .empty-dropzone {
+            margin: auto;
+            max-width: 540px;
+            width: 100%;
             background: var(--surface);
-            border-radius: var(--radius-md);
-            overflow: hidden;
+            backdrop-filter: blur(8px);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-xl);
+            padding: 38px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
             box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border);
+        }
+
+        .empty-dropzone:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .dropzone-icon-circle {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.85rem;
+            margin: 0 auto 14px auto;
             transition: var(--transition);
         }
 
-        .pdf-wrapper:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--primary);
+        .empty-dropzone:hover .dropzone-icon-circle {
+            background: var(--primary);
+            color: #ffffff;
+            transform: scale(1.06);
         }
 
-        .pdf2jpg-canvas {
-            width: 100%;
-            height: 180px;
-            object-fit: contain;
-            background: #f8fafc;
-            border-bottom: 1px solid var(--border);
+        .empty-dropzone h3 {
+            font-size: 1.05rem;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            font-weight: 700;
         }
 
-        .pdf-info-box {
-            padding: 10px;
-            background: var(--surface);
-            text-align: center;
+        .empty-dropzone p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            line-height: 1.5;
         }
 
-        .pdf-info-name {
-            font-size: 0.75rem;
+        .dropzone-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--primary);
+            color: #ffffff;
+            font-size: 0.78rem;
             font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 50px;
+            margin-bottom: 14px;
+            box-shadow: 0 3px 10px rgba(111, 138, 60, 0.25);
+        }
+
+        .format-badges-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .fmt-pill {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.69rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 50px;
+        }
+
+        /* Grid de Tarjetas de Archivos */
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(205px, 1fr));
+            grid-auto-rows: max-content;
+            gap: 15px;
+            width: 100%;
+            align-content: start;
+        }
+
+        .file-card {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 11px;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            height: max-content;
+            position: relative;
+        }
+
+        .file-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .thumb-box {
+            height: 175px;
+            width: 100%;
+            flex-shrink: 0;
+            background: var(--input-bg);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            padding: 8px;
+        }
+
+        .thumb-box img,
+        .thumb-box canvas {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+        }
+
+        .order-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: var(--primary);
+            color: #ffffff;
+            min-width: 25px;
+            height: 25px;
+            padding: 0 7px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            font-weight: 700;
+            z-index: 3;
+        }
+
+        .card-remove-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.74rem;
+            cursor: pointer;
+            z-index: 4;
+            transition: var(--transition);
+        }
+
+        .card-remove-btn:hover {
+            background: var(--danger);
+            color: #ffffff;
+            border-color: var(--danger);
+        }
+
+        .file-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .file-info-col {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .file-title {
+            font-size: 0.8rem;
+            font-weight: 700;
             color: var(--text-main);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-bottom: 4px;
         }
 
-        .pdf-info-size {
+        .file-sub {
             font-size: 0.7rem;
             color: var(--text-muted);
+            font-weight: 600;
         }
 
-        /* PANEL DE CONTROLES LATERAL */
-        .pdf2jpg-controls {
-            width: 100%;
-            max-width: 320px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 25px;
+        .reorder-btns {
             display: flex;
-            flex-direction: column;
-            gap: 18px;
-            box-shadow: var(--shadow-sm);
+            gap: 4px;
+            flex-shrink: 0;
         }
 
-        #addMoreContainer label {
+        .mini-btn {
+            width: 25px;
+            height: 25px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text-muted);
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 100%;
-            padding: 12px;
-            border: 2px dashed var(--primary);
-            color: var(--primary);
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            cursor: pointer;
+            font-size: 0.68rem;
             transition: var(--transition);
-            background: var(--primary-light);
         }
 
-        #addMoreContainer label:hover {
+        .mini-btn:hover:not(:disabled) {
             background: var(--primary);
-            color: white;
-        }
-
-        /* Controles de Formulario */
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .control-group label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        select {
-            width: 100%;
-            padding: 10px 14px;
-            border-radius: var(--radius-md);
-            border: 1.5px solid var(--border);
-            background: var(--bg-color);
-            color: var(--text-main);
-            font-size: 0.95rem;
-            outline: none;
-            transition: var(--transition);
-        }
-
-        select:focus {
+            color: #ffffff;
             border-color: var(--primary);
         }
 
-        /* Checkbox estilo Auro */
-        .styled-checkbox {
+        .mini-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        /* =========================================
+           VISOR DE ALTA FIDELIDAD (WORD DOCX, PPTX Y EXCEL)
+           ========================================= */
+        .doc-live-preview-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
             display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .doc-preview-header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
             gap: 10px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
+            flex-wrap: wrap;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Contenedor de páginas reales Word y Diapositivas PowerPoint */
+        .doc-preview-content {
+            background: var(--mat-bg);
+            border: 1px inset var(--border);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            min-height: 380px;
+        }
+
+        /* Hojas individuales generadas por docx-preview y nuestro paginador */
+        .doc-preview-content .docx-wrapper {
+            background: transparent !important;
+            padding: 0 !important;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .doc-preview-content section.docx,
+        .word-page-slice {
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18) !important;
+            margin-bottom: 0 !important;
+            background: #ffffff !important;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+            color: #000;
+        }
+
+        .word-page-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .word-page-badge {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: var(--surface);
+            padding: 2px 10px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+        }
+
+        /* Tarjeta de Diapositiva PowerPoint renderizada 1:1 */
+        .pptx-slide-wrapper {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .pptx-slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding: 0 4px;
+        }
+
+        .pptx-slide-canvas-stage {
+            position: relative;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            background: #ffffff;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            transform-origin: top left;
+            user-select: text;
+        }
+
+        /* Estilo de Tablas Excel en el visor */
+        .excel-table-container {
+            background: var(--surface);
+            padding: 18px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-sm);
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .excel-table-container table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.76rem;
             color: var(--text-main);
         }
 
-        .styled-checkbox input {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--primary);
-            cursor: pointer;
+        .excel-table-container th,
+        .excel-table-container td {
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            text-align: left;
         }
 
-        /* Botones Globales */
-        .btn {
+        .excel-table-container th {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* =========================================
+           COLUMNA DERECHA: PANEL DE CONFIGURACIÓN
+           ========================================= */
+        .sidebar-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            background: var(--toolbar-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header h2 {
+            font-size: 0.94rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-header h2 i {
+            color: var(--primary);
+        }
+
+        .sidebar-body {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .config-section {
+            background: var(--toolbar-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            flex-shrink: 0;
+            min-width: 0;
+        }
+
+        .sidebar-heading {
+            font-size: 0.73rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Grid de Formatos de Salida en Modo 1 */
+        .target-formats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+
+        .fmt-card-btn {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .fmt-card-btn i {
+            font-size: 1.05rem;
+            color: var(--primary);
+        }
+
+        .fmt-card-btn span {
+            font-size: 0.73rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .fmt-card-btn small {
+            font-size: 0.61rem;
+            color: var(--text-muted);
+        }
+
+        .fmt-card-btn:hover {
+            border-color: var(--primary);
+        }
+
+        .fmt-card-btn.active {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            box-shadow: 0 2px 6px rgba(111, 138, 60, 0.15);
+        }
+
+        /* Inputs y Selects blindados contra desbordamiento */
+        .modern-input-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--input-bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 7px 11px;
+            gap: 10px;
+            transition: var(--transition);
+            min-width: 0;
             width: 100%;
-            padding: 14px 20px;
+            overflow: hidden;
+        }
+
+        .modern-input-group:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(111, 138, 60, 0.12);
+        }
+
+        .modern-input-group label {
+            font-size: 0.75rem;
+            color: var(--text-main);
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .modern-input {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-align: right;
+            outline: none;
+            flex: 1;
+            min-width: 0;
+            text-overflow: ellipsis;
+        }
+
+        .modern-select {
+            background-color: transparent;
+            border: none;
+            color: var(--primary);
+            font-size: 0.77rem;
+            font-weight: 700;
+            outline: none;
+            cursor: pointer;
+            flex: 1;
+            min-width: 0;
+            max-width: 220px;
+            text-align: right;
+            text-align-last: right;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .modern-select option {
+            color: var(--text-main);
+            background: var(--surface);
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .custom-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            padding: 8px 11px;
+            border-radius: var(--radius-sm);
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            gap: 8px;
+        }
+
+        .custom-toggle input[type="checkbox"] {
+            accent-color: var(--primary);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .helper-note {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+            background: var(--primary-light);
+            padding: 8px 10px;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--primary);
+        }
+
+        /* Barra de Progreso Integrada */
+        .progress-box {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: var(--primary-light);
+            padding: 9px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(111, 138, 60, 0.25);
+        }
+
+        .progress-label-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.73rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 7px;
+            background: #cbd5e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            transition: width 0.2s ease;
+        }
+
+        /* Pie de Exportación */
+        .sidebar-footer {
+            padding: 13px 16px;
+            border-top: 1px solid var(--border);
+            background: var(--toolbar-bg);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 11px 16px;
             border-radius: 50px;
             border: none;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.83rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -337,177 +1252,2665 @@
             text-decoration: none;
         }
 
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
         .btn-primary {
             background: var(--primary);
-            color: white;
-            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.2);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.24);
         }
 
         .btn-primary:hover:not(:disabled) {
             background: var(--primary-hover);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
 
-        /* Barras de Progreso */
-        .progress-wrapper {
-            display: none;
-            margin-bottom: 10px;
+        .btn-primary:disabled,
+        .btn-outline:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
-        .progress-text {
+        .btn-outline {
+            background: var(--surface);
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+        }
+
+        .btn-outline:hover:not(:disabled) {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        /* Toast Flotante */
+        .global-toast {
+            position: fixed;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: #ffffff;
+            padding: 10px 24px;
+            border-radius: 50px;
             font-size: 0.85rem;
             font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        .progress-container {
-            width: 100%;
-            height: 8px;
-            background: var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: var(--primary);
-            transition: width 0.3s ease;
-        }
-
-        /* Status de conversión */
-        .pdf2jpg-status {
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        /* Overlay para Drag & Drop interno */
-        #dragOverlay {
-            position: absolute;
-            background: rgba(242, 245, 235, 0.9);
-            border: 3px dashed var(--primary);
-            border-radius: var(--radius-lg);
-            z-index: 100;
+            box-shadow: 0 8px 20px rgba(111, 138, 60, 0.35);
+            z-index: 10000;
             display: flex;
             align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            color: var(--primary);
-            font-size: 1.2rem;
-            font-weight: 600;
-            gap: 15px;
+            gap: 8px;
+            transition: bottom 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        #dragOverlay i {
-            font-size: 3rem;
+        .global-toast.show {
+            bottom: 24px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 980px) {
+            body {
+                height: auto;
+                overflow: auto;
+            }
+
+            .mode-section.active {
+                grid-template-columns: 1fr;
+            }
+
+            .viewer-panel {
+                min-height: 480px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="container">
+    <!-- CABECERA SUPERIOR COMPACTA -->
+    <header class="app-header">
+        <div class="header-left">
+            <a href="../../index.html" class="nav-pill-btn">
+                <i class="fas fa-arrow-left"></i> Portal
+            </a>
 
-        <div class="back-nav">
-            <a href="../../index.html"><i class="fas fa-arrow-left"></i> Volver al Portal</a>
+            <div class="header-title">
+                <h1><i class="fas fa-right-left"></i> <span>Suite Universal PDF & Office 1:1</span></h1>
+                <p>Conversión idéntica al original con soporte de tipografías, temas OpenXML y saltos de página</p>
+            </div>
         </div>
 
-        <section class="top-banner">
-            <h1>PDF a JPG</h1>
-            <p>Convierte archivos PDF a JPG o PNG con alta resolución</p>
-        </section>
+        <div class="header-right">
+            <nav class="tool-tabs">
+                <button type="button" class="tab-btn active" id="tabBtnPdfToAny" data-mode="pdf-to-any">
+                    <i class="fa-solid fa-file-export"></i> De PDF a Otros Formatos
+                </button>
+                <button type="button" class="tab-btn" id="tabBtnAnyToPdf" data-mode="any-to-pdf">
+                    <i class="fa-solid fa-file-pdf"></i> Convertir a PDF (Fidelidad 1:1)
+                </button>
+            </nav>
 
-        <main class="card">
+            <button type="button" class="invert-direction-btn" id="btnInvertDirection"
+                title="Invertir dirección de conversión">
+                <i class="fa-solid fa-repeat"></i>
+            </button>
 
-            <!-- Zona de Carga Inicial -->
-            <label for="inputPDF" class="file-upload" id="dragDropArea">
-                <i class="fas fa-file-image"></i>
-                <span>Arrastra y suelta tus PDF aquí, o haz clic para seleccionar</span>
-                <input type="file" id="inputPDF" accept="application/pdf" multiple style="display:none;" />
-            </label>
-
-            <!-- Barra de Progreso General (Lectura PDF) -->
-            <div id="loadingProgressContainer" class="progress-wrapper">
-                <div id="loadingProgressText" class="progress-text">Cargando PDF...</div>
-                <div class="progress-container">
-                    <div id="loadingProgressBar" class="progress-bar"></div>
-                </div>
+            <div class="header-badge">
+                <i class="fas fa-check-double"></i>
+                <span>Motor Office 1:1</span>
             </div>
 
-            <!-- Contenedor Principal (Workspace) -->
-            <div class="pdf2jpg-container">
+            <!-- Switch Modo Oscuro Sincronizado con localStorage -->
+            <label class="theme-switch" title="Cambiar tema">
+                <input type="checkbox" class="theme-checkbox" id="themeToggleCheckbox">
+                <span class="switch-slider">
+                    <i class="fas fa-sun icon-sun"></i>
+                    <i class="fas fa-moon icon-moon"></i>
+                    <span class="switch-knob"></span>
+                </span>
+            </label>
+        </div>
+    </header>
 
-                <!-- Vista Previa -->
-                <div class="pdf2jpg-preview">
-                    <div id="pdfPreviewPages"></div>
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="converter-main-workspace">
+
+        <!-- =========================================================
+             MODO 1: DE PDF A CUALQUIER FORMATO
+             ========================================================= -->
+        <section id="pdf-to-any" class="mode-section active">
+
+            <!-- Columna Izquierda: Mesa de PDFs Cargados -->
+            <div class="viewer-panel">
+                <div class="viewer-toolbar">
+                    <div class="viewer-status">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>Documentos PDF de Entrada</span>
+                        <span class="count-pill" id="pdfInCountPill">0 archivos</span>
+                    </div>
+
+                    <div class="toolbar-right-actions">
+                        <input type="file" id="inputPDF" accept=".pdf,application/pdf" multiple style="display:none;" />
+                        <button type="button" class="nav-pill-btn"
+                            onclick="document.getElementById('inputPDF').click()">
+                            <i class="fa-solid fa-plus"></i> Añadir más PDF
+                        </button>
+                        <button type="button" class="btn-sm-danger" id="btnClearPdfIn" style="display: none;">
+                            <i class="fa-solid fa-trash-can"></i> Vaciar
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Panel de Controles -->
-                <div class="pdf2jpg-controls">
-
-                    <div id="addMoreContainer">
-                        <label for="inputPDF">
-                            <i class="fas fa-plus"></i> Añadir más PDF
-                        </label>
-                    </div>
-
-                    <label class="styled-checkbox">
-                        <input type="checkbox" id="groupByFolder" checked>
-                        Agrupar por Carpetas
-                    </label>
-
-                    <div class="control-group">
-                        <label for="scaleInput">Resolución de Salida</label>
-                        <select id="scaleInput">
-                            <option value="150">150 dpi (Web)</option>
-                            <option value="300">300 dpi (Estándar)</option>
-                            <option value="600">600 dpi (Alta)</option>
-                            <option value="1200" selected>1200 dpi (Máxima)</option>
-                        </select>
-                    </div>
-
-                    <div class="control-group">
-                        <label for="formatSelect">Formato de Imagen</label>
-                        <select id="formatSelect">
-                            <option value="jpeg">JPG</option>
-                            <option value="png">PNG</option>
-                        </select>
-                    </div>
-
-                    <!-- Progreso de Conversión -->
-                    <div id="progressContainerWrapper" class="progress-wrapper">
-                        <div id="progressText" class="progress-text">0% completado</div>
-                        <div class="progress-container" id="progressContainer">
-                            <div class="progress-bar" id="progressBar"></div>
+                <div class="mat-viewport" id="pdfDropViewport">
+                    <div class="empty-dropzone" id="pdfEmptyDropzone"
+                        onclick="document.getElementById('inputPDF').click()">
+                        <div class="dropzone-icon-circle">
+                            <i class="fa-solid fa-file-arrow-up"></i>
+                        </div>
+                        <h3>Arrastra y suelta tus archivos PDF aquí</h3>
+                        <p>Convierte lotes de PDF a Imágenes de hasta 1200 DPI, presentaciones PowerPoint (.PPTX),
+                            documentos Word (.DOC), libros Excel (.XLSX) o HTML.</p>
+                        <div class="dropzone-cta-btn">
+                            <i class="fa-solid fa-folder-open"></i> Seleccionar archivos PDF
+                        </div>
+                        <div class="format-badges-row">
+                            <span class="fmt-pill">PDF ➔ JPG / PNG / WebP</span>
+                            <span class="fmt-pill">PDF ➔ PowerPoint (.PPTX)</span>
+                            <span class="fmt-pill">PDF ➔ Word (.DOC)</span>
+                            <span class="fmt-pill">PDF ➔ Excel (.XLSX)</span>
                         </div>
                     </div>
 
-                    <button id="convertBtn" class="btn btn-primary">
-                        <i class="fas fa-sync-alt"></i> Convertir
-                    </button>
-
-                    <a id="downloadBtn" class="btn btn-primary" style="display: none;" download>
-                        <i class="fas fa-download"></i> Descargar ZIP
-                    </a>
-
-                    <div id="status" class="pdf2jpg-status">Esperando archivos...</div>
+                    <div class="preview-grid" id="pdfPreviewPages" style="display: none;"></div>
                 </div>
             </div>
 
-        </main>
+            <!-- Columna Derecha: Formato de Salida y Controles Especializados -->
+            <aside class="sidebar-panel">
+                <div class="sidebar-header">
+                    <h2><i class="fas fa-sliders"></i> Parámetros de Exportación</h2>
+                </div>
+
+                <div class="sidebar-body">
+
+                    <div class="config-section">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-bullseye"></i> 1. Elige el Formato de Salida
+                        </h3>
+                        <div class="target-formats-grid" id="pdfTargetFormatGrid">
+                            <button type="button" class="fmt-card-btn active" data-target="jpg">
+                                <i class="fa-solid fa-file-image"></i>
+                                <span>JPG</span>
+                                <small>Alta Res.</small>
+                            </button>
+                            <button type="button" class="fmt-card-btn" data-target="png">
+                                <i class="fa-regular fa-file-image"></i>
+                                <span>PNG</span>
+                                <small>Sin pérdida</small>
+                            </button>
+                            <button type="button" class="fmt-card-btn" data-target="webp">
+                                <i class="fa-solid fa-bolt"></i>
+                                <span>WebP</span>
+                                <small>Ligero</small>
+                            </button>
+                            <button type="button" class="fmt-card-btn" data-target="pptx">
+                                <i class="fa-solid fa-file-powerpoint" style="color: var(--ppt-color);"></i>
+                                <span>PowerPoint</span>
+                                <small>Slides .PPTX</small>
+                            </button>
+                            <button type="button" class="fmt-card-btn" data-target="word">
+                                <i class="fa-solid fa-file-word" style="color: var(--word-color);"></i>
+                                <span>Word</span>
+                                <small>Fiel .DOC</small>
+                            </button>
+                            <button type="button" class="fmt-card-btn" data-target="excel">
+                                <i class="fa-solid fa-file-excel" style="color: var(--excel-color);"></i>
+                                <span>Excel</span>
+                                <small>Tablas .XLSX</small>
+                            </button>
+                            <button type="button" class="fmt-card-btn" data-target="csv">
+                                <i class="fa-solid fa-table"></i>
+                                <span>CSV</span>
+                                <small>Datos planos</small>
+                            </button>
+                            <button type="button" class="fmt-card-btn" data-target="txt">
+                                <i class="fa-solid fa-file-lines"></i>
+                                <span>TXT</span>
+                                <small>Texto Puro</small>
+                            </button>
+                            <button type="button" class="fmt-card-btn" data-target="html">
+                                <i class="fa-solid fa-code"></i>
+                                <span>HTML</span>
+                                <small>Web Doc</small>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="config-section pdf-target-opts" id="optsPdfToImage">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-camera"></i> Ajustes de Resolución</h3>
+                        <div class="modern-input-group">
+                            <label for="scaleInput">Calidad DPI:</label>
+                            <select id="scaleInput" class="modern-select">
+                                <option value="150">150 DPI (Rápido / Web)</option>
+                                <option value="300">300 DPI (Estándar Nitidez)</option>
+                                <option value="600">600 DPI (Alta Definición)</option>
+                                <option value="1200" selected>1200 DPI (Máxima Imprenta)</option>
+                            </select>
+                        </div>
+                        <label class="custom-toggle" id="groupByFolderToggleWrap">
+                            <span>Agrupar por Carpetas en el .ZIP</span>
+                            <input type="checkbox" id="groupByFolder" checked>
+                        </label>
+                    </div>
+
+                    <div class="config-section pdf-target-opts" id="optsPdfToWord" style="display: none;">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-file-word"></i> Ajustes de Reconstrucción Word
+                        </h3>
+                        <div class="modern-input-group">
+                            <label for="wordModeSelect">Fidelidad:</label>
+                            <select id="wordModeSelect" class="modern-select">
+                                <option value="exact">Idéntico al PDF (Diseño Exacto)</option>
+                                <option value="hybrid">Híbrido (Diseño + Texto Editable)</option>
+                                <option value="text">Solo Párrafos de Texto Editable</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="config-section pdf-target-opts" id="optsPdfToExcel" style="display: none;">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-file-excel"></i> Ajustes de Hoja de Cálculo
+                        </h3>
+                        <div class="modern-input-group">
+                            <label for="excelSheetMode">Hojas:</label>
+                            <select id="excelSheetMode" class="modern-select">
+                                <option value="per-page">1 Hoja por Página</option>
+                                <option value="single">Unir en 1 sola Hoja</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="progress-box" id="pdfProgressBox">
+                        <div class="progress-label-row">
+                            <span id="pdfStatusText">Procesando...</span>
+                            <span id="pdfProgressPercent">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" id="pdfProgressBar"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="sidebar-footer">
+                    <button type="button" class="btn-action btn-primary" id="convertBtn" disabled>
+                        <i class="fas fa-sync-alt"></i> <span id="convertBtnLabel">Convertir PDF a Imágenes JPG</span>
+                    </button>
+                </div>
+            </aside>
+
+        </section>
+
+        <!-- =========================================================
+             MODO 2: DE CUALQUIER FORMATO A PDF (FIDELIDAD 1:1)
+             ========================================================= -->
+        <section id="any-to-pdf" class="mode-section">
+
+            <!-- Columna Izquierda: Selector de Origen y Vista Previa Fiel -->
+            <div class="viewer-panel">
+                <div class="viewer-toolbar">
+                    <div class="viewer-status">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                        <span id="toPdfStageTitle">Imágenes a PDF</span>
+                        <span class="count-pill" id="toPdfCountPill">Sin archivos</span>
+                    </div>
+
+                    <div class="toolbar-right-actions">
+                        <input type="file" id="inputToPdf" accept=".jpg,.jpeg,.png,.webp,.bmp,.svg,image/*" multiple
+                            style="display:none;" />
+                        <button type="button" class="nav-pill-btn" id="btnTriggerToPdfUpload">
+                            <i class="fa-solid fa-plus"></i> <span id="btnTriggerToPdfText">Subir Imágenes</span>
+                        </button>
+                        <button type="button" class="btn-sm-danger" id="btnClearToPdf" style="display: none;">
+                            <i class="fa-solid fa-trash-can"></i> Limpiar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sub-pestañas por tipo de archivo -->
+                <div class="source-type-tabs">
+                    <button type="button" class="src-tab-btn active" data-srcmode="images">
+                        <i class="fa-solid fa-images" style="color:var(--img-color);"></i> 1. Imágenes a PDF
+                    </button>
+                    <button type="button" class="src-tab-btn" data-srcmode="word">
+                        <i class="fa-solid fa-file-word" style="color:var(--word-color);"></i> 2. Word (.DOCX) a PDF 1:1
+                    </button>
+                    <button type="button" class="src-tab-btn" data-srcmode="pptx">
+                        <i class="fa-solid fa-file-powerpoint" style="color:var(--ppt-color);"></i> 3. PowerPoint
+                        (.PPTX) a PDF 1:1
+                    </button>
+                    <button type="button" class="src-tab-btn" data-srcmode="excel">
+                        <i class="fa-solid fa-file-excel" style="color:var(--excel-color);"></i> 4. Excel / CSV a PDF
+                    </button>
+                </div>
+
+                <div class="mat-viewport" id="toPdfDropViewport">
+                    <!-- Dropzone Dinámico -->
+                    <div class="empty-dropzone" id="toPdfEmptyDropzone">
+                        <div class="dropzone-icon-circle" id="toPdfDropIconBox">
+                            <i class="fa-solid fa-images" id="toPdfDropIcon"></i>
+                        </div>
+                        <h3 id="toPdfDropTitle">Arrastra tus Imágenes aquí para unirlas en PDF</h3>
+                        <p id="toPdfDropDesc">Soporta múltiples fotografías, diseños o vectores (JPG, PNG, WebP, SVG y
+                            BMP) con ordenamiento libre.</p>
+                        <div class="dropzone-cta-btn" id="toPdfDropCta">
+                            <i class="fa-solid fa-folder-open"></i> Seleccionar Imágenes
+                        </div>
+                        <div class="format-badges-row" id="toPdfBadgesRow">
+                            <span class="fmt-pill">JPG / JPEG</span>
+                            <span class="fmt-pill">PNG</span>
+                            <span class="fmt-pill">WebP</span>
+                            <span class="fmt-pill">SVG / BMP</span>
+                        </div>
+                    </div>
+
+                    <!-- Grid para Imágenes a PDF -->
+                    <div class="preview-grid" id="toPdfImagesGrid" style="display: none;"></div>
+
+                    <!-- Visor de Alta Fidelidad 1:1 para Word, PowerPoint y Excel -->
+                    <div class="doc-live-preview-card" id="toPdfDocPreviewCard" style="display: none;">
+                        <div class="doc-preview-header">
+                            <strong id="loadedDocName" style="font-size:0.88rem; color:var(--primary);">Documento
+                                cargado</strong>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <span class="count-pill" id="loadedDocTypePill">Vista Previa 1:1</span>
+                                <button type="button" class="nav-pill-btn"
+                                    onclick="document.getElementById('inputToPdf').click()">
+                                    <i class="fa-solid fa-rotate"></i> Cambiar archivo
+                                </button>
+                            </div>
+                        </div>
+                        <div class="doc-preview-content" id="toPdfDocPreviewBody"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Controles Unificados de Tamaño de Página y Opciones por Formato -->
+            <aside class="sidebar-panel">
+                <div class="sidebar-header">
+                    <h2><i class="fas fa-sliders"></i> Maquetación del PDF</h2>
+                </div>
+
+                <div class="sidebar-body">
+
+                    <!-- 1. Nombre de salida común -->
+                    <div class="config-section">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-signature"></i> Documento PDF de Salida</h3>
+                        <div class="modern-input-group">
+                            <label for="toPdfOutputName">Archivo:</label>
+                            <input type="text" id="toPdfOutputName" class="modern-input" value="Documento_Auro"
+                                placeholder="Nombre_Final">
+                        </div>
+                    </div>
+
+                    <!-- 2. PANEL GLOBAL MEJORADO: TAMAÑO DE PÁGINA Y ORIENTACIÓN (POR DEFECTO DEL ARCHIVO) -->
+                    <div class="config-section">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-ruler-combined"></i> Formato y Tamaño de
+                            Página</h3>
+
+                        <div class="modern-input-group">
+                            <label for="globalPdfPageSize">Tamaño Página:</label>
+                            <select id="globalPdfPageSize" class="modern-select">
+                                <option value="default" selected>Por defecto del archivo (Original 1:1)</option>
+                                <option value="letter">Carta / Letter (215.9 × 279.4 mm)</option>
+                                <option value="a4">A4 Estándar (210 × 297 mm)</option>
+                                <option value="legal">Oficio / Legal (215.9 × 355.6 mm)</option>
+                                <option value="wide169">Presentación 16:9 (254 × 142.9 mm)</option>
+                                <option value="std43">Presentación 4:3 (254 × 190.5 mm)</option>
+                            </select>
+                        </div>
+
+                        <div class="modern-input-group">
+                            <label for="globalPdfOrientation">Orientación:</label>
+                            <select id="globalPdfOrientation" class="modern-select">
+                                <option value="default" selected>Por defecto del archivo</option>
+                                <option value="p">Forzar Vertical (Portrait)</option>
+                                <option value="l">Forzar Horizontal (Landscape)</option>
+                            </select>
+                        </div>
+
+                        <div class="modern-input-group">
+                            <label for="globalPdfMargin">Margen Extra:</label>
+                            <select id="globalPdfMargin" class="modern-select">
+                                <option value="0" selected>0 mm (Respetar margen original)</option>
+                                <option value="8">8 mm (Margen Corto)</option>
+                                <option value="15">15 mm (Margen Estándar)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- PANEL ESPECIALIZADO A: IMÁGENES A PDF -->
+                    <div class="config-section to-pdf-spec-panel" id="specImagesToPdf">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-images"></i> Opciones de Lote de Imágenes</h3>
+                        <label class="custom-toggle">
+                            <span>Unir todas las imágenes en 1 solo PDF</span>
+                            <input type="checkbox" id="imgPdfMergeAll" checked>
+                        </label>
+                    </div>
+
+                    <!-- PANEL ESPECIALIZADO B: WORD (.DOCX) FIEL A PDF -->
+                    <div class="config-section to-pdf-spec-panel" id="specWordToPdf" style="display: none;">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-file-word"></i> Motor Word Fiel 1:1</h3>
+                        <div class="modern-input-group">
+                            <label for="wordRenderQuality">Nitidez PDF:</label>
+                            <select id="wordRenderQuality" class="modern-select">
+                                <option value="2" selected>Alta Definición (2x Impresión)</option>
+                                <option value="3">Ultra Nitidez (3x Editorial)</option>
+                                <option value="1.5">Ligero Web (1.5x)</option>
+                            </select>
+                        </div>
+                        <div class="helper-note">
+                            <i class="fa-solid fa-file-circle-check"></i> Respeta saltos de página automáticos y
+                            manuales, fuentes originales, tablas e imágenes incrustadas.
+                        </div>
+                    </div>
+
+                    <!-- PANEL ESPECIALIZADO C: POWERPOINT (.PPTX) A PDF -->
+                    <div class="config-section to-pdf-spec-panel" id="specPptxToPdf" style="display: none;">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-file-powerpoint"></i> Motor PowerPoint 1:1
+                        </h3>
+                        <div class="modern-input-group">
+                            <label for="pptxPdfScale">Resolución Slide:</label>
+                            <select id="pptxPdfScale" class="modern-select">
+                                <option value="2" selected>Full HD 1080p (2x Nitidez)</option>
+                                <option value="2.7">Ultra 4K (Máxima Calidad)</option>
+                            </select>
+                        </div>
+                        <div class="helper-note">
+                            <i class="fa-solid fa-palette"></i> Incluye fondos del Patrón de Diapositivas, tipografías
+                            originales de la presentación, mayúsculas y líneas vectoriales.
+                        </div>
+                    </div>
+
+                    <!-- PANEL ESPECIALIZADO D: EXCEL / CSV A PDF -->
+                    <div class="config-section to-pdf-spec-panel" id="specExcelToPdf" style="display: none;">
+                        <h3 class="sidebar-heading"><i class="fa-solid fa-file-excel"></i> Ajustes de Tablas Excel</h3>
+                        <div class="modern-input-group">
+                            <label for="excelPdfTheme">Estilo Tabla:</label>
+                            <select id="excelPdfTheme" class="modern-select">
+                                <option value="auro" selected>Verde Auro Studio</option>
+                                <option value="dark">Ejecutivo Oscuro</option>
+                                <option value="grid">Cuadrícula Limpia</option>
+                            </select>
+                        </div>
+                        <label class="custom-toggle">
+                            <span>Exportar todas las hojas del libro</span>
+                            <input type="checkbox" id="excelAllSheets" checked>
+                        </label>
+                    </div>
+
+                    <!-- Barra de Progreso Modo 2 -->
+                    <div class="progress-box" id="toPdfProgressBox">
+                        <div class="progress-label-row">
+                            <span id="toPdfStatusText">Renderizando páginas...</span>
+                            <span id="toPdfProgressPercent">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" id="toPdfProgressBar"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="sidebar-footer">
+                    <button type="button" class="btn-action btn-primary" id="btnGeneratePdfFromAny" disabled>
+                        <i class="fa-solid fa-file-pdf"></i> Convertir y Descargar PDF Exacto
+                    </button>
+                </div>
+            </aside>
+
+        </section>
+
+    </main>
+
+    <!-- TOAST DE NOTIFICACIÓN -->
+    <div id="globalToast" class="global-toast">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toastMsg">Completado</span>
     </div>
 
-    <!-- Script de lógica -->
-    <script src="pdf_converter.js"></script>
+    <!-- LÓGICA INTEGRADA DE CONVERSIÓN UNIVERSAL Y MOTOR OPENXML PRO -->
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            function showToast(msg) {
+                const toast = document.getElementById('globalToast');
+                document.getElementById('toastMsg').innerText = msg;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2800);
+            }
+
+            // =========================================================
+            // CARGADOR DINÁMICO DE FUENTES GOOGLE FONTS PARA FIDELIDAD 1:1
+            // =========================================================
+            const loadedGoogleFonts = new Set([
+                'poppins', 'arial', 'calibri', 'times new roman', 'courier new',
+                'helvetica', 'georgia', 'verdana', 'tahoma', 'trebuchet ms'
+            ]);
+
+            async function ensureGoogleFontsLoaded(fontNamesArray) {
+                const unique = [];
+                const seen = new Set();
+
+                for (const rawName of (fontNamesArray || [])) {
+                    if (!rawName) continue;
+
+                    let clean = String(rawName)
+                        .replace(/['"]/g, '')
+                        .replace(/\s+/g, ' ')
+                        .trim();
+
+                    if (!clean || clean.startsWith('+')) continue;
+
+                    const baseFamily = clean
+                        .replace(/\s+(Light|Regular|Medium|SemiBold|Bold|ExtraBold|Black|Heavy|Italic|Thin)$/i, '')
+                        .trim();
+
+                    for (const family of [clean, baseFamily]) {
+                        if (!family || family.startsWith('+')) continue;
+
+                        const key = family.toLowerCase();
+                        if (seen.has(key)) continue;
+                        seen.add(key);
+
+                        if (!loadedGoogleFonts.has(key)) {
+                            loadedGoogleFonts.add(key);
+                            unique.push(family);
+                        }
+                    }
+                }
+
+                // PowerPoint normalmente usa fuentes instaladas localmente.
+                // Primero dejamos que el navegador resuelva esas fuentes.
+                if (document.fonts && document.fonts.ready) {
+                    await document.fonts.ready;
+                }
+
+                const toLoad = unique.filter(family => {
+                    try {
+                        return !document.fonts || !document.fonts.check(`16px "${family}"`);
+                    } catch (_) {
+                        return true;
+                    }
+                });
+
+                if (toLoad.length) {
+                    await Promise.all(toLoad.map(family => new Promise(resolve => {
+                        const encoded = encodeURIComponent(family);
+                        const link = document.createElement('link');
+
+                        link.rel = 'stylesheet';
+                        link.href =
+                            `https://fonts.googleapis.com/css2?family=${encoded}` +
+                            `:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700` +
+                            `&display=block`;
+
+                        let done = false;
+                        const finish = () => {
+                            if (done) return;
+                            done = true;
+                            resolve();
+                        };
+
+                        link.onload = finish;
+                        link.onerror = finish;
+                        document.head.appendChild(link);
+
+                        // No bloquear indefinidamente si Google Fonts no dispone de la familia.
+                        setTimeout(finish, 2500);
+                    })));
+                }
+
+                if (document.fonts && document.fonts.ready) {
+                    await document.fonts.ready;
+
+                    // Forzar la resolución real de cada familia antes de html2canvas.
+                    await Promise.all((fontNamesArray || []).map(async rawName => {
+                        if (!rawName) return;
+
+                        const family = String(rawName)
+                            .replace(/['"]/g, '')
+                            .replace(/\s+/g, ' ')
+                            .trim();
+
+                        if (!family || family.startsWith('+')) return;
+
+                        try {
+                            await document.fonts.load(`400 16px "${family}"`);
+                            await document.fonts.load(`700 16px "${family}"`);
+                        } catch (_) {
+                            // Si la fuente no existe, el CSS usará la fuente local/fallback.
+                        }
+                    }));
+                }
+            }
+
+            // Espera adicional específica para la exportación PPTX.
+            // html2canvas puede comenzar a pintar antes de que una webfont
+            // termine de sustituir el fallback.
+            async function waitForPptxFonts(root) {
+                if (!root) return;
+
+                if (document.fonts && document.fonts.ready) {
+                    await document.fonts.ready;
+                }
+
+                const families = new Set();
+                root.querySelectorAll('*').forEach(el => {
+                    const family = getComputedStyle(el).fontFamily;
+                    if (family) {
+                        family.split(',').forEach(f => {
+                            const clean = f.replace(/["']/g, '').trim();
+                            if (clean) families.add(clean);
+                        });
+                    }
+                });
+
+                if (document.fonts) {
+                    await Promise.all(Array.from(families).map(async family => {
+                        try {
+                            await document.fonts.load(`400 16px "${family}"`);
+                            await document.fonts.load(`700 16px "${family}"`);
+                        } catch (_) { }
+                    }));
+                    await document.fonts.ready;
+                }
+
+                // Dos frames garantizan que el layout se recalcule con la fuente final.
+                await new Promise(requestAnimationFrame);
+                await new Promise(requestAnimationFrame);
+            }
+
+            // =========================================================
+            // 1. CONMUTACIÓN DE DIRECCIÓN (PDF ➔ OTROS  vs  OTROS ➔ PDF)
+            // =========================================================
+            const tabBtnPdfToAny = document.getElementById('tabBtnPdfToAny');
+            const tabBtnAnyToPdf = document.getElementById('tabBtnAnyToPdf');
+            const btnInvertDirection = document.getElementById('btnInvertDirection');
+            const secPdfToAny = document.getElementById('pdf-to-any');
+            const secAnyToPdf = document.getElementById('any-to-pdf');
+
+            let currentDirection = 'pdf-to-any';
+
+            function setDirection(mode) {
+                currentDirection = mode;
+                const isPdfToAny = mode === 'pdf-to-any';
+                tabBtnPdfToAny.classList.toggle('active', isPdfToAny);
+                tabBtnAnyToPdf.classList.toggle('active', !isPdfToAny);
+                secPdfToAny.classList.toggle('active', isPdfToAny);
+                secAnyToPdf.classList.toggle('active', !isPdfToAny);
+            }
+
+            tabBtnPdfToAny.addEventListener('click', () => setDirection('pdf-to-any'));
+            tabBtnAnyToPdf.addEventListener('click', () => setDirection('any-to-pdf'));
+            btnInvertDirection.addEventListener('click', () => {
+                setDirection(currentDirection === 'pdf-to-any' ? 'any-to-pdf' : 'pdf-to-any');
+                showToast(currentDirection === 'pdf-to-any' ? "Modo: De PDF a Otros Formatos" : "Modo: Convertir a PDF (Fidelidad 1:1)");
+            });
+
+            // =========================================================
+            // 2. MODO 1: DE PDF A CUALQUIER FORMATO
+            // =========================================================
+            const inputPDF = document.getElementById('inputPDF');
+            const pdfDropViewport = document.getElementById('pdfDropViewport');
+            const pdfEmptyDropzone = document.getElementById('pdfEmptyDropzone');
+            const pdfPreviewPages = document.getElementById('pdfPreviewPages');
+            const pdfInCountPill = document.getElementById('pdfInCountPill');
+            const btnClearPdfIn = document.getElementById('btnClearPdfIn');
+            const convertBtn = document.getElementById('convertBtn');
+            const convertBtnLabel = document.getElementById('convertBtnLabel');
+
+            const pdfProgressBox = document.getElementById('pdfProgressBox');
+            const pdfStatusText = document.getElementById('pdfStatusText');
+            const pdfProgressPercent = document.getElementById('pdfProgressPercent');
+            const pdfProgressBar = document.getElementById('pdfProgressBar');
+
+            let pdfFiles = [];
+            let pdfItemCounter = 0;
+            let selectedTargetFormat = 'jpg';
+
+            document.querySelectorAll('#pdfTargetFormatGrid .fmt-card-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#pdfTargetFormatGrid .fmt-card-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedTargetFormat = btn.dataset.target;
+
+                    const isImgOrPptx = ['jpg', 'png', 'webp', 'pptx'].includes(selectedTargetFormat);
+                    const isWord = selectedTargetFormat === 'word';
+                    const isExcel = ['excel', 'csv'].includes(selectedTargetFormat);
+
+                    document.getElementById('optsPdfToImage').style.display = isImgOrPptx ? 'flex' : 'none';
+                    document.getElementById('groupByFolderToggleWrap').style.display = selectedTargetFormat === 'pptx' ? 'none' : 'flex';
+                    document.getElementById('optsPdfToWord').style.display = isWord ? 'flex' : 'none';
+                    document.getElementById('optsPdfToExcel').style.display = isExcel ? 'flex' : 'none';
+
+                    const labels = {
+                        jpg: 'Convertir PDF a Imágenes JPG',
+                        png: 'Convertir PDF a Imágenes PNG',
+                        webp: 'Convertir PDF a Imágenes WebP',
+                        pptx: 'Convertir PDF a PowerPoint (.PPTX)',
+                        word: 'Convertir PDF a Word (.DOC)',
+                        excel: 'Convertir PDF a Excel (.XLSX)',
+                        csv: 'Extraer Tablas PDF a .CSV',
+                        txt: 'Extraer Texto Puro (.TXT)',
+                        html: 'Convertir PDF a Documento .HTML'
+                    };
+                    convertBtnLabel.textContent = labels[selectedTargetFormat] || 'Convertir PDF';
+                });
+            });
+
+            ['dragenter', 'dragover'].forEach(evt => {
+                pdfDropViewport.addEventListener(evt, e => {
+                    e.preventDefault();
+                    pdfDropViewport.classList.add('drag-over');
+                });
+            });
+            ['dragleave', 'drop'].forEach(evt => {
+                pdfDropViewport.addEventListener(evt, e => {
+                    e.preventDefault();
+                    pdfDropViewport.classList.remove('drag-over');
+                });
+            });
+            pdfDropViewport.addEventListener('drop', e => {
+                const droppedFiles = Array.from(e.dataTransfer.files);
+                const pdfs = droppedFiles.filter(f => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
+                if (pdfs.length) {
+                    loadMultiplePDFs(pdfs);
+                } else if (droppedFiles.length) {
+                    setDirection('any-to-pdf');
+                    handleIncomingFilesToPdf(droppedFiles);
+                }
+            });
+
+            inputPDF.addEventListener('change', e => {
+                const files = Array.from(e.target.files).filter(f => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
+                if (files.length) loadMultiplePDFs(files);
+                inputPDF.value = '';
+            });
+
+            async function loadMultiplePDFs(files) {
+                pdfProgressBox.style.display = 'flex';
+                pdfProgressBar.style.width = '0%';
+                pdfStatusText.textContent = 'Analizando PDF...';
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    try {
+                        const buf = await file.arrayBuffer();
+                        const bytes = new Uint8Array(buf);
+
+                        const pdfDoc = await pdfjsLib.getDocument({ data: bytes.slice(0) }).promise;
+                        const page = await pdfDoc.getPage(1);
+                        const viewport = page.getViewport({ scale: 0.45 });
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+                        await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+                        const thumbUrl = canvas.toDataURL('image/jpeg', 0.85);
+                        const numPages = pdfDoc.numPages;
+                        await pdfDoc.destroy();
+
+                        pdfFiles.push({
+                            id: ++pdfItemCounter,
+                            name: file.name,
+                            size: file.size,
+                            bytes,
+                            numPages,
+                            thumbUrl
+                        });
+                    } catch (err) {
+                        console.error("Error cargando PDF:", err);
+                        showToast(`No se pudo leer ${file.name}`);
+                    }
+
+                    const pct = Math.round(((i + 1) / files.length) * 100);
+                    pdfProgressBar.style.width = `${pct}%`;
+                    pdfProgressPercent.textContent = `${pct}%`;
+                }
+
+                pdfProgressBox.style.display = 'none';
+                renderPdfInGrid();
+                if (pdfFiles.length) showToast(`${files.length} PDF(s) listos para convertir`);
+            }
+
+            function renderPdfInGrid() {
+                if (pdfFiles.length === 0) {
+                    pdfEmptyDropzone.style.display = 'block';
+                    pdfPreviewPages.style.display = 'none';
+                    btnClearPdfIn.style.display = 'none';
+                    convertBtn.disabled = true;
+                    pdfInCountPill.textContent = '0 archivos';
+                    return;
+                }
+
+                pdfEmptyDropzone.style.display = 'none';
+                pdfPreviewPages.style.display = 'grid';
+                btnClearPdfIn.style.display = 'inline-flex';
+                convertBtn.disabled = false;
+
+                const totalP = pdfFiles.reduce((acc, f) => acc + f.numPages, 0);
+                pdfInCountPill.textContent = `${pdfFiles.length} PDF(s) • ${totalP} págs`;
+
+                pdfPreviewPages.innerHTML = pdfFiles.map((item, idx) => `
+                    <div class="file-card">
+                        <div class="thumb-box">
+                            <span class="order-badge">${item.numPages}p</span>
+                            <button type="button" class="card-remove-btn" onclick="window.removePdfIn(${idx})" title="Quitar">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                            <img src="${item.thumbUrl}" alt="${item.name}">
+                        </div>
+                        <div class="file-meta-row">
+                            <div class="file-info-col">
+                                <div class="file-title" title="${item.name}">${item.name}</div>
+                                <div class="file-sub">${(item.size / (1024 * 1024)).toFixed(2)} MB</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            window.removePdfIn = (idx) => {
+                pdfFiles.splice(idx, 1);
+                renderPdfInGrid();
+            };
+
+            btnClearPdfIn.addEventListener('click', () => {
+                pdfFiles = [];
+                renderPdfInGrid();
+                showToast("Lista vaciada");
+            });
+
+            function getScaleFromDPI(dpi) {
+                switch (String(dpi)) {
+                    case "150": return 1.5;
+                    case "300": return 2.2;
+                    case "600": return 3.2;
+                    case "1200": return 4.2;
+                    default: return 2.2;
+                }
+            }
+
+            async function extractRowsFromPdfPage(page) {
+                const textContent = await page.getTextContent();
+                const items = textContent.items.filter(it => it.str && it.str.trim().length > 0);
+
+                const rowMap = [];
+                items.forEach(it => {
+                    const x = it.transform[4];
+                    const y = it.transform[5];
+                    let existingRow = rowMap.find(r => Math.abs(r.y - y) < 4.5);
+                    if (!existingRow) {
+                        existingRow = { y, cells: [] };
+                        rowMap.push(existingRow);
+                    }
+                    existingRow.cells.push({ x, text: it.str.trim() });
+                });
+
+                rowMap.sort((a, b) => b.y - a.y);
+
+                return rowMap.map(r => {
+                    r.cells.sort((a, b) => a.x - b.x);
+                    return r.cells.map(c => c.text);
+                });
+            }
+
+            // Ejecutar Conversión de PDF al Formato Seleccionado
+            convertBtn.addEventListener('click', async () => {
+                if (pdfFiles.length === 0) return;
+
+                convertBtn.disabled = true;
+                pdfProgressBox.style.display = 'flex';
+                pdfProgressBar.style.width = '0%';
+                pdfProgressPercent.textContent = '0%';
+
+                try {
+                    const totalPagesAll = pdfFiles.reduce((acc, f) => acc + f.numPages, 0);
+                    let processedPages = 0;
+
+                    const updateProgress = (msg) => {
+                        const pct = Math.min(100, Math.round((processedPages / totalPagesAll) * 100));
+                        pdfStatusText.textContent = msg;
+                        pdfProgressBar.style.width = `${pct}%`;
+                        pdfProgressPercent.textContent = `${pct}%`;
+                    };
+
+                    if (['jpg', 'png', 'webp'].includes(selectedTargetFormat)) {
+                        const scale = getScaleFromDPI(document.getElementById('scaleInput').value);
+                        const groupByFolder = document.getElementById('groupByFolder').checked;
+                        const mime = selectedTargetFormat === 'jpg' ? 'image/jpeg' : `image/${selectedTargetFormat}`;
+                        const zip = new JSZip();
+
+                        for (const fileObj of pdfFiles) {
+                            const pdf = await pdfjsLib.getDocument({ data: fileObj.bytes.slice(0) }).promise;
+                            const baseFolderName = fileObj.name.replace(/\.pdf$/i, "");
+                            const targetContainer = groupByFolder ? zip.folder(baseFolderName) : zip;
+
+                            for (let i = 1; i <= pdf.numPages; i++) {
+                                const page = await pdf.getPage(i);
+                                const viewport = page.getViewport({ scale });
+                                const canvas = document.createElement('canvas');
+                                canvas.width = viewport.width;
+                                canvas.height = viewport.height;
+                                const ctx = canvas.getContext('2d');
+
+                                if (selectedTargetFormat === 'jpg') {
+                                    ctx.fillStyle = '#FFFFFF';
+                                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                                }
+
+                                await page.render({ canvasContext: ctx, viewport }).promise;
+                                const dataURL = canvas.toDataURL(mime, 0.95);
+                                const base64 = dataURL.split(',')[1];
+
+                                const paddedIndex = String(i).padStart(4, '0');
+                                targetContainer.file(`${baseFolderName}_${paddedIndex}.${selectedTargetFormat}`, base64, { base64: true });
+
+                                processedPages++;
+                                updateProgress(`Página ${processedPages} de ${totalPagesAll} renderizada`);
+                            }
+                            await pdf.destroy();
+                        }
+
+                        pdfStatusText.textContent = "Empaquetando archivo .ZIP...";
+                        const zipBlob = await zip.generateAsync({ type: 'blob' });
+                        const outName = pdfFiles.length === 1
+                            ? `${pdfFiles[0].name.replace(/\.pdf$/i, '')}_${selectedTargetFormat.toUpperCase()}.zip`
+                            : `Lote_PDF_a_${selectedTargetFormat.toUpperCase()}.zip`;
+                        saveAs(zipBlob, outName);
+                        showToast(`¡Conversión a ${selectedTargetFormat.toUpperCase()} descargada!`);
+                    }
+
+                    else if (selectedTargetFormat === 'pptx') {
+                        const scale = getScaleFromDPI(document.getElementById('scaleInput').value);
+
+                        for (const fileObj of pdfFiles) {
+                            const pdf = await pdfjsLib.getDocument({ data: fileObj.bytes.slice(0) }).promise;
+                            const baseName = fileObj.name.replace(/\.pdf$/i, '');
+                            const pptx = new PptxGenJS();
+
+                            const firstPage = await pdf.getPage(1);
+                            const firstVp = firstPage.getViewport({ scale: 1 });
+                            const ratio = firstVp.width / firstVp.height;
+                            const slideW = 10;
+                            const slideH = +(slideW / ratio).toFixed(2);
+                            pptx.defineLayout({ name: 'PDF_EXACT', width: slideW, height: slideH });
+                            pptx.layout = 'PDF_EXACT';
+
+                            for (let i = 1; i <= pdf.numPages; i++) {
+                                const page = await pdf.getPage(i);
+                                const viewport = page.getViewport({ scale });
+                                const canvas = document.createElement('canvas');
+                                canvas.width = viewport.width;
+                                canvas.height = viewport.height;
+                                const ctx = canvas.getContext('2d');
+                                ctx.fillStyle = '#FFFFFF';
+                                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                                await page.render({ canvasContext: ctx, viewport }).promise;
+                                const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+
+                                const slide = pptx.addSlide();
+                                slide.addImage({ data: dataUrl, x: 0, y: 0, w: '100%', h: '100%' });
+
+                                processedPages++;
+                                updateProgress(`Creando diapositiva ${processedPages} de ${totalPagesAll}`);
+                            }
+                            await pdf.destroy();
+                            await pptx.writeFile({ fileName: `${baseName}_Presentacion.pptx` });
+                        }
+                        showToast("¡Presentación PowerPoint (.PPTX) generada!");
+                    }
+
+                    else if (selectedTargetFormat === 'word') {
+                        const wordMode = document.getElementById('wordModeSelect').value;
+
+                        for (const fileObj of pdfFiles) {
+                            const pdf = await pdfjsLib.getDocument({ data: fileObj.bytes.slice(0) }).promise;
+                            const baseName = fileObj.name.replace(/\.pdf$/i, '');
+
+                            let bodyHtml = '';
+                            for (let i = 1; i <= pdf.numPages; i++) {
+                                const page = await pdf.getPage(i);
+                                let pageContentHtml = '';
+
+                                if (wordMode === 'exact' || wordMode === 'hybrid') {
+                                    const vp = page.getViewport({ scale: 2.0 });
+                                    const c = document.createElement('canvas');
+                                    c.width = vp.width;
+                                    c.height = vp.height;
+                                    const ctx = c.getContext('2d');
+                                    ctx.fillStyle = '#FFFFFF';
+                                    ctx.fillRect(0, 0, c.width, c.height);
+                                    await page.render({ canvasContext: ctx, viewport: vp }).promise;
+                                    pageContentHtml += '<div style="text-align:center; margin:0;"><img src="' + c.toDataURL('image/jpeg', 0.92) + '" style="width:100%; max-width:17.5cm;" /><' + '/div>';
+                                }
+
+                                if (wordMode === 'hybrid' || wordMode === 'text') {
+                                    const rows = await extractRowsFromPdfPage(page);
+                                    const paragraphs = rows.map(r => '<p style="margin:0 0 6pt 0; font-family:Calibri,sans-serif; font-size:11pt;">' + r.join(' ') + '<' + '/p>').join('');
+                                    pageContentHtml += '<div style="margin-top:10pt;">' + paragraphs + '<' + '/div>';
+                                }
+
+                                bodyHtml += '<div style="page-break-after: always;">' + pageContentHtml + '<' + '/div>';
+                                processedPages++;
+                                updateProgress(`Maquetando en Word página ${processedPages}/${totalPagesAll}`);
+                            }
+                            await pdf.destroy();
+
+                            const wordDoc = '<' + 'html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
+                                '<' + 'head><meta charset="utf-8"><title>' + baseName + '<' + '/title>' +
+                                '<' + 'style>@page { size: 21cm 29.7cm; margin: 1.5cm; } body { margin: 0; }<' + '/style><' + '/head>' +
+                                '<' + 'body>' + bodyHtml + '<' + '/body><' + '/html>';
+
+                            const blob = new Blob(['\ufeff', wordDoc], { type: 'application/msword;charset=utf-8' });
+                            saveAs(blob, `${baseName}.doc`);
+                        }
+                        showToast("¡Documento Word (.DOC) descargado!");
+                    }
+
+                    else if (selectedTargetFormat === 'excel' || selectedTargetFormat === 'csv') {
+                        const sheetMode = document.getElementById('excelSheetMode').value;
+
+                        for (const fileObj of pdfFiles) {
+                            const pdf = await pdfjsLib.getDocument({ data: fileObj.bytes.slice(0) }).promise;
+                            const baseName = fileObj.name.replace(/\.pdf$/i, '');
+                            const wb = XLSX.utils.book_new();
+                            let unifiedRows = [];
+
+                            for (let i = 1; i <= pdf.numPages; i++) {
+                                const page = await pdf.getPage(i);
+                                const rows = await extractRowsFromPdfPage(page);
+
+                                if (sheetMode === 'per-page' && selectedTargetFormat === 'excel') {
+                                    const ws = XLSX.utils.aoa_to_sheet(rows.length ? rows : [['(Sin datos tabulares en esta página)']]);
+                                    XLSX.utils.book_append_sheet(wb, ws, `Pagina_${i}`);
+                                } else {
+                                    unifiedRows.push([`--- PÁGINA ${i} ---`], ...rows, []);
+                                }
+
+                                processedPages++;
+                                updateProgress(`Analizando celdas página ${processedPages}/${totalPagesAll}`);
+                            }
+                            await pdf.destroy();
+
+                            if (selectedTargetFormat === 'csv') {
+                                const ws = XLSX.utils.aoa_to_sheet(unifiedRows);
+                                const csvContent = XLSX.utils.sheet_to_csv(ws);
+                                const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8' });
+                                saveAs(blob, `${baseName}.csv`);
+                            } else {
+                                if (sheetMode === 'single') {
+                                    const ws = XLSX.utils.aoa_to_sheet(unifiedRows);
+                                    XLSX.utils.book_append_sheet(wb, ws, "Datos_PDF");
+                                }
+                                XLSX.writeFile(wb, `${baseName}_Tablas.xlsx`);
+                            }
+                        }
+                        showToast(`¡Archivo ${selectedTargetFormat.toUpperCase()} generado!`);
+                    }
+
+                    else {
+                        for (const fileObj of pdfFiles) {
+                            const pdf = await pdfjsLib.getDocument({ data: fileObj.bytes.slice(0) }).promise;
+                            const baseName = fileObj.name.replace(/\.pdf$/i, '');
+                            const pagesData = [];
+
+                            for (let i = 1; i <= pdf.numPages; i++) {
+                                const page = await pdf.getPage(i);
+                                const rows = await extractRowsFromPdfPage(page);
+                                pagesData.push({
+                                    pageNumber: i,
+                                    lines: rows.map(r => r.join(' '))
+                                });
+                                processedPages++;
+                                updateProgress(`Extrayendo página ${processedPages}/${totalPagesAll}`);
+                            }
+                            await pdf.destroy();
+
+                            if (selectedTargetFormat === 'txt') {
+                                const txt = pagesData.map(p => `=== PÁGINA ${p.pageNumber} ===\n${p.lines.join('\n')}`).join('\n\n');
+                                saveAs(new Blob([txt], { type: 'text/plain;charset=utf-8' }), `${baseName}.txt`);
+                            } else if (selectedTargetFormat === 'html') {
+                                const htmlBody = pagesData.map(p =>
+                                    '<div style="background:#fff; padding:28px; margin-bottom:20px; border-radius:12px; border:1px solid #e2e8f0;">' +
+                                    '<h3 style="color:#6F8A3C; margin-top:0;">Página ' + p.pageNumber + '<' + '/h3>' +
+                                    p.lines.map(l => '<p>' + l + '<' + '/p>').join('') +
+                                    '<' + '/div>'
+                                ).join('');
+
+                                const fullHtml = '<' + '!DOCTYPE html><' + 'html lang="es"><' + 'head><meta charset="utf-8"><title>' + baseName + '<' + '/title>' +
+                                    '<' + 'style>body{font-family:system-ui,sans-serif;background:#f4f6f4;padding:30px;max-width:900px;margin:auto;color:#2d3748;line-height:1.6;}<' + '/style><' + '/head>' +
+                                    '<' + 'body><h1>' + baseName + '<' + '/h1>' + htmlBody + '<' + '/body><' + '/html>';
+
+                                saveAs(new Blob([fullHtml], { type: 'text/html;charset=utf-8' }), `${baseName}.html`);
+                            }
+                        }
+                        showToast(`¡Exportación a .${selectedTargetFormat.toUpperCase()} completada!`);
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                    showToast("Ocurrió un error durante la conversión");
+                } finally {
+                    convertBtn.disabled = false;
+                    setTimeout(() => pdfProgressBox.style.display = 'none', 1500);
+                }
+            });
+
+
+            // =========================================================
+            // 3. MODO 2: CONVERTIR WORD, POWERPOINT, IMÁGENES Y EXCEL A PDF 1:1
+            // =========================================================
+            const inputToPdf = document.getElementById('inputToPdf');
+            const btnTriggerToPdfUpload = document.getElementById('btnTriggerToPdfUpload');
+            const btnTriggerToPdfText = document.getElementById('btnTriggerToPdfText');
+            const toPdfStageTitle = document.getElementById('toPdfStageTitle');
+            const toPdfDropViewport = document.getElementById('toPdfDropViewport');
+            const toPdfEmptyDropzone = document.getElementById('toPdfEmptyDropzone');
+            const toPdfDropIcon = document.getElementById('toPdfDropIcon');
+            const toPdfDropTitle = document.getElementById('toPdfDropTitle');
+            const toPdfDropDesc = document.getElementById('toPdfDropDesc');
+            const toPdfDropCta = document.getElementById('toPdfDropCta');
+            const toPdfBadgesRow = document.getElementById('toPdfBadgesRow');
+
+            const toPdfImagesGrid = document.getElementById('toPdfImagesGrid');
+            const toPdfDocPreviewCard = document.getElementById('toPdfDocPreviewCard');
+            const toPdfDocPreviewBody = document.getElementById('toPdfDocPreviewBody');
+            const toPdfCountPill = document.getElementById('toPdfCountPill');
+            const btnClearToPdf = document.getElementById('btnClearToPdf');
+            const btnGeneratePdfFromAny = document.getElementById('btnGeneratePdfFromAny');
+
+            const toPdfProgressBox = document.getElementById('toPdfProgressBox');
+            const toPdfStatusText = document.getElementById('toPdfStatusText');
+            const toPdfProgressPercent = document.getElementById('toPdfProgressPercent');
+            const toPdfProgressBar = document.getElementById('toPdfProgressBar');
+
+            let activeSourceSubMode = 'images';
+            let loadedImagesForPdf = [];
+            let loadedWordReady = false;
+            let loadedPptxReady = false;
+            let loadedPptxAspectRatio = 16 / 9;
+            let loadedExcelWorkbook = null;
+
+            const SUBMODE_CONFIG = {
+                images: {
+                    stageTitle: 'Imágenes a PDF',
+                    btnText: 'Subir Imágenes',
+                    accept: '.jpg,.jpeg,.png,.webp,.bmp,.svg,image/*',
+                    multiple: true,
+                    icon: 'fa-solid fa-images',
+                    dropTitle: 'Arrastra tus Imágenes aquí para unirlas en PDF',
+                    dropDesc: 'Soporta múltiples fotografías, diseños o vectores (JPG, PNG, WebP, SVG y BMP) con ordenamiento libre.',
+                    cta: 'Seleccionar Imágenes desde tu PC',
+                    badges: ['JPG / JPEG', 'PNG', 'WebP', 'SVG / BMP']
+                },
+                word: {
+                    stageTitle: 'Word (.DOCX) a PDF Fiel 1:1',
+                    btnText: 'Subir Word (.DOCX)',
+                    accept: '.docx,.html,.htm,.txt',
+                    multiple: false,
+                    icon: 'fa-solid fa-file-word',
+                    dropTitle: 'Arrastra tu archivo Word (.DOCX) aquí',
+                    dropDesc: 'Respeta saltos de página automáticos y manuales, fuentes originales, tablas, imágenes y márgenes exactos.',
+                    cta: 'Seleccionar Documento Word (.DOCX)',
+                    badges: ['Word .DOCX Fiel 1:1', 'Saltos de Página Exactos', 'Tipografía Original', 'Tablas y Logos']
+                },
+                pptx: {
+                    stageTitle: 'PowerPoint (.PPTX) a PDF Fiel 1:1',
+                    btnText: 'Subir PowerPoint (.PPTX)',
+                    accept: '.pptx',
+                    multiple: false,
+                    icon: 'fa-solid fa-file-powerpoint',
+                    dropTitle: 'Arrastra tu presentación PowerPoint (.PPTX) aquí',
+                    dropDesc: 'Lee el Tema, Patrón de Diapositivas, fuentes originales, colores, mayúsculas, líneas vectoriales y fotos en cada diapositiva.',
+                    cta: 'Seleccionar Presentación (.PPTX)',
+                    badges: ['PowerPoint .PPTX 1:1', 'Tipografía y Tema Original', 'Líneas y Formas', '1 Slide = 1 Página PDF']
+                },
+                excel: {
+                    stageTitle: 'Excel / CSV a PDF',
+                    btnText: 'Subir Excel / CSV',
+                    accept: '.xlsx,.xls,.csv',
+                    multiple: false,
+                    icon: 'fa-solid fa-file-excel',
+                    dropTitle: 'Arrastra tu libro de Excel (.XLSX / .XLS) o tabla .CSV aquí',
+                    dropDesc: 'Convierte hojas de cálculo e inventarios en tablas vectoriales PDF perfectamente alineadas.',
+                    cta: 'Seleccionar Archivo Excel (.XLSX, .XLS, .CSV)',
+                    badges: ['Excel .XLSX', 'Excel 97-2003 .XLS', 'Datos .CSV']
+                }
+            };
+
+            document.querySelectorAll('.src-tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setSourceSubMode(btn.dataset.srcmode);
+                });
+            });
+
+            function setSourceSubMode(submode) {
+                activeSourceSubMode = submode;
+                document.querySelectorAll('.src-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.srcmode === submode));
+
+                document.getElementById('specImagesToPdf').style.display = submode === 'images' ? 'flex' : 'none';
+                document.getElementById('specWordToPdf').style.display = submode === 'word' ? 'flex' : 'none';
+                document.getElementById('specPptxToPdf').style.display = submode === 'pptx' ? 'flex' : 'none';
+                document.getElementById('specExcelToPdf').style.display = submode === 'excel' ? 'flex' : 'none';
+
+                document.getElementById('globalPdfPageSize').value = 'default';
+                document.getElementById('globalPdfOrientation').value = 'default';
+
+                const cfg = SUBMODE_CONFIG[submode];
+                inputToPdf.setAttribute('accept', cfg.accept);
+                if (cfg.multiple) inputToPdf.setAttribute('multiple', 'multiple');
+                else inputToPdf.removeAttribute('multiple');
+
+                toPdfStageTitle.textContent = cfg.stageTitle;
+                btnTriggerToPdfText.textContent = cfg.btnText;
+                toPdfDropIcon.className = cfg.icon;
+                toPdfDropTitle.textContent = cfg.dropTitle;
+                toPdfDropDesc.textContent = cfg.dropDesc;
+                toPdfDropCta.innerHTML = '<i class="fa-solid fa-folder-open"></i> ' + cfg.cta;
+                toPdfBadgesRow.innerHTML = cfg.badges.map(b => '<span class="fmt-pill">' + b + '<' + '/span>').join('');
+
+                refreshToPdfView();
+            }
+
+            btnTriggerToPdfUpload.addEventListener('click', () => inputToPdf.click());
+            toPdfEmptyDropzone.addEventListener('click', () => inputToPdf.click());
+
+            ['dragenter', 'dragover'].forEach(evt => {
+                toPdfDropViewport.addEventListener(evt, e => {
+                    e.preventDefault();
+                    toPdfDropViewport.classList.add('drag-over');
+                });
+            });
+            ['dragleave', 'drop'].forEach(evt => {
+                toPdfDropViewport.addEventListener(evt, e => {
+                    e.preventDefault();
+                    toPdfDropViewport.classList.remove('drag-over');
+                });
+            });
+            toPdfDropViewport.addEventListener('drop', e => {
+                if (e.dataTransfer.files.length) handleIncomingFilesToPdf(Array.from(e.dataTransfer.files));
+            });
+
+            inputToPdf.addEventListener('change', e => {
+                if (e.target.files.length) handleIncomingFilesToPdf(Array.from(e.target.files));
+                inputToPdf.value = '';
+            });
+
+            // =========================================================
+            // MOTOR AVANZADO OPENXML POWERPOINT (.PPTX)
+            // =========================================================
+            function applyColorModifiers(hexStr, colorNode) {
+                if (!hexStr) return null;
+                let clean = hexStr.replace('#', '');
+                if (clean.length !== 6) return '#' + clean;
+
+                let r = parseInt(clean.slice(0, 2), 16);
+                let g = parseInt(clean.slice(2, 4), 16);
+                let b = parseInt(clean.slice(4, 6), 16);
+
+                if (!colorNode) return `#${clean}`;
+
+                const lumModEl = colorNode.getElementsByTagName("a:lumMod")[0];
+                const lumOffEl = colorNode.getElementsByTagName("a:lumOff")[0];
+                const tintEl = colorNode.getElementsByTagName("a:tint")[0];
+                const shadeEl = colorNode.getElementsByTagName("a:shade")[0];
+                const alphaEl = colorNode.getElementsByTagName("a:alpha")[0];
+                const alpha = alphaEl && alphaEl.getAttribute("val")
+                    ? Math.max(0, Math.min(1, parseInt(alphaEl.getAttribute("val"), 10) / 100000))
+                    : 1;
+
+                if (lumModEl || lumOffEl) {
+                    let rf = r / 255, gf = g / 255, bf = b / 255;
+                    let max = Math.max(rf, gf, bf), min = Math.min(rf, gf, bf);
+                    let h = 0, s = 0, l = (max + min) / 2;
+                    if (max !== min) {
+                        let d = max - min;
+                        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                        switch (max) {
+                            case rf: h = (gf - bf) / d + (gf < bf ? 6 : 0); break;
+                            case gf: h = (bf - rf) / d + 2; break;
+                            case bf: h = (rf - gf) / d + 4; break;
+                        }
+                        h /= 6;
+                    }
+                    if (lumModEl) l *= (parseInt(lumModEl.getAttribute("val"), 10) / 100000);
+                    if (lumOffEl) l += (parseInt(lumOffEl.getAttribute("val"), 10) / 100000);
+                    l = Math.max(0, Math.min(1, l));
+
+                    const hue2rgb = (p, q, t) => {
+                        if (t < 0) t += 1;
+                        if (t > 1) t -= 1;
+                        if (t < 1 / 6) return p + (q - p) * 6 * t;
+                        if (t < 1 / 2) return q;
+                        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+                        return p;
+                    };
+                    if (s === 0) {
+                        r = g = b = Math.round(l * 255);
+                    } else {
+                        let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                        let p = 2 * l - q;
+                        r = Math.round(hue2rgb(p, q, h + 1 / 3) * 255);
+                        g = Math.round(hue2rgb(p, q, h) * 255);
+                        b = Math.round(hue2rgb(p, q, h - 1 / 3) * 255);
+                    }
+                } else if (tintEl) {
+                    const t = parseInt(tintEl.getAttribute("val"), 10) / 100000;
+                    r = Math.round(r + (255 - r) * (1 - t));
+                    g = Math.round(g + (255 - g) * (1 - t));
+                    b = Math.round(b + (255 - b) * (1 - t));
+                } else if (shadeEl) {
+                    const sh = parseInt(shadeEl.getAttribute("val"), 10) / 100000;
+                    r = Math.round(r * sh);
+                    g = Math.round(g * sh);
+                    b = Math.round(b * sh);
+                }
+
+                const toHex = (n) => Math.max(0, Math.min(255, n)).toString(16).padStart(2, '0');
+                if (alpha < 0.999999) {
+                    return `rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},${alpha})`;
+                }
+                return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+            }
+
+            function resolveOpenXmlColor(containerNode, themeColors) {
+                if (!containerNode) return null;
+                const srgb = containerNode.getElementsByTagName("a:srgbClr")[0];
+                if (srgb && srgb.getAttribute("val")) {
+                    return applyColorModifiers(srgb.getAttribute("val"), srgb);
+                }
+                const scheme = containerNode.getElementsByTagName("a:schemeClr")[0];
+                if (scheme && scheme.getAttribute("val")) {
+                    const key = scheme.getAttribute("val");
+                    const baseHex = themeColors[key] || null;
+                    if (baseHex) return applyColorModifiers(baseHex, scheme);
+                }
+                const sys = containerNode.getElementsByTagName("a:sysClr")[0];
+                if (sys && sys.getAttribute("lastClr")) {
+                    return applyColorModifiers(sys.getAttribute("lastClr"), sys);
+                }
+                return null;
+            }
+
+            function resolveOpenXmlFill(fillNode, themeColors) {
+                if (!fillNode) return null;
+
+                const solid = fillNode.getElementsByTagName('a:solidFill')[0];
+                if (solid) return { type: 'solid', color: resolveOpenXmlColor(solid, themeColors) };
+
+                const grad = fillNode.getElementsByTagName('a:gradFill')[0];
+                if (grad) {
+                    const stops = Array.from(grad.getElementsByTagName('a:gs')).map(gs => {
+                        const pos = Math.max(0, Math.min(100, parseInt(gs.getAttribute('pos') || '0', 10) / 1000));
+                        return { pos, color: resolveOpenXmlColor(gs, themeColors) || '#000000' };
+                    }).sort((a, b) => a.pos - b.pos);
+
+                    if (stops.length >= 2) {
+                        const lin = grad.getElementsByTagName('a:lin')[0];
+                        let angle = 180;
+                        if (lin && lin.getAttribute('ang')) {
+                            angle = parseInt(lin.getAttribute('ang'), 10) / 60000 + 90;
+                        }
+                        const cssStops = stops.map(st => `${st.color} ${st.pos}%`).join(', ');
+                        return { type: 'gradient', css: `linear-gradient(${angle}deg, ${cssStops})` };
+                    }
+                }
+                return null;
+            }
+
+            async function renderPptxFileToSlides(file, containerEl) {
+                containerEl.innerHTML = '';
+                const arrayBuffer = await file.arrayBuffer();
+                const zip = await JSZip.loadAsync(arrayBuffer);
+                const parser = new DOMParser();
+
+                let slideW_Emu = 9144000;
+                let slideH_Emu = 5143500;
+
+                const presFile = zip.file("ppt/presentation.xml");
+                if (presFile) {
+                    const presXml = await presFile.async("string");
+                    const presDoc = parser.parseFromString(presXml, "application/xml");
+                    const sldSz = presDoc.getElementsByTagName("p:sldSz")[0] || presDoc.getElementsByTagName("sldSz")[0];
+                    if (sldSz) {
+                        const cx = parseInt(sldSz.getAttribute("cx"), 10);
+                        const cy = parseInt(sldSz.getAttribute("cy"), 10);
+                        if (cx > 0 && cy > 0) {
+                            slideW_Emu = cx;
+                            slideH_Emu = cy;
+                        }
+                    }
+                }
+
+                loadedPptxAspectRatio = slideW_Emu / slideH_Emu;
+                const renderW = 1600;
+                const renderH = Math.round(renderW / loadedPptxAspectRatio);
+
+                const themeColors = {
+                    dk1: '#000000', lt1: '#FFFFFF', dk2: '#1F497D', lt2: '#EEECE1',
+                    accent1: '#4F81BD', accent2: '#C0504D', accent3: '#9BBB59',
+                    accent4: '#8064A2', accent5: '#4BACC6', accent6: '#F79646',
+                    tx1: '#000000', tx2: '#1F497D', bg1: '#FFFFFF', bg2: '#EEECE1'
+                };
+                let majorFont = 'Arial';
+                let minorFont = 'Calibri';
+                const detectedFonts = new Set();
+
+                const themeFile = zip.file("ppt/theme/theme1.xml");
+                if (themeFile) {
+                    const themeXml = await themeFile.async("string");
+                    const themeDoc = parser.parseFromString(themeXml, "application/xml");
+
+                    const clrScheme = themeDoc.getElementsByTagName("a:clrScheme")[0];
+                    if (clrScheme) {
+                        ['dk1', 'lt1', 'dk2', 'lt2', 'accent1', 'accent2', 'accent3', 'accent4', 'accent5', 'accent6'].forEach(k => {
+                            const node = clrScheme.getElementsByTagName(`a:${k}`)[0];
+                            if (node) {
+                                const srgb = node.getElementsByTagName("a:srgbClr")[0];
+                                const sys = node.getElementsByTagName("a:sysClr")[0];
+                                if (srgb && srgb.getAttribute("val")) themeColors[k] = `#${srgb.getAttribute("val")}`;
+                                else if (sys && sys.getAttribute("lastClr")) themeColors[k] = `#${sys.getAttribute("lastClr")}`;
+                            }
+                        });
+                        themeColors.tx1 = themeColors.dk1;
+                        themeColors.tx2 = themeColors.dk2;
+                        themeColors.bg1 = themeColors.lt1;
+                        themeColors.bg2 = themeColors.lt2;
+                    }
+
+                    const fontScheme = themeDoc.getElementsByTagName("a:fontScheme")[0];
+                    if (fontScheme) {
+                        const maj = fontScheme.getElementsByTagName("a:majorFont")[0];
+                        const min = fontScheme.getElementsByTagName("a:minorFont")[0];
+                        if (maj) {
+                            const lat = maj.getElementsByTagName("a:latin")[0];
+                            if (lat && lat.getAttribute("typeface")) {
+                                majorFont = lat.getAttribute("typeface");
+                                detectedFonts.add(majorFont);
+                            }
+                        }
+                        if (min) {
+                            const lat = min.getElementsByTagName("a:latin")[0];
+                            if (lat && lat.getAttribute("typeface")) {
+                                minorFont = lat.getAttribute("typeface");
+                                detectedFonts.add(minorFont);
+                            }
+                        }
+                    }
+                }
+
+                let masterBgColor = null;
+                let masterDoc = null;
+                const masterStyles = { title: {}, body: {}, other: {} };
+
+                const masterFile = zip.file("ppt/slideMasters/slideMaster1.xml");
+                if (masterFile) {
+                    const masterXml = await masterFile.async("string");
+                    masterDoc = parser.parseFromString(masterXml, "application/xml");
+
+                    const clrMap = masterDoc.getElementsByTagName("p:clrMap")[0];
+                    if (clrMap) {
+                        ['bg1', 'bg2', 'tx1', 'tx2'].forEach(k => {
+                            const mapped = clrMap.getAttribute(k);
+                            if (mapped && themeColors[mapped]) themeColors[k] = themeColors[mapped];
+                        });
+                    }
+
+                    const bgNode = masterDoc.getElementsByTagName("p:bg")[0];
+                    if (bgNode) masterBgColor = resolveOpenXmlColor(bgNode, themeColors);
+
+                    const txStyles = masterDoc.getElementsByTagName("p:txStyles")[0];
+                    if (txStyles) {
+                        const parseMasterLvl1 = (styleTag) => {
+                            const stNode = txStyles.getElementsByTagName(styleTag)[0];
+                            if (!stNode) return {};
+                            const lvl1 = stNode.getElementsByTagName("a:lvl1pPr")[0];
+                            if (!lvl1) return {};
+                            const defRPr = lvl1.getElementsByTagName("a:defRPr")[0];
+                            const res = { algn: lvl1.getAttribute("algn") || null };
+                            if (defRPr) {
+                                res.sz = parseInt(defRPr.getAttribute("sz") || 0, 10);
+                                res.b = defRPr.getAttribute("b") === "1";
+                                res.cap = defRPr.getAttribute("cap") || null;
+                                res.color = resolveOpenXmlColor(defRPr, themeColors);
+                                const lat = defRPr.getElementsByTagName("a:latin")[0];
+                                if (lat && lat.getAttribute("typeface")) {
+                                    res.font = lat.getAttribute("typeface");
+                                    detectedFonts.add(res.font);
+                                }
+                            }
+                            return res;
+                        };
+                        masterStyles.title = parseMasterLvl1("p:titleStyle");
+                        masterStyles.body = parseMasterLvl1("p:bodyStyle");
+                        masterStyles.other = parseMasterLvl1("p:otherStyle");
+                    }
+                }
+
+                const slidePaths = Object.keys(zip.files)
+                    .filter(p => /^ppt\/slides\/slide\d+\.xml$/i.test(p))
+                    .sort((a, b) => {
+                        const numA = parseInt(a.match(/slide(\d+)\.xml/i)[1], 10);
+                        const numB = parseInt(b.match(/slide(\d+)\.xml/i)[1], 10);
+                        return numA - numB;
+                    });
+
+                for (const sp of slidePaths) {
+                    const sXml = await zip.file(sp).async("string");
+                    const matches = sXml.matchAll(/typeface=["']([^"'+][^"']*)["']/gi);
+                    for (const m of matches) {
+                        detectedFonts.add(m[1]);
+                    }
+                }
+
+                await ensureGoogleFontsLoaded(Array.from(detectedFonts));
+
+                const mediaCache = {};
+                const getMediaDataUrl = async (targetPath) => {
+                    if (!targetPath) return null;
+                    const cleanPath = targetPath.replace(/^\.\.\//, 'ppt/').replace(/^ppt\/slides\/\.\.\//, 'ppt/').replace(/^ppt\/slideLayouts\/\.\.\//, 'ppt/');
+                    if (mediaCache[cleanPath]) return mediaCache[cleanPath];
+                    const fileEntry = zip.file(cleanPath);
+                    if (!fileEntry) return null;
+                    const b64 = await fileEntry.async("base64");
+                    const ext = cleanPath.split('.').pop().toLowerCase();
+                    const mime = ext === 'png' ? 'image/png' : (ext === 'svg' ? 'image/svg+xml' : 'image/jpeg');
+                    const dataUrl = `data:${mime};base64,${b64}`;
+                    mediaCache[cleanPath] = dataUrl;
+                    return dataUrl;
+                };
+
+                const resolveFontName = (rawFont) => {
+                    if (!rawFont) return minorFont;
+                    if (rawFont.startsWith('+mj')) return majorFont;
+                    if (rawFont.startsWith('+mn')) return minorFont;
+                    return rawFont;
+                };
+
+                for (let idx = 0; idx < slidePaths.length; idx++) {
+                    const slidePath = slidePaths[idx];
+                    const slideNum = idx + 1;
+                    const slideXml = await zip.file(slidePath).async("string");
+                    const slideDoc = parser.parseFromString(slideXml, "application/xml");
+
+                    const slideFileIndex = slidePath.match(/slide(\d+)\.xml/i)[1];
+                    const relsPath = `ppt/slides/_rels/slide${slideFileIndex}.xml.rels`;
+                    const relsMap = {};
+                    let layoutTarget = null;
+
+                    if (zip.file(relsPath)) {
+                        const relsXml = await zip.file(relsPath).async("string");
+                        const relsDoc = parser.parseFromString(relsXml, "application/xml");
+                        Array.from(relsDoc.getElementsByTagName("Relationship")).forEach(rel => {
+                            const id = rel.getAttribute("Id");
+                            const target = rel.getAttribute("Target");
+                            const type = rel.getAttribute("Type") || "";
+                            relsMap[id] = target;
+                            if (type.includes("slideLayout")) layoutTarget = target;
+                        });
+                    }
+
+                    let layoutDoc = null;
+                    let layoutBgColor = null;
+                    const layoutPlaceholders = {};
+                    const layoutRelsMap = {};
+
+                    if (layoutTarget) {
+                        const cleanLayoutPath = layoutTarget.replace(/^\.\.\//, 'ppt/');
+                        if (zip.file(cleanLayoutPath)) {
+                            const layoutXml = await zip.file(cleanLayoutPath).async("string");
+                            layoutDoc = parser.parseFromString(layoutXml, "application/xml");
+
+                            const lBg = layoutDoc.getElementsByTagName("p:bg")[0];
+                            if (lBg) layoutBgColor = resolveOpenXmlColor(lBg, themeColors);
+
+                            const lName = cleanLayoutPath.split('/').pop();
+                            const lRelsPath = `ppt/slideLayouts/_rels/${lName}.rels`;
+                            if (zip.file(lRelsPath)) {
+                                const lrXml = await zip.file(lRelsPath).async("string");
+                                const lrDoc = parser.parseFromString(lrXml, "application/xml");
+                                Array.from(lrDoc.getElementsByTagName("Relationship")).forEach(r => {
+                                    layoutRelsMap[r.getAttribute("Id")] = r.getAttribute("Target");
+                                });
+                            }
+
+                            Array.from(layoutDoc.getElementsByTagName("p:sp")).forEach(sp => {
+                                const ph = sp.getElementsByTagName("p:ph")[0];
+                                if (ph) {
+                                    const phType = ph.getAttribute("type") || "body";
+                                    const phIdx = ph.getAttribute("idx") || "";
+                                    const xfrm = sp.getElementsByTagName("a:xfrm")[0];
+                                    const info = { xfrm, sp };
+                                    layoutPlaceholders[`${phType}_${phIdx}`] = info;
+                                    if (!layoutPlaceholders[phType]) layoutPlaceholders[phType] = info;
+                                    if (phIdx) layoutPlaceholders[`idx_${phIdx}`] = info;
+                                }
+                            });
+                        }
+                    }
+
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'pptx-slide-wrapper';
+
+                    const header = document.createElement('div');
+                    header.className = 'pptx-slide-header';
+                    header.innerHTML = `<span><i class="fa-solid fa-file-powerpoint" style="color:var(--ppt-color);"></i> Diapositiva #${slideNum}</span><span>${renderW} × ${renderH} px (Fidelidad 1:1)</span>`;
+
+                    const stage = document.createElement('div');
+                    stage.className = 'pptx-slide-canvas-stage pptx-export-target';
+                    stage.style.width = `${renderW}px`;
+                    stage.style.height = `${renderH}px`;
+                    stage.style.fontSynthesis = 'none';
+                    stage.style.fontKerning = 'normal';
+                    stage.style.textRendering = 'geometricPrecision';
+                    stage.style.webkitFontSmoothing = 'antialiased';
+                    stage.style.printColorAdjust = 'exact';
+
+                    const slideBgNode = slideDoc.getElementsByTagName("p:bg")[0];
+                    const slideBgColor = resolveOpenXmlColor(slideBgNode, themeColors);
+                    stage.style.backgroundColor = slideBgColor || layoutBgColor || masterBgColor || themeColors.bg1 || '#FFFFFF';
+
+                    const renderShapeTree = async (treeNode, currentRelsMap, isBackgroundLayer = false, groupTransform = null) => {
+                        if (!treeNode) return;
+
+                        for (const node of Array.from(treeNode.children)) {
+                            const tagName = node.tagName;
+
+                            if (isBackgroundLayer) {
+                                const ph = node.getElementsByTagName("p:ph")[0];
+                                if (ph) continue;
+                            }
+
+                            if (tagName === 'p:grpSp' || tagName === 'grpSp') {
+                                const grpSpPr = node.getElementsByTagName("p:grpSpPr")[0];
+                                let nextTransform = groupTransform;
+                                if (grpSpPr) {
+                                    const xfrm = grpSpPr.getElementsByTagName("a:xfrm")[0];
+                                    if (xfrm) {
+                                        const off = xfrm.getElementsByTagName("a:off")[0];
+                                        const ext = xfrm.getElementsByTagName("a:ext")[0];
+                                        const chOff = xfrm.getElementsByTagName("a:chOff")[0];
+                                        const chExt = xfrm.getElementsByTagName("a:chExt")[0];
+                                        if (off && ext && chOff && chExt) {
+                                            nextTransform = {
+                                                gx: parseInt(off.getAttribute("x") || 0, 10),
+                                                gy: parseInt(off.getAttribute("y") || 0, 10),
+                                                gcx: parseInt(ext.getAttribute("cx") || 1, 10),
+                                                gcy: parseInt(ext.getAttribute("cy") || 1, 10),
+                                                chx: parseInt(chOff.getAttribute("x") || 0, 10),
+                                                chy: parseInt(chOff.getAttribute("y") || 0, 10),
+                                                chcx: parseInt(chExt.getAttribute("cx") || 1, 10),
+                                                chcy: parseInt(chExt.getAttribute("cy") || 1, 10)
+                                            };
+                                        }
+                                    }
+                                }
+                                await renderShapeTree(node, currentRelsMap, isBackgroundLayer, nextTransform);
+                                continue;
+                            }
+
+                            const phNode = node.getElementsByTagName("p:ph")[0];
+                            let phType = phNode ? (phNode.getAttribute("type") || "body") : null;
+                            let phIdx = phNode ? (phNode.getAttribute("idx") || "") : "";
+                            let inheritedPh = null;
+                            if (phNode) {
+                                inheritedPh = layoutPlaceholders[`${phType}_${phIdx}`] || layoutPlaceholders[`idx_${phIdx}`] || layoutPlaceholders[phType] || null;
+                            }
+
+                            let xfrm = node.getElementsByTagName("a:xfrm")[0];
+                            if (!xfrm && inheritedPh) xfrm = inheritedPh.xfrm;
+
+                            let leftPx = 0, topPx = 0, widthPx = 0, heightPx = 0;
+                            let flipH = false, flipV = false, rotDeg = 0;
+
+                            if (xfrm) {
+                                flipH = xfrm.getAttribute("flipH") === "1";
+                                flipV = xfrm.getAttribute("flipV") === "1";
+                                if (xfrm.getAttribute("rot")) {
+                                    rotDeg = parseInt(xfrm.getAttribute("rot"), 10) / 60000;
+                                }
+
+                                const off = xfrm.getElementsByTagName("a:off")[0];
+                                const ext = xfrm.getElementsByTagName("a:ext")[0];
+                                if (off && ext) {
+                                    let rawX = parseInt(off.getAttribute("x") || 0, 10);
+                                    let rawY = parseInt(off.getAttribute("y") || 0, 10);
+                                    let rawCx = parseInt(ext.getAttribute("cx") || 0, 10);
+                                    let rawCy = parseInt(ext.getAttribute("cy") || 0, 10);
+
+                                    if (groupTransform) {
+                                        const scaleX = groupTransform.gcx / (groupTransform.chcx || 1);
+                                        const scaleY = groupTransform.gcy / (groupTransform.chcy || 1);
+                                        rawX = groupTransform.gx + (rawX - groupTransform.chx) * scaleX;
+                                        rawY = groupTransform.gy + (rawY - groupTransform.chy) * scaleY;
+                                        rawCx = rawCx * scaleX;
+                                        rawCy = rawCy * scaleY;
+                                    }
+
+                                    leftPx = (rawX / slideW_Emu) * renderW;
+                                    topPx = (rawY / slideH_Emu) * renderH;
+                                    widthPx = (rawCx / slideW_Emu) * renderW;
+                                    heightPx = (rawCy / slideH_Emu) * renderH;
+                                }
+                            }
+
+                            if (tagName === 'p:pic' || tagName === 'pic') {
+                                const blip = node.getElementsByTagName("a:blip")[0];
+                                const embedId = blip ? blip.getAttribute("r:embed") : null;
+                                if (embedId && currentRelsMap[embedId]) {
+                                    const imgDataUrl = await getMediaDataUrl(currentRelsMap[embedId]);
+                                    if (imgDataUrl) {
+                                        const imgEl = document.createElement('img');
+                                        imgEl.src = imgDataUrl;
+                                        imgEl.style.cssText = `position:absolute; left:${leftPx}px; top:${topPx}px; width:${widthPx}px; height:${heightPx}px; object-fit:cover; pointer-events:none;`;
+                                        if (rotDeg) imgEl.style.transform = `rotate(${rotDeg}deg)`;
+                                        stage.appendChild(imgEl);
+                                    }
+                                }
+                            }
+
+                            else if (tagName === 'p:cxnSp' || tagName === 'cxnSp' || ((tagName === 'p:sp' || tagName === 'sp') && node.getElementsByTagName("a:prstGeom")[0]?.getAttribute("prst") === "line")) {
+                                const ln = node.getElementsByTagName("a:ln")[0];
+                                let strokeColor = resolveOpenXmlColor(ln, themeColors) || themeColors.tx1 || '#000000';
+                                let strokeW = ln && ln.getAttribute("w") ? Math.max(1, (parseInt(ln.getAttribute("w"), 10) / 12700) * (renderW / 960)) : 1.2;
+
+                                const svgNS = "http://www.w3.org/2000/svg";
+                                const svgEl = document.createElementNS(svgNS, "svg");
+                                const pad = 6;
+                                svgEl.setAttribute("width", Math.max(widthPx + pad * 2, 12));
+                                svgEl.setAttribute("height", Math.max(heightPx + pad * 2, 12));
+                                svgEl.style.cssText = `position:absolute; left:${leftPx - pad}px; top:${topPx - pad}px; overflow:visible; pointer-events:none;`;
+                                if (rotDeg) svgEl.style.transform = `rotate(${rotDeg}deg)`;
+
+                                const lineEl = document.createElementNS(svgNS, "line");
+                                const x1 = flipH ? widthPx + pad : pad;
+                                const y1 = flipV ? heightPx + pad : pad;
+                                const x2 = flipH ? pad : widthPx + pad;
+                                const y2 = flipV ? pad : heightPx + pad;
+
+                                lineEl.setAttribute("x1", x1);
+                                lineEl.setAttribute("y1", y1);
+                                lineEl.setAttribute("x2", x2);
+                                lineEl.setAttribute("y2", y2);
+                                lineEl.setAttribute("stroke", strokeColor);
+                                lineEl.setAttribute("stroke-width", strokeW);
+                                svgEl.appendChild(lineEl);
+                                stage.appendChild(svgEl);
+                            }
+
+                            else if (tagName === 'p:sp' || tagName === 'sp') {
+                                const box = document.createElement('div');
+                                box.style.cssText = `position:absolute; left:${leftPx}px; top:${topPx}px; width:${widthPx}px; height:${heightPx}px; display:flex; flex-direction:column; overflow:visible; box-sizing:border-box;`;
+                                if (rotDeg) box.style.transform = `rotate(${rotDeg}deg)`;
+
+                                const bodyPr = node.getElementsByTagName("a:bodyPr")[0] || (inheritedPh ? inheritedPh.sp.getElementsByTagName("a:bodyPr")[0] : null);
+                                if (bodyPr) {
+                                    const anchor = bodyPr.getAttribute("anchor");
+                                    if (anchor === 'ctr') box.style.justifyContent = 'center';
+                                    else if (anchor === 'b') box.style.justifyContent = 'flex-end';
+                                    else box.style.justifyContent = 'flex-start';
+
+                                    const scaleEmuToPx = renderW / slideW_Emu;
+                                    const lIns = bodyPr.getAttribute("lIns") ? parseInt(bodyPr.getAttribute("lIns"), 10) * scaleEmuToPx : 6;
+                                    const rIns = bodyPr.getAttribute("rIns") ? parseInt(bodyPr.getAttribute("rIns"), 10) * scaleEmuToPx : 6;
+                                    const tIns = bodyPr.getAttribute("tIns") ? parseInt(bodyPr.getAttribute("tIns"), 10) * scaleEmuToPx : 4;
+                                    const bIns = bodyPr.getAttribute("bIns") ? parseInt(bodyPr.getAttribute("bIns"), 10) * scaleEmuToPx : 4;
+                                    box.style.padding = `${tIns}px ${rIns}px ${bIns}px ${lIns}px`;
+                                }
+
+                                const spPr = node.getElementsByTagName("p:spPr")[0];
+                                if (spPr) {
+                                    const fillNode = Array.from(spPr.children).find(ch =>
+                                        ch.tagName === 'a:solidFill' || ch.tagName === 'a:gradFill' || ch.tagName === 'a:pattFill' || ch.tagName === 'a:blipFill'
+                                    );
+                                    if (fillNode) {
+                                        const resolvedFill = resolveOpenXmlFill(fillNode, themeColors);
+                                        if (resolvedFill?.type === 'solid' && resolvedFill.color) {
+                                            box.style.backgroundColor = resolvedFill.color;
+                                        } else if (resolvedFill?.type === 'gradient') {
+                                            box.style.backgroundImage = resolvedFill.css;
+                                        }
+                                    }
+                                    const lnNode = Array.from(spPr.children).find(ch => ch.tagName === 'a:ln');
+                                    if (lnNode && !lnNode.getElementsByTagName("a:noFill")[0]) {
+                                        const brdClr = resolveOpenXmlColor(lnNode, themeColors);
+                                        if (brdClr) {
+                                            const bw = lnNode.getAttribute("w") ? Math.max(1, (parseInt(lnNode.getAttribute("w"), 10) / 12700) * (renderW / 960)) : 1;
+                                            box.style.border = `${bw}px solid ${brdClr}`;
+                                        }
+                                    }
+                                }
+
+                                let baseStyle = masterStyles.other;
+                                if (phType === 'title' || phType === 'ctrTitle') baseStyle = masterStyles.title;
+                                else if (phType === 'body' || phType === 'subTitle') baseStyle = masterStyles.body;
+
+                                const getLstStyleDefaults = (spElement) => {
+                                    if (!spElement) return {};
+                                    const lst = spElement.getElementsByTagName("a:lstStyle")[0];
+                                    if (!lst) return {};
+                                    const lvl1 = lst.getElementsByTagName("a:lvl1pPr")[0];
+                                    if (!lvl1) return {};
+                                    const defRPr = lvl1.getElementsByTagName("a:defRPr")[0];
+                                    const res = { algn: lvl1.getAttribute("algn") || null };
+                                    if (defRPr) {
+                                        if (defRPr.getAttribute("sz")) res.sz = parseInt(defRPr.getAttribute("sz"), 10);
+                                        if (defRPr.getAttribute("b")) res.b = defRPr.getAttribute("b") === "1";
+                                        if (defRPr.getAttribute("cap")) res.cap = defRPr.getAttribute("cap");
+                                        const c = resolveOpenXmlColor(defRPr, themeColors);
+                                        if (c) res.color = c;
+                                        const lat = defRPr.getElementsByTagName("a:latin")[0];
+                                        if (lat && lat.getAttribute("typeface")) res.font = lat.getAttribute("typeface");
+                                    }
+                                    return res;
+                                };
+
+                                const layoutDef = inheritedPh ? getLstStyleDefaults(inheritedPh.sp) : {};
+                                const localDef = getLstStyleDefaults(node);
+
+                                const paragraphs = Array.from(node.getElementsByTagName("a:p"));
+                                paragraphs.forEach(pNode => {
+                                    const pEl = document.createElement('div');
+                                    pEl.style.cssText = 'margin:0; padding:0; line-height:1.15; word-break:break-word; white-space:pre-wrap;';
+
+                                    const pPr = pNode.getElementsByTagName("a:pPr")[0];
+                                    const algn = (pPr && pPr.getAttribute("algn")) || localDef.algn || layoutDef.algn || baseStyle.algn || 'l';
+                                    if (algn === 'ctr') pEl.style.textAlign = 'center';
+                                    else if (algn === 'r') pEl.style.textAlign = 'right';
+                                    else if (algn === 'just') pEl.style.textAlign = 'justify';
+                                    else pEl.style.textAlign = 'left';
+
+                                    if (pPr) {
+                                        const lnSpc = pPr.getElementsByTagName("a:lnSpc")[0];
+                                        if (lnSpc) {
+                                            const spcPct = lnSpc.getElementsByTagName("a:spcPct")[0];
+                                            if (spcPct && spcPct.getAttribute("val")) {
+                                                pEl.style.lineHeight = (parseInt(spcPct.getAttribute("val"), 10) / 100000) * 1.12;
+                                            }
+                                        }
+                                        const spcBef = pPr.getElementsByTagName("a:spcBef")[0];
+                                        if (spcBef) {
+                                            const pts = spcBef.getElementsByTagName("a:spcPts")[0];
+                                            if (pts && pts.getAttribute("val")) {
+                                                pEl.style.marginTop = `${(parseInt(pts.getAttribute("val"), 10) / 100) * (renderW / 720)}px`;
+                                            }
+                                        }
+                                        const spcAft = pPr.getElementsByTagName("a:spcAft")[0];
+                                        if (spcAft) {
+                                            const pts = spcAft.getElementsByTagName("a:spcPts")[0];
+                                            if (pts && pts.getAttribute("val")) {
+                                                pEl.style.marginBottom = `${(parseInt(pts.getAttribute("val"), 10) / 100) * (renderW / 720)}px`;
+                                            }
+                                        }
+                                    }
+
+                                    const childrenNodes = Array.from(pNode.children);
+                                    let hasTextInP = false;
+
+                                    childrenNodes.forEach(ch => {
+                                        if (ch.tagName === 'a:br') {
+                                            pEl.appendChild(document.createElement('br'));
+                                            return;
+                                        }
+                                        if (ch.tagName !== 'a:r' && ch.tagName !== 'a:fld') return;
+
+                                        const tNode = ch.getElementsByTagName("a:t")[0];
+                                        if (!tNode || !tNode.textContent) return;
+                                        hasTextInP = true;
+
+                                        const span = document.createElement('span');
+                                        const rPr = ch.getElementsByTagName("a:rPr")[0];
+
+                                        let szHundredths = (rPr && parseInt(rPr.getAttribute("sz") || 0, 10))
+                                            || localDef.sz
+                                            || layoutDef.sz
+                                            || baseStyle.sz
+                                            || (phType === 'title' || phType === 'ctrTitle' ? 4000 : 1800);
+
+                                        const ptSize = szHundredths / 100;
+                                        const pxSize = ptSize * (96 / 72) * (renderW / (slideW_Emu / 914400 * 96));
+                                        span.style.fontSize = `${pxSize.toFixed(2)}px`;
+
+                                        let rawTypeface = null;
+                                        if (rPr) {
+                                            const lat = rPr.getElementsByTagName("a:latin")[0] || rPr.getElementsByTagName("a:cs")[0];
+                                            if (lat && lat.getAttribute("typeface")) rawTypeface = lat.getAttribute("typeface");
+                                        }
+                                        if (!rawTypeface) rawTypeface = localDef.font || layoutDef.font || baseStyle.font || (phType === 'title' || phType === 'ctrTitle' ? majorFont : minorFont);
+                                        const resolvedFamily = resolveFontName(rawTypeface);
+                                        const baseFamilyClean = resolvedFamily.replace(/\s+(Light|Regular|Medium|SemiBold|Bold|ExtraBold|Black|Heavy)$/i, '').trim();
+                                        span.style.fontFamily = `"${resolvedFamily}", "${baseFamilyClean}", sans-serif`;
+
+                                        const isBold = (rPr && rPr.getAttribute("b") !== null)
+                                            ? rPr.getAttribute("b") === "1"
+                                            : (localDef.b ?? layoutDef.b ?? baseStyle.b ?? false);
+
+                                        if (/extrabold|black|heavy/i.test(resolvedFamily)) {
+                                            span.style.fontWeight = '800';
+                                        } else if (isBold || /bold/i.test(resolvedFamily)) {
+                                            span.style.fontWeight = '700';
+                                        } else {
+                                            span.style.fontWeight = '400';
+                                        }
+
+                                        if (rPr && rPr.getAttribute("i") === "1") span.style.fontStyle = 'italic';
+                                        if (rPr && rPr.getAttribute("u") && rPr.getAttribute("u") !== "none") span.style.textDecoration = 'underline';
+
+                                        const capMode = (rPr && rPr.getAttribute("cap")) || localDef.cap || layoutDef.cap || baseStyle.cap || null;
+                                        if (capMode === 'all') span.style.textTransform = 'uppercase';
+                                        else if (capMode === 'small') span.style.fontVariant = 'small-caps';
+
+                                        if (rPr && rPr.getAttribute("spc")) {
+                                            const spcVal = parseInt(rPr.getAttribute("spc"), 10) / 100;
+                                            span.style.letterSpacing = `${(spcVal * (renderW / 960)).toFixed(2)}px`;
+                                        }
+
+                                        let textColor = resolveOpenXmlColor(rPr, themeColors)
+                                            || localDef.color
+                                            || layoutDef.color
+                                            || baseStyle.color
+                                            || themeColors.tx1
+                                            || '#000000';
+                                        span.style.color = textColor;
+
+                                        span.textContent = tNode.textContent;
+                                        pEl.appendChild(span);
+                                    });
+
+                                    if (hasTextInP) {
+                                        box.appendChild(pEl);
+                                    }
+                                });
+
+                                if (box.children.length > 0 || box.style.backgroundColor || box.style.border) {
+                                    stage.appendChild(box);
+                                }
+                            }
+                        }
+                    };
+
+                    if (layoutDoc) {
+                        const layoutTree = layoutDoc.getElementsByTagName("p:spTree")[0];
+                        await renderShapeTree(layoutTree, layoutRelsMap, true, null);
+                    }
+
+                    const slideTree = slideDoc.getElementsByTagName("p:spTree")[0];
+                    await renderShapeTree(slideTree, relsMap, false, null);
+
+                    await waitForPptxFonts(stage);
+
+                    wrapper.appendChild(header);
+                    wrapper.appendChild(stage);
+                    containerEl.appendChild(wrapper);
+                }
+
+                return slidePaths.length;
+            }
+
+
+            // =========================================================
+            // MOTOR WORD (.DOCX) CON PRE-PROCESADOR
+            // =========================================================
+            async function preprocessDocxBufferAndFonts(arrayBuffer) {
+                try {
+                    const zip = await JSZip.loadAsync(arrayBuffer);
+                    const fontsToLoad = new Set();
+
+                    const fontTableFile = zip.file("word/fontTable.xml");
+                    if (fontTableFile) {
+                        const ftXml = await fontTableFile.async("string");
+                        const matches = ftXml.matchAll(/w:name=["']([^"']+)["']/gi);
+                        for (const m of matches) fontsToLoad.add(m[1]);
+                    }
+
+                    const docFile = zip.file("word/document.xml");
+                    if (docFile) {
+                        let docXml = await docFile.async("string");
+                        docXml = docXml.replace(/<w:lastRenderedPageBreak\s*\/>/g, '<w:br w:type="page"/>');
+                        zip.file("word/document.xml", docXml);
+                    }
+
+                    await ensureGoogleFontsLoaded(Array.from(fontsToLoad));
+                    return await zip.generateAsync({ type: "arraybuffer" });
+                } catch (e) {
+                    console.warn("Usando buffer DOCX directo:", e);
+                    return arrayBuffer;
+                }
+            }
+
+            function enforceVisualPaginationOnDocx(containerEl) {
+                const sections = Array.from(containerEl.querySelectorAll('section.docx'));
+                if (sections.length === 0) return 0;
+
+                const finalPages = [];
+
+                sections.forEach((sec) => {
+                    const pageW = sec.offsetWidth || 794;
+                    const minH = parseFloat(sec.style.minHeight) || 1122.5;
+                    const actualH = sec.scrollHeight;
+
+                    if (actualH <= minH + 24) {
+                        sec.style.height = `${minH}px`;
+                        sec.classList.add('word-export-page');
+                        finalPages.push(sec);
+                    } else {
+                        const cs = window.getComputedStyle(sec);
+                        const padTop = parseFloat(cs.paddingTop) || 72;
+                        const padBot = parseFloat(cs.paddingBottom) || 72;
+                        const contentViewportH = minH - padTop - padBot;
+                        const totalContentH = actualH - padTop - padBot;
+                        const numSlices = Math.ceil(totalContentH / contentViewportH);
+
+                        for (let s = 0; s < numSlices; s++) {
+                            const pageClone = document.createElement('div');
+                            pageClone.className = 'word-page-slice word-export-page';
+                            pageClone.style.cssText = `width:${pageW}px; height:${minH}px; background:#ffffff; position:relative; overflow:hidden; padding:${padTop}px ${cs.paddingRight} ${padBot}px ${cs.paddingLeft}; box-sizing:border-box;`;
+
+                            const viewportInner = document.createElement('div');
+                            viewportInner.style.cssText = `width:100%; height:${contentViewportH}px; overflow:hidden; position:relative;`;
+
+                            const innerClone = sec.cloneNode(true);
+                            innerClone.style.cssText = `padding:0 !important; margin:0 !important; width:100% !important; min-height:0 !important; box-shadow:none !important; transform:translateY(-${s * contentViewportH}px);`;
+
+                            viewportInner.appendChild(innerClone);
+                            pageClone.appendChild(viewportInner);
+                            finalPages.push(pageClone);
+                        }
+                    }
+                });
+
+                const wrapper = containerEl.querySelector('.docx-wrapper') || containerEl;
+                wrapper.innerHTML = '';
+                finalPages.forEach((pageEl, idx) => {
+                    const holder = document.createElement('div');
+                    holder.className = 'word-page-wrapper';
+                    const badge = document.createElement('span');
+                    badge.className = 'word-page-badge';
+                    badge.innerHTML = `<i class="fa-solid fa-file-word" style="color:var(--word-color);"></i> Página ${idx + 1} de ${finalPages.length}`;
+                    holder.appendChild(badge);
+                    holder.appendChild(pageEl);
+                    wrapper.appendChild(holder);
+                });
+
+                return finalPages.length;
+            }
+
+
+            // =========================================================
+            // MANEJO DE ARCHIVOS EN MODO 2
+            // =========================================================
+            async function handleIncomingFilesToPdf(files) {
+                const firstFile = files[0];
+                const firstExt = firstFile.name.split('.').pop().toLowerCase();
+
+                if (firstExt === 'pdf') {
+                    setDirection('pdf-to-any');
+                    loadMultiplePDFs(files);
+                    return;
+                }
+
+                // 1. IMÁGENES
+                if (['jpg', 'jpeg', 'png', 'webp', 'bmp', 'svg'].includes(firstExt) || firstFile.type.startsWith('image/')) {
+                    if (activeSourceSubMode !== 'images') setSourceSubMode('images');
+                    for (const f of files) {
+                        if (!f.type.startsWith('image/') && !f.name.toLowerCase().endsWith('.svg')) continue;
+                        const dataUrl = await readFileAsDataURL(f);
+                        const dims = await getImageDimensions(dataUrl);
+                        loadedImagesForPdf.push({
+                            file: f,
+                            name: f.name,
+                            dataUrl,
+                            width: dims.width,
+                            height: dims.height
+                        });
+                    }
+                    const cleanBase = (loadedImagesForPdf[0]?.name.replace(/\.[^/.]+$/, '') || 'Imagenes').slice(0, 28);
+                    document.getElementById('toPdfOutputName').value = cleanBase + '_PDF';
+                    refreshToPdfView();
+                    showToast(`${files.length} imagen(es) cargadas`);
+                }
+
+                // 2. WORD (.DOCX) CON SALTOS DE PÁGINA Y FUENTES ORIGINALES
+                else if (['docx', 'html', 'htm', 'txt'].includes(firstExt)) {
+                    if (activeSourceSubMode !== 'word') setSourceSubMode('word');
+                    const f = firstFile;
+                    document.getElementById('toPdfOutputName').value = f.name.replace(/\.[^/.]+$/, '').slice(0, 30);
+
+                    try {
+                        toPdfDocPreviewBody.innerHTML = '<div style="padding:40px; color:var(--primary); font-weight:700;"><i class="fa-solid fa-spinner fa-spin"></i> Renderizando páginas y tipografías del documento Word...<' + '/div>';
+                        loadedWordReady = true;
+                        refreshToPdfView();
+
+                        if (firstExt === 'docx') {
+                            const rawBuffer = await f.arrayBuffer();
+                            const processedBuffer = await preprocessDocxBufferAndFonts(rawBuffer);
+                            toPdfDocPreviewBody.innerHTML = '';
+
+                            await docx.renderAsync(processedBuffer, toPdfDocPreviewBody, null, {
+                                className: "docx",
+                                inWrapper: true,
+                                ignoreWidth: false,
+                                ignoreHeight: false,
+                                ignoreFonts: false,
+                                breakPages: true,
+                                useBase64URL: true,
+                                experimental: true
+                            });
+
+                            await new Promise(r => setTimeout(r, 150));
+                            const totalPages = enforceVisualPaginationOnDocx(toPdfDocPreviewBody);
+
+                            document.getElementById('loadedDocName').textContent = f.name;
+                            document.getElementById('loadedDocTypePill').textContent = `${totalPages} página(s) Word 1:1`;
+                            toPdfCountPill.textContent = `${totalPages} página(s)`;
+                        } else {
+                            const rawText = await f.text();
+                            toPdfDocPreviewBody.innerHTML = '';
+                            const pageDiv = document.createElement('section');
+                            pageDiv.className = 'docx word-export-page';
+                            pageDiv.style.cssText = 'width:794px; min-height:1123px; padding:64px; background:#fff; color:#000; font-size:14px; line-height:1.6;';
+                            pageDiv.innerHTML = firstExt === 'txt'
+                                ? '<pre style="white-space:pre-wrap; font-family:Calibri,sans-serif;">' + rawText.replace(/</g, '&lt;') + '<' + '/pre>'
+                                : rawText;
+                            const wrap = document.createElement('div');
+                            wrap.className = 'docx-wrapper';
+                            wrap.appendChild(pageDiv);
+                            toPdfDocPreviewBody.appendChild(wrap);
+                            const totalPages = enforceVisualPaginationOnDocx(toPdfDocPreviewBody);
+                            document.getElementById('loadedDocName').textContent = f.name;
+                            document.getElementById('loadedDocTypePill').textContent = `${totalPages} página(s)`;
+                            toPdfCountPill.textContent = `${totalPages} página(s)`;
+                        }
+
+                        showToast(`Documento "${f.name}" procesado con saltos de página exactos`);
+                    } catch (err) {
+                        console.error(err);
+                        showToast("Error renderizando el archivo Word .DOCX");
+                    }
+                }
+
+                // 3. POWERPOINT (.PPTX) CON MOTOR OPENXML COMPLETO
+                else if (firstExt === 'pptx') {
+                    if (activeSourceSubMode !== 'pptx') setSourceSubMode('pptx');
+                    const f = firstFile;
+                    document.getElementById('toPdfOutputName').value = f.name.replace(/\.[^/.]+$/, '').slice(0, 30);
+
+                    try {
+                        toPdfDocPreviewBody.innerHTML = '<div style="padding:40px; color:var(--primary); font-weight:700;"><i class="fa-solid fa-spinner fa-spin"></i> Cargando tema, fuentes y diapositivas de PowerPoint...<' + '/div>';
+                        loadedPptxReady = true;
+                        refreshToPdfView();
+
+                        const slideCount = await renderPptxFileToSlides(f, toPdfDocPreviewBody);
+                        document.getElementById('loadedDocName').textContent = f.name;
+                        document.getElementById('loadedDocTypePill').textContent = `${slideCount} diapositiva(s) 1:1`;
+                        toPdfCountPill.textContent = `${slideCount} slides`;
+                        showToast(`Presentación PowerPoint (${slideCount} diapositivas) lista`);
+                    } catch (err) {
+                        console.error(err);
+                        showToast("Error al leer la presentación .PPTX");
+                    }
+                }
+
+                // 4. EXCEL / CSV
+                else if (['xlsx', 'xls', 'csv'].includes(firstExt)) {
+                    if (activeSourceSubMode !== 'excel') setSourceSubMode('excel');
+                    const f = firstFile;
+                    document.getElementById('toPdfOutputName').value = f.name.replace(/\.[^/.]+$/, '').slice(0, 30);
+                    try {
+                        const data = await f.arrayBuffer();
+                        loadedExcelWorkbook = XLSX.read(data, { type: 'array' });
+                        loadedExcelWorkbook._fileName = f.name;
+                        refreshToPdfView();
+                        showToast(`Tabla "${f.name}" lista para exportar a PDF`);
+                    } catch (err) {
+                        console.error(err);
+                        showToast("Error leyendo el archivo Excel/CSV");
+                    }
+                }
+
+                else {
+                    showToast("Formato no soportado. Usa Word (.docx), PowerPoint (.pptx), Excel (.xlsx) o Imágenes.");
+                }
+            }
+
+            function readFileAsDataURL(file) {
+                return new Promise(res => {
+                    const fr = new FileReader();
+                    fr.onload = e => res(e.target.result);
+                    fr.readAsDataURL(file);
+                });
+            }
+
+            function getImageDimensions(url) {
+                return new Promise(res => {
+                    const img = new Image();
+                    img.onload = () => res({ width: img.naturalWidth || 1000, height: img.naturalHeight || 1000 });
+                    img.onerror = () => res({ width: 1000, height: 1000 });
+                    img.src = url;
+                });
+            }
+
+            function refreshToPdfView() {
+                toPdfEmptyDropzone.style.display = 'none';
+                toPdfImagesGrid.style.display = 'none';
+                toPdfDocPreviewCard.style.display = 'none';
+
+                if (activeSourceSubMode === 'images') {
+                    if (loadedImagesForPdf.length === 0) {
+                        toPdfEmptyDropzone.style.display = 'block';
+                        btnClearToPdf.style.display = 'none';
+                        btnGeneratePdfFromAny.disabled = true;
+                        toPdfCountPill.textContent = 'Sin imágenes';
+                        return;
+                    }
+
+                    toPdfImagesGrid.style.display = 'grid';
+                    btnClearToPdf.style.display = 'inline-flex';
+                    btnGeneratePdfFromAny.disabled = false;
+                    toPdfCountPill.textContent = `${loadedImagesForPdf.length} imagen(es)`;
+
+                    toPdfImagesGrid.innerHTML = loadedImagesForPdf.map((img, idx) => `
+                        <div class="file-card">
+                            <div class="thumb-box">
+                                <span class="order-badge">#${idx + 1}</span>
+                                <button type="button" class="card-remove-btn" onclick="window.removeImgToPdf(${idx})">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                                <img src="${img.dataUrl}" alt="${img.name}">
+                            </div>
+                            <div class="file-meta-row">
+                                <div class="file-info-col">
+                                    <div class="file-title" title="${img.name}">${img.name}</div>
+                                    <div class="file-sub">${img.width} × ${img.height} px</div>
+                                </div>
+                                <div class="reorder-btns">
+                                    <button type="button" class="mini-btn" ${idx === 0 ? 'disabled' : ''} onclick="window.moveImgToPdf(${idx}, -1)">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                    </button>
+                                    <button type="button" class="mini-btn" ${idx === loadedImagesForPdf.length - 1 ? 'disabled' : ''} onclick="window.moveImgToPdf(${idx}, 1)">
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                else if (activeSourceSubMode === 'word') {
+                    if (!loadedWordReady) {
+                        toPdfEmptyDropzone.style.display = 'block';
+                        btnClearToPdf.style.display = 'none';
+                        btnGeneratePdfFromAny.disabled = true;
+                        toPdfCountPill.textContent = 'Sin documento';
+                        return;
+                    }
+                    toPdfDocPreviewCard.style.display = 'flex';
+                    btnClearToPdf.style.display = 'inline-flex';
+                    btnGeneratePdfFromAny.disabled = false;
+                }
+
+                else if (activeSourceSubMode === 'pptx') {
+                    if (!loadedPptxReady) {
+                        toPdfEmptyDropzone.style.display = 'block';
+                        btnClearToPdf.style.display = 'none';
+                        btnGeneratePdfFromAny.disabled = true;
+                        toPdfCountPill.textContent = 'Sin presentación';
+                        return;
+                    }
+                    toPdfDocPreviewCard.style.display = 'flex';
+                    btnClearToPdf.style.display = 'inline-flex';
+                    btnGeneratePdfFromAny.disabled = false;
+                }
+
+                else if (activeSourceSubMode === 'excel') {
+                    if (!loadedExcelWorkbook) {
+                        toPdfEmptyDropzone.style.display = 'block';
+                        btnClearToPdf.style.display = 'none';
+                        btnGeneratePdfFromAny.disabled = true;
+                        toPdfCountPill.textContent = 'Sin tabla';
+                        return;
+                    }
+                    toPdfDocPreviewCard.style.display = 'flex';
+                    btnClearToPdf.style.display = 'inline-flex';
+                    btnGeneratePdfFromAny.disabled = false;
+                    const firstSheet = loadedExcelWorkbook.SheetNames[0];
+                    document.getElementById('loadedDocName').textContent = `${loadedExcelWorkbook._fileName} (${loadedExcelWorkbook.SheetNames.length} hoja[s])`;
+                    document.getElementById('loadedDocTypePill').textContent = `Hoja: ${firstSheet}`;
+                    toPdfDocPreviewBody.innerHTML = '<div class="excel-table-container">' + XLSX.utils.sheet_to_html(loadedExcelWorkbook.Sheets[firstSheet]) + '<' + '/div>';
+                    toPdfCountPill.textContent = `${loadedExcelWorkbook.SheetNames.length} hoja(s)`;
+                }
+            }
+
+            window.removeImgToPdf = (idx) => {
+                loadedImagesForPdf.splice(idx, 1);
+                refreshToPdfView();
+            };
+
+            window.moveImgToPdf = (idx, dir) => {
+                const target = idx + dir;
+                if (target < 0 || target >= loadedImagesForPdf.length) return;
+                const [moved] = loadedImagesForPdf.splice(idx, 1);
+                loadedImagesForPdf.splice(target, 0, moved);
+                refreshToPdfView();
+            };
+
+            btnClearToPdf.addEventListener('click', () => {
+                if (activeSourceSubMode === 'images') loadedImagesForPdf = [];
+                if (activeSourceSubMode === 'word') { loadedWordReady = false; toPdfDocPreviewBody.innerHTML = ''; }
+                if (activeSourceSubMode === 'pptx') { loadedPptxReady = false; toPdfDocPreviewBody.innerHTML = ''; }
+                if (activeSourceSubMode === 'excel') { loadedExcelWorkbook = null; toPdfDocPreviewBody.innerHTML = ''; }
+                refreshToPdfView();
+                showToast("Mesa de conversión vaciada");
+            });
+
+            function resolvePdfPageDimensions(nativeWMm, nativeHMm) {
+                const sizeChoice = document.getElementById('globalPdfPageSize').value;
+                const orientChoice = document.getElementById('globalPdfOrientation').value;
+                const extraMargin = parseFloat(document.getElementById('globalPdfMargin').value) || 0;
+
+                const PRESET_MM = {
+                    letter: [215.9, 279.4],
+                    a4: [210, 297],
+                    legal: [215.9, 355.6],
+                    wide169: [254, 142.88],
+                    std43: [254, 190.5]
+                };
+
+                let w = nativeWMm;
+                let h = nativeHMm;
+
+                if (sizeChoice !== 'default' && PRESET_MM[sizeChoice]) {
+                    [w, h] = PRESET_MM[sizeChoice];
+                }
+
+                let finalOrient = w > h ? 'l' : 'p';
+                if (orientChoice === 'p') {
+                    finalOrient = 'p';
+                    if (w > h) [w, h] = [h, w];
+                } else if (orientChoice === 'l') {
+                    finalOrient = 'l';
+                    if (h > w) [w, h] = [h, w];
+                } else if (sizeChoice !== 'default') {
+                    const nativeIsLandscape = nativeWMm > nativeHMm;
+                    if (nativeIsLandscape && h > w) {
+                        [w, h] = [h, w];
+                        finalOrient = 'l';
+                    } else if (!nativeIsLandscape && w > h) {
+                        [w, h] = [h, w];
+                        finalOrient = 'p';
+                    }
+                }
+
+                return { pageW: w, pageH: h, orient: finalOrient, margin: extraMargin };
+            }
+
+            // =========================================================
+            // EXPORTACIÓN DE ALTA FIDELIDAD A PDF
+            // =========================================================
+            btnGeneratePdfFromAny.addEventListener('click', async () => {
+                const { jsPDF } = window.jspdf;
+                const outBaseName = (document.getElementById('toPdfOutputName').value.trim() || 'Documento_Auro').replace(/\.pdf$/i, '');
+
+                btnGeneratePdfFromAny.disabled = true;
+                const origBtnHtml = btnGeneratePdfFromAny.innerHTML;
+                btnGeneratePdfFromAny.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando PDF 1:1...';
+
+                toPdfProgressBox.style.display = 'flex';
+                toPdfProgressBar.style.width = '0%';
+                toPdfProgressPercent.textContent = '0%';
+
+                const updateToPdfProgress = (curr, total, text) => {
+                    const pct = Math.min(100, Math.round((curr / total) * 100));
+                    toPdfStatusText.textContent = text;
+                    toPdfProgressBar.style.width = `${pct}%`;
+                    toPdfProgressPercent.textContent = `${pct}%`;
+                };
+
+                try {
+                    // --- 1. IMÁGENES A PDF ---
+                    if (activeSourceSubMode === 'images' && loadedImagesForPdf.length > 0) {
+                        const mergeAll = document.getElementById('imgPdfMergeAll').checked;
+
+                        const buildImagePdf = async (imagesList) => {
+                            let doc = null;
+                            for (let i = 0; i < imagesList.length; i++) {
+                                const imgObj = imagesList[i];
+                                const cleanDataUrl = await normalizeImageToJpgOrPng(imgObj.dataUrl);
+
+                                const nativeWMm = Math.max(20, (imgObj.width * 25.4) / 96);
+                                const nativeHMm = Math.max(20, (imgObj.height * 25.4) / 96);
+                                const layout = resolvePdfPageDimensions(nativeWMm, nativeHMm);
+
+                                if (i === 0) doc = new jsPDF({ orientation: layout.orient, unit: 'mm', format: [layout.pageW, layout.pageH] });
+                                else doc.addPage([layout.pageW, layout.pageH], layout.orient);
+
+                                const availW = layout.pageW - (layout.margin * 2);
+                                const availH = layout.pageH - (layout.margin * 2);
+                                const ratio = Math.min(availW / nativeWMm, availH / nativeHMm);
+                                const drawW = nativeWMm * ratio;
+                                const drawH = nativeHMm * ratio;
+
+                                doc.addImage(cleanDataUrl, 'JPEG', (layout.pageW - drawW) / 2, (layout.pageH - drawH) / 2, drawW, drawH);
+                                updateToPdfProgress(i + 1, imagesList.length, `Maquetando imagen ${i + 1} de ${imagesList.length}`);
+                            }
+                            return doc.output('blob');
+                        };
+
+                        if (mergeAll || loadedImagesForPdf.length === 1) {
+                            const pdfBlob = await buildImagePdf(loadedImagesForPdf);
+                            saveAs(pdfBlob, `${outBaseName}.pdf`);
+                            showToast("¡PDF de imágenes descargado!");
+                        } else {
+                            const zip = new JSZip();
+                            for (const imgObj of loadedImagesForPdf) {
+                                const singleBlob = await buildImagePdf([imgObj]);
+                                zip.file(`${imgObj.name.replace(/\.[^/.]+$/, '')}.pdf`, singleBlob);
+                            }
+                            const zipBlob = await zip.generateAsync({ type: 'blob' });
+                            saveAs(zipBlob, `${outBaseName}_Individuales.zip`);
+                            showToast("¡ZIP con PDFs individuales descargado!");
+                        }
+                    }
+
+                    // --- 2. WORD (.DOCX) FIEL 1:1 A PDF ---
+                    else if (activeSourceSubMode === 'word' && loadedWordReady) {
+                        const scaleQual = parseFloat(document.getElementById('wordRenderQuality').value) || 2;
+                        const pages = Array.from(toPdfDocPreviewBody.querySelectorAll('.word-export-page'));
+
+                        if (pages.length === 0) throw new Error("No hay hojas Word renderizadas");
+
+                        let doc = null;
+
+                        for (let i = 0; i < pages.length; i++) {
+                            const pageEl = pages[i];
+                            updateToPdfProgress(i + 1, pages.length, `Capturando página Word ${i + 1} de ${pages.length}...`);
+
+                            const canvas = await html2canvas(pageEl, {
+                                scale: scaleQual,
+                                useCORS: true,
+                                allowTaint: true,
+                                backgroundColor: '#ffffff',
+                                logging: false
+                            });
+
+                            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                            const nativeWMm = (pageEl.offsetWidth * 25.4) / 96;
+                            const nativeHMm = (pageEl.offsetHeight * 25.4) / 96;
+                            const layout = resolvePdfPageDimensions(nativeWMm, nativeHMm);
+
+                            if (i === 0) {
+                                doc = new jsPDF({ orientation: layout.orient, unit: 'mm', format: [layout.pageW, layout.pageH] });
+                            } else {
+                                doc.addPage([layout.pageW, layout.pageH], layout.orient);
+                            }
+
+                            const availW = layout.pageW - (layout.margin * 2);
+                            const availH = layout.pageH - (layout.margin * 2);
+                            const ratio = Math.min(availW / nativeWMm, availH / nativeHMm);
+                            const drawW = nativeWMm * ratio;
+                            const drawH = nativeHMm * ratio;
+
+                            doc.addImage(imgData, 'JPEG', (layout.pageW - drawW) / 2, (layout.pageH - drawH) / 2, drawW, drawH);
+                        }
+
+                        saveAs(doc.output('blob'), `${outBaseName}.pdf`);
+                        showToast("¡Word convertido a PDF respetando cada página!");
+                    }
+
+                    // --- 3. POWERPOINT (.PPTX) A PDF FIEL 1:1 ---
+                    else if (activeSourceSubMode === 'pptx' && loadedPptxReady) {
+                        const scaleQual = parseFloat(document.getElementById('pptxPdfScale').value) || 2;
+                        const slideEls = Array.from(toPdfDocPreviewBody.querySelectorAll('.pptx-export-target'));
+
+                        if (slideEls.length === 0) throw new Error("No hay diapositivas para exportar");
+
+                        const nativeWMm = 254;
+                        const nativeHMm = +(nativeWMm / loadedPptxAspectRatio).toFixed(2);
+                        const layout = resolvePdfPageDimensions(nativeWMm, nativeHMm);
+
+                        const doc = new jsPDF({ orientation: layout.orient, unit: 'mm', format: [layout.pageW, layout.pageH] });
+
+                        for (let i = 0; i < slideEls.length; i++) {
+                            const slideEl = slideEls[i];
+                            updateToPdfProgress(i + 1, slideEls.length, `Renderizando diapositiva ${i + 1} de ${slideEls.length}...`);
+
+                            await waitForPptxFonts(slideEl);
+
+                            const canvas = await html2canvas(slideEl, {
+                                scale: Math.max(2, scaleQual),
+                                useCORS: true,
+                                allowTaint: true,
+                                backgroundColor: null,
+                                imageTimeout: 0,
+                                logging: false,
+                                removeContainer: true
+                            });
+
+                            if (i > 0) doc.addPage([layout.pageW, layout.pageH], layout.orient);
+
+                            const availW = layout.pageW - (layout.margin * 2);
+                            const availH = layout.pageH - (layout.margin * 2);
+                            const ratio = Math.min(availW / nativeWMm, availH / nativeHMm);
+                            const drawW = nativeWMm * ratio;
+                            const drawH = nativeHMm * ratio;
+
+                            doc.addImage(
+                                canvas.toDataURL('image/png'),
+                                'PNG',
+                                (layout.pageW - drawW) / 2,
+                                (layout.pageH - drawH) / 2,
+                                drawW,
+                                drawH,
+                                undefined,
+                                'FAST'
+                            );
+                        }
+
+                        saveAs(doc.output('blob'), `${outBaseName}.pdf`);
+                        showToast("¡Presentación PowerPoint convertida a PDF 1:1!");
+                    }
+
+                    // --- 4. EXCEL / CSV A PDF ---
+                    else if (activeSourceSubMode === 'excel' && loadedExcelWorkbook) {
+                        const theme = document.getElementById('excelPdfTheme').value;
+                        const allSheets = document.getElementById('excelAllSheets').checked;
+
+                        const layout = resolvePdfPageDimensions(297, 210);
+                        const doc = new jsPDF({ orientation: layout.orient, unit: 'mm', format: [layout.pageW, layout.pageH] });
+                        const sheetsToProcess = allSheets ? loadedExcelWorkbook.SheetNames : [loadedExcelWorkbook.SheetNames[0]];
+
+                        const headColor = theme === 'auro' ? [111, 138, 60] : (theme === 'dark' ? [45, 55, 72] : [226, 232, 240]);
+                        const headText = theme === 'grid' ? [45, 55, 72] : [255, 255, 255];
+
+                        sheetsToProcess.forEach((sheetName, idx) => {
+                            if (idx > 0) doc.addPage([layout.pageW, layout.pageH], layout.orient);
+                            updateToPdfProgress(idx + 1, sheetsToProcess.length, `Maquetando hoja ${sheetName}...`);
+
+                            const sheet = loadedExcelWorkbook.Sheets[sheetName];
+                            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+
+                            doc.setFont("helvetica", "bold");
+                            doc.setFontSize(12);
+                            doc.setTextColor(111, 138, 60);
+                            doc.text(`Hoja: ${sheetName}`, 14, 15);
+
+                            if (rows.length > 0) {
+                                const headers = [rows[0].map(String)];
+                                const body = rows.slice(1).map(r => r.map(String));
+
+                                doc.autoTable({
+                                    startY: 20,
+                                    head: headers,
+                                    body: body,
+                                    theme: theme === 'grid' ? 'grid' : 'striped',
+                                    headStyles: {
+                                        fillColor: headColor,
+                                        textColor: headText,
+                                        fontStyle: 'bold',
+                                        fontSize: 8.5
+                                    },
+                                    styles: {
+                                        fontSize: 8,
+                                        cellPadding: 2.5
+                                    }
+                                });
+                            }
+                        });
+
+                        saveAs(doc.output('blob'), `${outBaseName}.pdf`);
+                        showToast("¡Tabla Excel exportada a PDF vectorial!");
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                    showToast("Error al generar el PDF");
+                } finally {
+                    btnGeneratePdfFromAny.disabled = false;
+                    btnGeneratePdfFromAny.innerHTML = origBtnHtml;
+                    setTimeout(() => toPdfProgressBox.style.display = 'none', 1500);
+                }
+            });
+
+            function normalizeImageToJpgOrPng(dataUrl) {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const c = document.createElement('canvas');
+                        c.width = img.naturalWidth || 1000;
+                        c.height = img.naturalHeight || 1000;
+                        const ctx = c.getContext('2d');
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.fillRect(0, 0, c.width, c.height);
+                        ctx.drawImage(img, 0, 0, c.width, c.height);
+                        resolve(c.toDataURL('image/jpeg', 0.95));
+                    };
+                    img.src = dataUrl;
+                });
+            }
+
+        });
+    </script>
 </body>
 
 </html>

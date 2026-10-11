@@ -1,260 +1,253 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Referencias al DOM (Sincronizadas con index_8.html)
     const dragDropArea = document.getElementById('dragDropArea');
     const inputImage = document.getElementById('inputImage');
     const imagePreviewPages = document.getElementById('imagePreviewPages');
+
     const convertFormatSelect = document.getElementById('convertFormatSelect');
     const resolutionSelect = document.getElementById('resolutionSelect');
-    const colorProfileSelect = document.getElementById('colorProfileSelect');
+
     const convertBtn = document.getElementById('convertBtn');
+    const btnClearUi = document.getElementById('btnClearUi');
     const statusDiv = document.getElementById('status');
+
+    // Barras de Progreso
     const loadingProgressContainer = document.getElementById('loadingProgressContainer');
     const loadingProgressBar = document.getElementById('loadingProgressBar');
     const loadingProgressText = document.getElementById('loadingProgressText');
+
     const progressContainer = document.getElementById('progressContainer');
     const progressBar = document.getElementById('progressBar');
     const progressText = document.getElementById('progressText');
-    const addMoreContainer = document.getElementById('addMoreContainer');
-
-    const pdf2jpgContainer = document.querySelector('.pdf2jpg-container');
 
     let loadedFiles = [];
     let convertedImages = [];
 
-    // Estado inicial
-    pdf2jpgContainer.style.display = 'none';
-    convertBtn.style.display = 'none';
-    convertBtn.dataset.mode = 'convert';
-    convertBtn.textContent = 'Convertir';
-
-    // Drag & Drop
+    // ==========================================
+    // 1. DRAG & DROP Y SELECCIÓN DE ARCHIVOS
+    // ==========================================
     dragDropArea.addEventListener('dragover', (e) => {
         e.preventDefault();
-        dragDropArea.classList.add('dragover');
-        statusDiv.textContent = 'Suelta tus imágenes aquí.';
+        dragDropArea.style.borderColor = "var(--primary)";
+        dragDropArea.style.background = "rgba(111, 138, 60, 0.12)";
     });
 
     dragDropArea.addEventListener('dragleave', () => {
-        dragDropArea.classList.remove('dragover');
-        statusDiv.textContent = '';
+        dragDropArea.style.borderColor = "var(--border)";
+        dragDropArea.style.background = "var(--primary-light)";
     });
 
     dragDropArea.addEventListener('drop', (e) => {
         e.preventDefault();
-        dragDropArea.classList.remove('dragover');
-        statusDiv.textContent = '';
+        dragDropArea.style.borderColor = "var(--border)";
+        dragDropArea.style.background = "var(--primary-light)";
         handleFiles(e.dataTransfer.files);
     });
 
-    // Input file
     inputImage.addEventListener('change', (e) => {
         handleFiles(e.target.files);
+        inputImage.value = ''; // Resetear input
     });
 
-    // Add más
-    addMoreContainer.addEventListener('click', () => {
-        inputImage.click();
-    });
-
-    // Función para manejar archivos
+    // ==========================================
+    // 2. LECTURA Y RENDERIZADO DE MINIATURAS
+    // ==========================================
     function handleFiles(files) {
-        if (files.length === 0) {
-            finishLoading();
-            return;
-        }
+        const validFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+        if (validFiles.length === 0) return;
 
-        // Mostrar progreso
-        loadingProgressContainer.style.display = 'block';
-        loadingProgressText.style.display = 'block';
-        loadingProgressText.textContent = 'Cargando imágenes...';
+        // Mostrar barra de carga
+        dragDropArea.style.display = 'none';
+        imagePreviewPages.style.display = 'none';
+        loadingProgressContainer.style.display = 'flex';
         loadingProgressBar.style.width = '0%';
+        loadingProgressText.textContent = '0%';
 
         let loadedCount = 0;
-        const totalFiles = files.length;
+        const totalFiles = validFiles.length;
 
-        Array.from(files).forEach((file) => {
-            if (!file.type.startsWith('image/')) {
-                console.warn(`Skipping non-image file: ${file.name}`);
-                loadedCount++;
-                if (loadedCount === totalFiles) {
-                    finishLoading();
-                }
-                return;
-            }
-
-            loadedFiles.push(file);
+        validFiles.forEach((file) => {
             const reader = new FileReader();
             reader.onload = (e) => {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.alt = `Preview of ${file.name}`;
-                img.title = `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
-
-                const imgContainer = document.createElement('div');
-                imgContainer.classList.add('image-preview-item');
-                imgContainer.appendChild(img);
-
-                const fileTypeSpan = document.createElement('span');
-                fileTypeSpan.textContent = `Tipo: ${file.type.split('/')[1].toUpperCase()}`;
-                fileTypeSpan.classList.add('file-type-display');
-                imgContainer.appendChild(fileTypeSpan);
-
-                imagePreviewPages.appendChild(imgContainer);
+                loadedFiles.push({
+                    file: file,
+                    dataUrl: e.target.result
+                });
 
                 loadedCount++;
-                loadingProgressBar.style.width = `${(loadedCount / totalFiles) * 100}%`;
+                const pct = Math.round((loadedCount / totalFiles) * 100);
+                loadingProgressBar.style.width = `${pct}%`;
+                loadingProgressText.textContent = `${pct}%`;
 
                 if (loadedCount === totalFiles) {
-                    finishLoading();
+                    setTimeout(() => {
+                        renderPreviewGrid();
+                        finishLoading();
+                    }, 400);
                 }
             };
             reader.readAsDataURL(file);
         });
     }
 
+    // Función global para eliminar una imagen individual de la cuadrícula
+    window.removeImageItem = (index) => {
+        loadedFiles.splice(index, 1);
+        renderPreviewGrid();
+    };
+
+    function renderPreviewGrid() {
+        imagePreviewPages.innerHTML = '';
+
+        if (loadedFiles.length === 0) {
+            finishLoading();
+            return;
+        }
+
+        loadedFiles.forEach((fileObj, idx) => {
+            const ext = fileObj.file.type.split('/')[1]?.toUpperCase() || 'IMG';
+
+            const imgContainer = document.createElement('div');
+            imgContainer.className = 'image-preview-item';
+            imgContainer.innerHTML = `
+                <button type="button" class="card-remove-btn" onclick="window.removeImageItem(${idx})" style="position: absolute; top: 4px; right: 4px; z-index: 10; background: var(--danger); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <img src="${fileObj.dataUrl}" alt="Preview" title="${fileObj.file.name}">
+                <span class="file-type-display">${ext} • ${(fileObj.file.size / 1024).toFixed(1)} KB</span>
+            `;
+            imagePreviewPages.appendChild(imgContainer);
+        });
+    }
+
     function finishLoading() {
         loadingProgressContainer.style.display = 'none';
-        loadingProgressText.style.display = 'none';
         progressContainer.style.display = 'none';
-        progressText.style.display = 'none';
 
         if (loadedFiles.length > 0) {
             dragDropArea.style.display = 'none';
-            pdf2jpgContainer.style.display = 'flex';
-            convertBtn.style.display = 'block';
+            imagePreviewPages.style.display = 'grid'; // Asegurar display: grid
+            if (btnClearUi) btnClearUi.style.display = 'inline-flex';
+
+            convertBtn.style.display = 'inline-flex';
             convertBtn.dataset.mode = 'convert';
-            convertBtn.textContent = 'Convertir';
+            convertBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Convertir Imágenes';
             convertBtn.disabled = false;
-            statusDiv.textContent = `${loadedFiles.length} imagen(es) cargada(s) y lista(s) para convertir.`;
+
+            statusDiv.textContent = `${loadedFiles.length} imagen(es) lista(s).`;
+            statusDiv.style.display = 'block';
         } else {
-            dragDropArea.style.display = 'block';
-            pdf2jpgContainer.style.display = 'none';
-            imagePreviewPages.innerHTML = '';
-            loadedFiles = [];
+            dragDropArea.style.display = 'flex';
+            imagePreviewPages.style.display = 'none';
+            if (btnClearUi) btnClearUi.style.display = 'none';
+
             convertBtn.style.display = 'none';
             convertBtn.dataset.mode = 'convert';
-            convertBtn.textContent = 'Convertir';
             convertBtn.disabled = false;
-            statusDiv.textContent = 'Arrastra y suelta tus imágenes aquí, o haz click para seleccionar archivos.';
+            statusDiv.style.display = 'none';
         }
     }
 
-    // Botón convertir / descargar
+    // ==========================================
+    // 3. MOTOR DE CONVERSIÓN Y DESCARGA
+    // ==========================================
     convertBtn.addEventListener('click', async () => {
+
+        // --- MODO: CONVERTIR ---
         if (convertBtn.dataset.mode === 'convert') {
-            // Inicio conversión
-            if (loadedFiles.length === 0) {
-                alert('Por favor, carga al menos una imagen primero.');
-                finishLoading();
-                return;
-            }
+            if (loadedFiles.length === 0) return;
 
             convertBtn.disabled = true;
-            convertBtn.textContent = 'Convirtiendo...';
+            convertBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
             convertedImages = [];
 
-            progressContainer.style.display = 'block';
-            progressText.style.display = 'block';
-            progressText.textContent = 'Iniciando conversión...';
+            progressContainer.style.display = 'flex';
+            progressText.textContent = '0%';
             progressBar.style.width = '0%';
+            statusDiv.textContent = 'Convirtiendo...';
 
             const targetFormat = convertFormatSelect.value;
             const targetResolution = parseInt(resolutionSelect.value);
-            const colorProfile = colorProfileSelect.value; // 'rgb' o 'cmyk'
 
             let processedCount = 0;
             const totalImages = loadedFiles.length;
 
-            for (const file of loadedFiles) {
+            for (const fileObj of loadedFiles) {
                 await new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = async (e) => {
-                        const img = new Image();
-                        img.onload = async () => {
-                            if (img.width === 0 || img.height === 0) {
-                                console.error(`Error: La imagen '${file.name}' cargó con dimensiones cero. Saltando.`);
-                                processedCount++;
-                                progressBar.style.width = `${(processedCount / totalImages) * 100}%`;
-                                progressText.textContent = `Convirtiendo ${processedCount} de ${totalImages} imágenes...`;
-                                resolve();
-                                return;
-                            }
-
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
-
-                            const dpiScale = targetResolution / 96;
-                            canvas.width = img.width * dpiScale;
-                            canvas.height = img.height * dpiScale;
-
-                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                            const originalFilename = file.name.split('.').slice(0, -1).join('.');
-                            const targetOutputName = originalFilename + '.' + targetFormat;
-
-                            const mimeTypeMap = {
-                                'jpeg': 'image/jpeg',
-                                'png': 'image/png',
-                                'webp': 'image/webp',
-                                'avif': 'image/avif',
-                                'bmp': 'image/bmp',
-                                'tiff': 'image/tiff',
-                                'heic': 'image/heic',
-                                'ico': 'image/x-icon'
-                            };
-                            const outputMimeType = mimeTypeMap[targetFormat] || 'image/png';
-                            const quality = (targetFormat === 'jpeg' || targetFormat === 'webp') ? 0.9 : 1.0;
-
-                            let dataUrl;
-                            try {
-                                dataUrl = canvas.toDataURL(outputMimeType, quality);
-
-                                if (dataUrl && dataUrl.length > 'data:;base64,'.length) {
-                                    convertedImages.push({ name: targetOutputName, data: dataUrl });
-                                } else {
-                                    console.warn(`Advertencia: dataUrl vacío para '${file.name}', fallback a PNG.`);
-                                    dataUrl = canvas.toDataURL('image/png', 1.0);
-                                    if (dataUrl && dataUrl.length > 'data:;base64,'.length) {
-                                        convertedImages.push({ name: originalFilename + '.png', data: dataUrl });
-                                    }
-                                }
-                            } catch (error) {
-                                console.error(`Error al convertir '${file.name}':`, error);
-                                dataUrl = canvas.toDataURL('image/png', 1.0);
-                                if (dataUrl && dataUrl.length > 'data:;base64,'.length) {
-                                    convertedImages.push({ name: originalFilename + '.png', data: dataUrl });
-                                }
-                            }
-
+                    const img = new Image();
+                    img.onload = async () => {
+                        if (img.width === 0 || img.height === 0) {
                             processedCount++;
-                            progressBar.style.width = `${(processedCount / totalImages) * 100}%`;
-                            progressText.textContent = `Convirtiendo ${processedCount} de ${totalImages} imágenes...`;
                             resolve();
+                            return;
+                        }
+
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+
+                        // Ajuste por DPI
+                        const dpiScale = targetResolution / 96;
+                        canvas.width = img.width * dpiScale;
+                        canvas.height = img.height * dpiScale;
+
+                        // Fondo blanco forzado para formatos que no soportan transparencia (JPEG, BMP)
+                        if (['jpeg', 'bmp', 'avif'].includes(targetFormat)) {
+                            ctx.fillStyle = '#FFFFFF';
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        }
+
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        const originalFilename = fileObj.file.name.split('.').slice(0, -1).join('.');
+                        const targetOutputName = originalFilename + '.' + targetFormat;
+
+                        const mimeTypeMap = {
+                            'jpeg': 'image/jpeg',
+                            'png': 'image/png',
+                            'webp': 'image/webp',
+                            'avif': 'image/avif',
+                            'bmp': 'image/bmp',
+                            'tiff': 'image/tiff',
+                            'heic': 'image/heic',
+                            'ico': 'image/x-icon'
                         };
-                        img.src = e.target.result;
+                        const outputMimeType = mimeTypeMap[targetFormat] || 'image/png';
+                        const quality = (targetFormat === 'jpeg' || targetFormat === 'webp') ? 0.95 : 1.0;
+
+                        try {
+                            const dataUrl = canvas.toDataURL(outputMimeType, quality);
+                            convertedImages.push({ name: targetOutputName, data: dataUrl });
+                        } catch (error) {
+                            // Fallback a PNG si el navegador no soporta el formato elegido (ej. TIFF o HEIC nativo)
+                            const fbDataUrl = canvas.toDataURL('image/png', 1.0);
+                            convertedImages.push({ name: originalFilename + '.png', data: fbDataUrl });
+                        }
+
+                        processedCount++;
+                        const pct = Math.round((processedCount / totalImages) * 100);
+                        progressBar.style.width = `${pct}%`;
+                        progressText.textContent = `${pct}%`;
+                        resolve();
                     };
-                    reader.readAsDataURL(file);
+                    img.onerror = resolve;
+                    img.src = fileObj.dataUrl;
                 });
             }
 
-            // Finalizar
-            progressText.textContent = 'Conversión completa.';
+            // UI al finalizar la conversión
+            statusDiv.textContent = '¡Conversión completa!';
             convertBtn.disabled = false;
-            convertBtn.textContent = 'Descargar';
+            convertBtn.innerHTML = '<i class="fa-solid fa-download"></i> Descargar Archivos';
             convertBtn.dataset.mode = 'download';
-            statusDiv.textContent = `¡${convertedImages.length} imagen(es) lista(s) para descargar!`;
-        } else if (convertBtn.dataset.mode === 'download') {
-            // Descargar
-            if (convertedImages.length === 0) {
-                alert('No hay imágenes para descargar.');
-                if (loadedFiles.length > 0) {
-                    convertBtn.dataset.mode = 'convert';
-                    convertBtn.textContent = 'Convertir';
-                }
-                return;
-            }
+
+        }
+
+        // --- MODO: DESCARGAR ---
+        else if (convertBtn.dataset.mode === 'download') {
+            if (convertedImages.length === 0) return;
 
             if (convertedImages.length === 1) {
-                // Descargar directamente
+                // Descarga de archivo único
                 const image = convertedImages[0];
                 const a = document.createElement('a');
                 a.href = image.data;
@@ -262,27 +255,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-                statusDiv.textContent = 'Imagen descargada.';
-                progressContainer.style.display = 'none';
-                progressText.style.display = 'none';
+                statusDiv.textContent = 'Imagen descargada exitosamente.';
             } else {
-                // Crear ZIP
+                // Descarga Múltiple (Empaquetar en ZIP)
+                statusDiv.textContent = 'Empaquetando archivo ZIP...';
+                convertBtn.disabled = true;
+                convertBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creando ZIP...';
+
                 const zip = new JSZip();
                 convertedImages.forEach(image => {
                     const base64Data = image.data.split(',')[1];
                     zip.file(image.name, base64Data, { base64: true });
                 });
 
-                statusDiv.textContent = 'Creando archivo ZIP...';
-                progressContainer.style.display = 'block';
-                progressText.style.display = 'block';
-                progressBar.style.width = '0%';
-
                 zip.generateAsync({ type: 'blob' }, (metadata) => {
-                    progressBar.style.width = `${metadata.percent.toFixed(2)}%`;
-                    progressText.textContent = `Empaquetando: ${metadata.percent.toFixed(0)}%`;
+                    progressBar.style.width = `${metadata.percent}%`;
+                    progressText.textContent = `ZIP: ${metadata.percent.toFixed(0)}%`;
                 }).then((content) => {
-                    const zipFileName = `imagenes_convertidas_${Date.now()}.zip`;
+                    const zipFileName = `Auro_Imagenes_Convertidas.zip`;
                     const a = document.createElement('a');
                     a.href = URL.createObjectURL(content);
                     a.download = zipFileName;
@@ -290,14 +280,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     a.click();
                     document.body.removeChild(a);
                     URL.revokeObjectURL(a.href);
+
                     statusDiv.textContent = 'Archivo ZIP descargado.';
+                    convertBtn.disabled = false;
+                    convertBtn.innerHTML = '<i class="fa-solid fa-download"></i> Descargar de nuevo';
                     progressContainer.style.display = 'none';
-                    progressText.style.display = 'none';
-                }).catch(e => {
-                    console.error('Error al crear ZIP:', e);
-                    statusDiv.textContent = 'Error al crear ZIP.';
-                    progressContainer.style.display = 'none';
-                    progressText.style.display = 'none';
                 });
             }
         }

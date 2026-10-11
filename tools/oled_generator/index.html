@@ -1,0 +1,1946 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OLED Animator PRO | Eduardo Workspace</title>
+    <link rel="icon" href="data:,">
+
+    <!-- PRE-CARGA INMEDIATA DEL TEMA EN CACHÉ -->
+    <script>
+        (function () {
+            try {
+                const cachedTheme = localStorage.getItem('eduardo_workspace_theme') ||
+                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                if (cachedTheme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) { }
+        })();
+    </script>
+
+    <!-- Librerías requeridas -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================
+           VARIABLES (MODO CLARO)
+           ========================================= */
+        :root {
+            --primary: #6F8A3C;
+            --primary-hover: #58702f;
+            --primary-light: #f2f5eb;
+            --border-focus: #6F8A3C;
+
+            --bg-color: #f4f6f4;
+            --surface: #ffffff;
+            --toolbar-bg: #fafbfa;
+            --input-bg: #ffffff;
+            --banner-bg: rgba(255, 255, 255, 0.95);
+            --banner-border: rgba(255, 255, 255, 0.6);
+
+            --mat-bg: #e9ece9;
+            --mat-dot: #cbd5e0;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --danger: #e53e3e;
+
+            --switch-bg: #e2e8f0;
+            --switch-knob: #ffffff;
+
+            --oled-screen: #000000;
+            --oled-pixel: #00e5ff;
+
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        /* =========================================
+           VARIABLES MODO OSCURO
+           ========================================= */
+        [data-theme="dark"] {
+            --primary: #84a348;
+            --primary-hover: #96b559;
+            --primary-light: rgba(132, 163, 72, 0.16);
+            --border-focus: #84a348;
+
+            --bg-color: #0f1419;
+            --surface: #182026;
+            --toolbar-bg: #141b20;
+            --input-bg: #11171c;
+            --banner-bg: rgba(24, 32, 38, 0.92);
+            --banner-border: rgba(255, 255, 255, 0.07);
+
+            --mat-bg: #12181d;
+            --mat-dot: #26323d;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #283540;
+            --danger: #fc8181;
+
+            --switch-bg: #283540;
+            --switch-knob: #84a348;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        html,
+        body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            padding: 14px 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 8px;
+        }
+
+        [data-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        /* HEADER Y SWITCHES */
+        .theme-switch {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            width: 60px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .switch-slider {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: var(--switch-bg);
+            border-radius: 50px;
+            border: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7px;
+        }
+
+        .switch-slider .icon-sun {
+            color: #f59e0b;
+            font-size: 12px;
+            z-index: 1;
+        }
+
+        .switch-slider .icon-moon {
+            color: #94a3b8;
+            font-size: 12px;
+            z-index: 1;
+        }
+
+        [data-theme="dark"] .switch-slider .icon-moon {
+            color: #ffffff;
+        }
+
+        .switch-knob {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 23px;
+            height: 23px;
+            background-color: var(--switch-knob);
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            z-index: 2;
+        }
+
+        .theme-switch input:checked+.switch-slider .switch-knob {
+            transform: translateX(27px);
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--banner-bg);
+            backdrop-filter: blur(10px);
+            padding: 11px 22px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--banner-border);
+            margin-bottom: 14px;
+            flex-shrink: 0;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-pill-btn {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.82rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 13px;
+            border-radius: var(--radius-sm);
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-pill-btn:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .header-title h1 {
+            color: var(--primary);
+            font-size: 1.16rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-top: 2px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* LAYOUT PRINCIPAL */
+        .pdf-main-workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .tool-section {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 16px;
+            min-height: 0;
+        }
+
+        /* PANELES */
+        .panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-panel {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* PESTAÑAS PRINCIPALES */
+        .main-tabs-header {
+            display: flex;
+            background: var(--toolbar-bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .main-tab {
+            flex: 1;
+            text-align: center;
+            padding: 14px 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .main-tab:hover {
+            color: var(--text-main);
+            background: var(--bg-color);
+        }
+
+        .main-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: var(--surface);
+        }
+
+        .view-content {
+            display: none;
+            flex: 1;
+            min-height: 0;
+            flex-direction: column;
+        }
+
+        .view-content.active {
+            display: flex;
+        }
+
+        /* ================= VISTA 1: GALERÍA ================= */
+        .gallery-toolbar {
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .gallery-tabs {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            flex: 1;
+        }
+
+        .gallery-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .cat-pill {
+            padding: 6px 14px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            background: var(--input-bg);
+            white-space: nowrap;
+        }
+
+        .cat-pill.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .search-area {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .search-area input {
+            flex: 1;
+            padding: 8px 15px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text-main);
+            outline: none;
+            font-size: 0.8rem;
+        }
+
+        .search-area input:focus {
+            border-color: var(--primary);
+        }
+
+        .gallery-grid {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
+            align-content: start;
+            background-color: var(--mat-bg);
+        }
+
+        .preview-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            height: 110px;
+        }
+
+        .preview-card:hover,
+        .preview-card.active {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .preview-display {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-color: var(--oled-screen);
+            border-bottom: 1px solid var(--border);
+            padding: 5px;
+        }
+
+        .thumb-canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            image-rendering: pixelated;
+        }
+
+        .preview-label {
+            padding: 8px;
+            text-align: center;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface);
+            height: 36px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ================= VISTA 2: DIBUJAR Y ANIMAR ================= */
+        .draw-workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--mat-bg);
+            background-image: linear-gradient(rgba(111, 138, 60, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(111, 138, 60, 0.07) 1px, transparent 1px), radial-gradient(var(--mat-dot) 1px, transparent 1px);
+            background-size: 100px 100px, 100px 100px, 20px 20px;
+            padding: 20px;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .draw-toolbar {
+            display: flex;
+            gap: 8px;
+            background: var(--surface);
+            padding: 8px 12px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tool-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .tool-btn:hover {
+            color: var(--text-main);
+            border-color: var(--text-muted);
+        }
+
+        .tool-btn.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .tool-btn.danger {
+            color: var(--danger);
+        }
+
+        .tool-btn.danger:hover {
+            background: #fee2e2;
+            border-color: var(--danger);
+        }
+
+        .canvas-box-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 15px;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            max-width: 100%;
+        }
+
+        .oled-screen-container-main {
+            background: var(--oled-screen);
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid #283540;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: crosshair;
+            overflow: hidden;
+        }
+
+        #mainCanvas {
+            image-rendering: pixelated;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        /* Timeline de Fotogramas */
+        .timeline-container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .frame-box {
+            position: relative;
+            width: 64px;
+            height: 32px;
+            background: var(--oled-screen);
+            border: 2px solid #283540;
+            border-radius: 4px;
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .frame-box.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .frame-box canvas {
+            width: 100%;
+            height: 100%;
+            image-rendering: pixelated;
+            object-fit: contain;
+        }
+
+        .frame-num {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            font-size: 0.6rem;
+            font-weight: bold;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .frame-delete {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--danger);
+            color: #fff;
+            font-size: 0.55rem;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            border: none;
+            cursor: pointer;
+        }
+
+        .frame-box:hover .frame-delete {
+            display: flex;
+        }
+
+        .add-frame-btn {
+            width: 40px;
+            height: 32px;
+            border: 2px dashed var(--border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-muted);
+            flex-shrink: 0;
+            background: var(--input-bg);
+        }
+
+        .add-frame-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* ================= VISTA 3: IMPORTAR ================= */
+        .import-workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--mat-bg);
+            background-image: linear-gradient(rgba(111, 138, 60, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(111, 138, 60, 0.07) 1px, transparent 1px), radial-gradient(var(--mat-dot) 1px, transparent 1px);
+            background-size: 100px 100px, 100px 100px, 20px 20px;
+            padding: 40px 20px;
+            align-items: center;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .empty-dropzone {
+            max-width: 500px;
+            width: 100%;
+            background: var(--surface);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-xl);
+            padding: 40px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .empty-dropzone:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .dropzone-icon-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 16px auto;
+        }
+
+        /* Contenedor de Previsualización en Tiempo Real (Importar) */
+        .import-preview-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            max-width: 500px;
+            background: var(--surface);
+            padding: 25px;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .import-preview-canvas {
+            image-rendering: pixelated;
+            width: 100%;
+            max-width: 384px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .import-options {
+            max-width: 500px;
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .slider-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+        }
+
+        /* PANEL DERECHO: VISUALIZADOR Y CÓDIGO */
+        .sidebar-header {
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            background: var(--toolbar-bg);
+            border-top-left-radius: var(--radius-xl);
+            border-top-right-radius: var(--radius-xl);
+        }
+
+        .sidebar-header h2 {
+            font-size: 0.94rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-header h2 i {
+            color: var(--primary);
+        }
+
+        .sidebar-body {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .wiring-svg-container {
+            width: 100%;
+            background: var(--mat-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        #wiringSvg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .preview-controls {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .config-section {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sidebar-heading {
+            font-size: 0.73rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 5px;
+        }
+
+        .modern-select {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text-main);
+            outline: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .modern-select:focus {
+            border-color: var(--primary);
+        }
+
+        .setting-toggle {
+            position: relative;
+            display: inline-block;
+            width: 38px;
+            height: 22px;
+            margin-left: 10px;
+        }
+
+        .setting-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .setting-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--switch-bg);
+            border-radius: 34px;
+            transition: .3s;
+        }
+
+        .setting-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: .3s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .setting-toggle input:checked+.setting-slider {
+            background-color: var(--primary);
+        }
+
+        .setting-toggle input:checked+.setting-slider:before {
+            transform: translateX(16px);
+        }
+
+        .modern-input-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--input-bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 7px 11px;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .modern-input-group label.text-label {
+            font-size: 0.75rem;
+            color: var(--text-main);
+            font-weight: 600;
+            white-space: nowrap;
+            flex: 1;
+        }
+
+        .platform-files-count {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-family: monospace;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .code-container {
+            flex: 1 1 200px;
+            display: flex;
+            flex-direction: column;
+            min-height: 150px;
+            background: #0d1117;
+            border-radius: var(--radius-md);
+            border: 1px solid #30363d;
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: #161b22;
+            padding: 6px 12px;
+            font-size: 0.7rem;
+            color: #8b949e;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .code-output {
+            flex: 1;
+            padding: 12px;
+            margin: 0;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: #56d364;
+            line-height: 1.4;
+            white-space: pre-wrap;
+        }
+
+        .code-output::-webkit-scrollbar-thumb {
+            background: #30363d;
+        }
+
+        .sidebar-footer {
+            padding: 13px 16px;
+            border-top: 1px solid var(--border);
+            background: var(--toolbar-bg);
+            flex-shrink: 0;
+            border-bottom-left-radius: var(--radius-xl);
+            border-bottom-right-radius: var(--radius-xl);
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 11px 16px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.83rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(111, 138, 60, 0.24);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-icon {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: var(--radius-sm);
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex: 1;
+            transition: var(--transition);
+        }
+
+        .btn-icon:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-danger {
+            color: #e53e3e;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+        }
+
+        .btn-danger:hover {
+            background: #fee2e2;
+            color: #dc2626;
+            border-color: #ef4444;
+        }
+
+        @media (max-width: 960px) {
+
+            html,
+            body {
+                height: auto;
+                overflow: auto;
+            }
+
+            .tool-section {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar-panel {
+                min-height: 600px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- CABECERA -->
+        <header class="app-header">
+            <div class="header-left">
+                <a href="../../index.html" class="nav-pill-btn"><i class="fas fa-arrow-left"></i> Portal</a>
+                <div class="header-title">
+                    <h1><i class="fas fa-microchip"></i> <span>OLED Animator PRO</span></h1>
+                    <p>Diseña, anima y exporta código C++ para pantallas OLED.</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <label class="theme-switch" title="Cambiar tema">
+                    <input type="checkbox" id="themeToggleCheckbox">
+                    <span class="switch-slider"><i class="fas fa-sun icon-sun"></i><i
+                            class="fas fa-moon icon-moon"></i><span class="switch-knob"></span></span>
+                </label>
+            </div>
+        </header>
+
+        <main class="pdf-main-workspace">
+            <section class="tool-section">
+                <!-- PANEL IZQUIERDO: TABS Y ESPACIO DE TRABAJO -->
+                <div class="panel">
+                    <div class="main-tabs-header">
+                        <div class="main-tab active" data-target="view-gallery"><i class="fas fa-layer-group"></i>
+                            Galería</div>
+                        <div class="main-tab" data-target="view-draw"><i class="fas fa-pencil"></i> Dibujar & Animar
+                        </div>
+                        <div class="main-tab" data-target="view-import"><i class="fas fa-file-import"></i> Importar
+                        </div>
+                    </div>
+
+                    <!-- VISTA 1: GALERÍA -->
+                    <div class="view-content active" id="view-gallery">
+                        <div class="gallery-toolbar">
+                            <div class="gallery-tabs" id="catTabs">
+                                <div class="cat-pill active" data-filter="all">Todas</div>
+                                <div class="cat-pill" data-filter="UI">UI & Sistema</div>
+                                <div class="cat-pill" data-filter="Weather">Clima</div>
+                                <div class="cat-pill" data-filter="Loaders">Carga</div>
+                            </div>
+                            <div class="search-area">
+                                <input type="text" id="searchTpl" placeholder="Buscar animación...">
+                                <input type="text" id="tplTextInputBig" placeholder="Texto (ej. OLED)" value="OLED"
+                                    style="width: 130px; flex: none;">
+                            </div>
+                        </div>
+                        <div class="gallery-grid" id="templateList">
+                            <div
+                                style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 20px;">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Inicializando Motor OLED...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VISTA 2: DIBUJAR Y ANIMAR -->
+                    <div class="view-content" id="view-draw">
+                        <div class="draw-workspace">
+                            <div class="draw-toolbar">
+                                <button class="tool-btn active" id="btnToolPencil" title="Lápiz"><i
+                                        class="fas fa-pen"></i></button>
+                                <button class="tool-btn" id="btnToolEraser" title="Borrador"><i
+                                        class="fas fa-eraser"></i></button>
+                                <button class="tool-btn" id="btnToolFill" title="Rellenar"><i
+                                        class="fas fa-fill-drip"></i></button>
+                                <div style="width: 1px; background: var(--border); margin: 0 5px;"></div>
+                                <button class="tool-btn danger" id="btnToolClear" title="Limpiar Frame"><i
+                                        class="fas fa-trash-can"></i></button>
+                            </div>
+
+                            <div class="canvas-box-wrapper">
+                                <div class="oled-screen-container-main">
+                                    <canvas id="mainCanvas"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Línea de tiempo -->
+                            <div class="timeline-container" id="timelineContainer">
+                                <div class="add-frame-btn" id="btnAddFrame" title="Añadir Fotograma">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VISTA 3: IMPORTAR -->
+                    <div class="view-content" id="view-import">
+                        <div class="import-workspace">
+                            <input type="file" id="importFileInput" accept="image/png, image/jpeg, image/gif, video/mp4"
+                                style="display:none;" />
+
+                            <!-- Área de Drop inicial -->
+                            <label for="importFileInput" class="empty-dropzone" id="importDropzone">
+                                <div class="dropzone-icon-circle"><i class="fas fa-image"></i></div>
+                                <h3 style="color: var(--text-main); margin-bottom: 5px;">Sube una Imagen o GIF</h3>
+                                <p style="color: var(--text-muted); font-size: 0.85rem;">Formatos soportados: PNG, JPG,
+                                    GIF. Se convertirá automáticamente a 1-bit según tu resolución.</p>
+                                <div class="btn-action btn-primary"
+                                    style="margin-top: 15px; width: auto; padding: 8px 20px;">Examinar Archivo</div>
+                            </label>
+
+                            <!-- Previsualización en Tiempo Real -->
+                            <div class="import-preview-container" id="importPreviewContainer">
+                                <h3 style="font-size:0.9rem; margin-bottom: 10px;"><i class="fas fa-eye"></i> Vista
+                                    Previa de Importación</h3>
+                                <div class="oled-screen-container-main" style="margin-bottom: 15px;">
+                                    <canvas id="importPreviewCanvas" class="import-preview-canvas"></canvas>
+                                </div>
+                                <div style="display:flex; gap:10px; width:100%;">
+                                    <button id="btnCancelImport" class="btn-action btn-danger"><i
+                                            class="fas fa-times"></i> Cancelar</button>
+                                    <button id="btnConfirmImport" class="btn-action btn-primary"><i
+                                            class="fas fa-check"></i> Importar al Lienzo</button>
+                                </div>
+                            </div>
+
+                            <div class="import-options">
+                                <div class="slider-group">
+                                    <label><span>Umbral (Threshold)</span> <span id="lblThreshold">128</span></label>
+                                    <input type="range" id="rngThreshold" min="1" max="254" value="128">
+                                </div>
+                                <div class="modern-input-group" style="margin-top: 5px;">
+                                    <label class="text-label">Tramado (Dithering) <br><span
+                                            class="platform-files-count">Mejores gradientes</span></label>
+                                    <label class="setting-toggle">
+                                        <input type="checkbox" id="chkDither">
+                                        <span class="setting-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="modern-input-group">
+                                    <label class="text-label">Invertir Colores <br><span
+                                            class="platform-files-count">Fondo negro / Dibujo blanco</span></label>
+                                    <label class="setting-toggle">
+                                        <input type="checkbox" id="chkInvert">
+                                        <span class="setting-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL DERECHO: VISUALIZADOR Y CÓDIGO -->
+                <aside class="sidebar-panel">
+                    <div class="sidebar-header">
+                        <h2><i class="fas fa-tv"></i> Previsualización y Configuración</h2>
+                    </div>
+
+                    <div class="sidebar-body">
+
+                        <!-- SECCIÓN DE CONEXIÓN CON SVG INCRUSTADO -->
+                        <div class="config-section">
+                            <h3 class="sidebar-heading"><i class="fa-solid fa-plug"></i> Conexión (Wiring)</h3>
+
+                            <div class="wiring-svg-container" id="wiringSvgContainer">
+                                <svg id="wiringSvg" viewBox="0 0 500 280">
+                                    <!-- ... SVG definitions y diseño ... -->
+                                    <defs>
+                                        <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" stop-color="#f1f5f9"></stop>
+                                            <stop offset="50%" stop-color="#cbd5e1"></stop>
+                                            <stop offset="100%" stop-color="#64748b"></stop>
+                                        </linearGradient>
+                                    </defs>
+                                    <g id="wiringSvgWires">
+                                        <path d="M 115 200 C 219 235, 271 45, 375 70" class="wire-path wire-gnd"
+                                            stroke-width="2.5" stroke="#475569" fill="none"></path>
+                                        <path d="M 100 200 C 218 215, 277 60, 395 70" class="wire-path wire-vcc"
+                                            stroke-width="2.5" stroke="#ef4444" fill="none"></path>
+                                        <path d="M 195 200 C 263 185, 347 65, 415 70" class="wire-path wire-scl"
+                                            stroke-width="2.5" stroke="#f59e0b" fill="none"></path>
+                                        <path d="M 180 200 C 252 165, 363 50, 435 70" class="wire-path wire-sda"
+                                            stroke-width="2.5" stroke="#06b6d4" fill="none"></path>
+                                    </g>
+                                    <g id="wiringSvgBoard" transform="translate(0,0)">
+                                        <rect x="40" y="70" width="190" height="130" rx="10" fill="#1d4ed8"
+                                            stroke="#1e3a8a" stroke-width="2"></rect>
+                                        <rect x="44" y="74" width="182" height="122" rx="7" fill="none"
+                                            stroke="rgba(255,255,255,0.15)" stroke-width="1.5"></rect>
+                                        <rect x="18" y="110" width="22" height="36" rx="3" fill="url(#metalGrad)"
+                                            stroke="#64748b" stroke-width="1.5"></rect>
+                                        <rect x="22" y="115" width="8" height="26" fill="#1e293b" rx="1"></rect>
+                                        <rect x="35" y="160" width="30" height="22" rx="2" fill="#1e293b"></rect>
+                                        <circle cx="50" cy="171" r="5" fill="#0f172a"></circle>
+                                        <rect x="90" y="115" width="90" height="24" rx="2" fill="#0f172a"
+                                            stroke="#334155" stroke-width="1"></rect>
+                                        <line x1="95" y1="111" x2="95" y2="115" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="95" y1="139" x2="95" y2="143" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="105" y1="111" x2="105" y2="115" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="105" y1="139" x2="105" y2="143" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="115" y1="111" x2="115" y2="115" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="115" y1="139" x2="115" y2="143" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="125" y1="111" x2="125" y2="115" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="125" y1="139" x2="125" y2="143" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="135" y1="111" x2="135" y2="115" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="135" y1="139" x2="135" y2="143" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="145" y1="111" x2="145" y2="115" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="145" y1="139" x2="145" y2="143" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="155" y1="111" x2="155" y2="115" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="155" y1="139" x2="155" y2="143" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="165" y1="111" x2="165" y2="115" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="165" y1="139" x2="165" y2="143" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="175" y1="111" x2="175" y2="115" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <line x1="175" y1="139" x2="175" y2="143" stroke="#cbd5e1" stroke-width="1">
+                                        </line>
+                                        <text x="135" y="130" font-family="'JetBrains Mono', monospace" font-size="7"
+                                            fill="#64748b" text-anchor="middle" font-weight="bold">ATMEGA328P</text>
+                                        <rect x="55" y="72" width="165" height="8" fill="#0f172a" rx="1"></rect>
+                                        <rect x="65" y="190" width="145" height="8" fill="#0f172a" rx="1"></rect>
+                                        <circle cx="100" cy="194" r="3.5" fill="#ef4444"></circle>
+                                        <circle cx="115" cy="194" r="3.5" fill="#475569"></circle>
+                                        <circle cx="180" cy="194" r="3.5" fill="#06b6d4"></circle>
+                                        <circle cx="195" cy="194" r="3.5" fill="#f59e0b"></circle>
+                                        <text x="100" y="186" font-family="sans-serif" font-size="7" fill="#fca5a5"
+                                            text-anchor="middle" font-weight="bold">5V</text>
+                                        <text x="115" y="186" font-family="sans-serif" font-size="7" fill="#cbd5e1"
+                                            text-anchor="middle" font-weight="bold">GND</text>
+                                        <text x="180" y="186" font-family="sans-serif" font-size="7" fill="#cffafe"
+                                            text-anchor="middle" font-weight="bold">A4</text>
+                                        <text x="195" y="186" font-family="sans-serif" font-size="7" fill="#fef3c7"
+                                            text-anchor="middle" font-weight="bold">A5</text>
+                                        <text x="135" y="93" font-family="sans-serif" font-size="10" fill="#fff"
+                                            text-anchor="middle" font-weight="bold" opacity="0.9">ARDUINO UNO</text>
+                                    </g>
+                                    <g id="wiringSvgOled" transform="translate(0,0)">
+                                        <rect x="350" y="80" width="115" height="115" rx="6" fill="#1e3a8a"
+                                            stroke="#1d4ed8" stroke-width="1.8"></rect>
+                                        <rect x="353" y="83" width="109" height="109" rx="4" fill="none"
+                                            stroke="rgba(255,255,255,0.12)" stroke-width="1"></rect>
+                                        <circle cx="375" cy="80" r="3.5" fill="#c8a84b"></circle>
+                                        <rect x="373" y="68" width="4" height="12" fill="#c8a84b"></rect>
+                                        <circle cx="395" cy="80" r="3.5" fill="#c8a84b"></circle>
+                                        <rect x="393" y="68" width="4" height="12" fill="#c8a84b"></rect>
+                                        <circle cx="415" cy="80" r="3.5" fill="#c8a84b"></circle>
+                                        <rect x="413" y="68" width="4" height="12" fill="#c8a84b"></rect>
+                                        <circle cx="435" cy="80" r="3.5" fill="#c8a84b"></circle>
+                                        <rect x="433" y="68" width="4" height="12" fill="#c8a84b"></rect>
+                                        <text x="375" y="93" font-family="sans-serif" font-size="6" fill="#cbd5e1"
+                                            text-anchor="middle" font-weight="bold">GND</text>
+                                        <text x="395" y="93" font-family="sans-serif" font-size="6" fill="#fca5a5"
+                                            text-anchor="middle" font-weight="bold">VCC</text>
+                                        <text x="415" y="93" font-family="sans-serif" font-size="6" fill="#fef3c7"
+                                            text-anchor="middle" font-weight="bold">SCL</text>
+                                        <text x="435" y="93" font-family="sans-serif" font-size="6" fill="#cffafe"
+                                            text-anchor="middle" font-weight="bold">SDA</text>
+                                        <rect x="358" y="105" width="99" height="78" rx="4" fill="#000"
+                                            stroke="rgba(255,255,255,0.1)" stroke-width="1"></rect>
+                                        <circle cx="375" cy="70" r="3.5" fill="#475569"></circle>
+                                        <circle cx="395" cy="70" r="3.5" fill="#ef4444"></circle>
+                                        <circle cx="415" cy="70" r="3.5" fill="#f59e0b"></circle>
+                                        <circle cx="435" cy="70" r="3.5" fill="#06b6d4"></circle>
+
+                                        <!-- CANVAS PREVIA INCRUSTADO EN SVG -->
+                                        <foreignObject x="363" y="112" width="89" height="52">
+                                            <canvas id="previewCanvas"
+                                                style="width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; background: #000; border-radius: 2px; box-shadow: inset 0 0 6px rgba(255,255,255,0.1);"></canvas>
+                                        </foreignObject>
+                                        <text id="svgDisplayLabel" x="407" y="177" font-family="sans-serif"
+                                            font-size="6.5" fill="rgba(255,255,255,0.4)" text-anchor="middle"
+                                            letter-spacing="0.05em">0.96" 128×64 SSD1306</text>
+                                    </g>
+                                </svg>
+                            </div>
+
+                            <div class="preview-controls">
+                                <button id="btnPlay" class="btn-icon"><i class="fa-solid fa-play"></i>
+                                    Reproducir</button>
+                                <button id="btnStop" class="btn-icon btn-danger"><i class="fa-solid fa-stop"></i>
+                                    Detener</button>
+                            </div>
+                        </div>
+
+                        <!-- AJUSTES DE TRANSFORMACIÓN Y ESCALA -->
+                        <div class="config-section">
+                            <h3 class="sidebar-heading"><i class="fa-solid fa-expand"></i> Transformación</h3>
+                            <div class="slider-group">
+                                <label><span>Escala (Resolución)</span> <span id="lblScale">100%</span></label>
+                                <input type="range" id="rngScale" min="10" max="200" value="100" step="5">
+                                <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px;">Menos del 100%
+                                    agrupa píxeles (pierde resolución), más del 100% hace zoom in.</p>
+                            </div>
+                        </div>
+
+                        <!-- AJUSTES DE EXPORTACIÓN Y PANTALLA -->
+                        <div class="config-section">
+                            <h3 class="sidebar-heading"><i class="fa-solid fa-microchip"></i> Configuración Placa</h3>
+                            <div>
+                                <label style="font-size: 0.65rem; font-weight: 600; color: var(--text-muted);">Tamaño de
+                                    Pantalla</label>
+                                <select id="selDisplay" class="modern-select">
+                                    <option value="128x64-ssd1306" data-w="128" data-h="64">0.96" 128×64 SSD1306
+                                    </option>
+                                    <option value="128x32-ssd1306" data-w="128" data-h="32">0.91" 128×32 SSD1306
+                                    </option>
+                                    <option value="72x40-ssd1306" data-w="72" data-h="40">0.42" 72×40 SSD1306/SSD1315
+                                    </option>
+                                    <option value="64x48-ssd1306" data-w="64" data-h="48">0.66" 64×48 SSD1306</option>
+                                    <option value="96x16-ssd1306" data-w="96" data-h="16">0.69" 96×16 SSD1306</option>
+                                    <option value="128x64-sh1106" data-w="128" data-h="64">1.3" 128×64 SH1106</option>
+                                    <option value="128x64-ssd1309" data-w="128" data-h="64">1.54" 128×64 SSD1309
+                                    </option>
+                                </select>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <div style="flex:1;">
+                                    <label
+                                        style="font-size: 0.65rem; font-weight: 600; color: var(--text-muted);">Placa</label>
+                                    <select id="selBoard" class="modern-select">
+                                        <option value="arduino-uno">Arduino Uno</option>
+                                        <option value="esp32">ESP32 DevKit</option>
+                                        <option value="esp8266">ESP8266</option>
+                                    </select>
+                                </div>
+                                <div style="flex:1;">
+                                    <label
+                                        style="font-size: 0.65rem; font-weight: 600; color: var(--text-muted);">Librería</label>
+                                    <select id="selLib" class="modern-select">
+                                        <option value="adafruit">Adafruit</option>
+                                        <option value="u8g2">U8g2</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SALIDA DE CÓDIGO -->
+                        <div class="code-container">
+                            <div class="code-header">
+                                <span><i class="fa-solid fa-file-code"></i> sketch.ino</span>
+                                <button id="btnCopyCode"
+                                    style="background:none; border:none; color:#8b949e; cursor:pointer;"
+                                    title="Copiar"><i class="fa-regular fa-copy"></i></button>
+                            </div>
+                            <pre class="code-output" id="codeOutput">// Selecciona una plantilla, dibuja o importa
+// luego presiona "Generar Código C++"</pre>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-footer">
+                        <button id="btnGenerate" class="btn-action btn-primary">
+                            <i class="fa-solid fa-code"></i> Generar Código C++
+                        </button>
+                    </div>
+                </aside>
+            </section>
+        </main>
+    </div>
+
+    <!-- CARGA DE SCRIPTS JS DESDE LA CARPETA js/ -->
+    <script>
+        window.addEventListener('error', function (e) {
+            if (e.target && e.target.tagName === 'SCRIPT') {
+                console.error("⚠️ Falló la carga del script:", e.target.src, "Verifica que la carpeta 'js/' exista al lado de este HTML.");
+            }
+        }, true);
+    </script>
+    <script src="js/fonts.js"></script>
+    <script src="js/omggif.js"></script>
+    <script src="js/converter.js"></script>
+    <script src="js/qrcode.min.js"></script>
+    <script src="js/qr.js"></script>
+    <script src="js/codegen.js"></script>
+    <script src="js/canvas.js"></script>
+    <script src="js/templates.js"></script>
+    <script src="js/templates2.js"></script>
+
+    <script>
+        // ==========================================
+        // GESTIÓN DEL TEMA OSCURO
+        // ==========================================
+        const THEME_KEY = "eduardo_workspace_theme";
+        function syncThemeUI(theme, persist = true) {
+            const isDark = theme === "dark";
+            if (isDark) document.documentElement.setAttribute("data-theme", "dark");
+            else document.documentElement.removeAttribute("data-theme");
+
+            const toggle = document.getElementById("themeToggleCheckbox");
+            if (toggle) toggle.checked = isDark;
+            if (persist) try { localStorage.setItem(THEME_KEY, isDark ? "dark" : "light"); } catch (e) { }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const saved = localStorage.getItem(THEME_KEY) || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+            syncThemeUI(saved, false);
+
+            const themeCheckbox = document.getElementById("themeToggleCheckbox");
+            if (themeCheckbox) {
+                themeCheckbox.addEventListener("change", (e) => {
+                    syncThemeUI(e.target.checked ? "dark" : "light", true);
+                });
+            }
+
+            // ==========================================
+            // NAVEGACIÓN POR PESTAÑAS PRINCIPALES
+            // ==========================================
+            const mainTabs = document.querySelectorAll('.main-tab');
+            const viewContents = document.querySelectorAll('.view-content');
+
+            mainTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    mainTabs.forEach(t => t.classList.remove('active'));
+                    viewContents.forEach(v => v.classList.remove('active'));
+
+                    tab.classList.add('active');
+                    document.getElementById(tab.getAttribute('data-target')).classList.add('active');
+
+                    // Si entra a dibujar, refresca timeline
+                    if (tab.getAttribute('data-target') === 'view-draw') {
+                        updateTimelineUI();
+                        oledEditor && oledEditor.render();
+                    }
+                });
+            });
+
+            // ==========================================
+            // NÚCLEO DE LA APLICACIÓN OLED
+            // ==========================================
+            const appState = {
+                displayW: 128,
+                displayH: 64,
+                scale: 4,
+                frames: [],
+                originalFrames: [], // Almacena la versión sin transformar para poder escalar
+                currentFrame: 0,
+                history: [],
+                historyIndex: -1,
+                isPlaying: false,
+                fps: 10,
+                tool: 'pencil',
+                color: 'blue'
+            };
+
+            const mainCanvas = document.getElementById("mainCanvas");
+            const previewCanvas = document.getElementById("previewCanvas"); // Dentro del SVG
+            const importPreviewCanvas = document.getElementById("importPreviewCanvas");
+            const codeOutput = document.getElementById("codeOutput");
+            let oledEditor = null;
+            let playInterval = null;
+
+            // Función auxiliar para miniaturas y previos
+            function renderFrameToThumb(canvas, frame) {
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, appState.displayW, appState.displayH);
+                ctx.fillStyle = '#00e5ff';
+                for (let y = 0; y < Math.min(appState.displayH, frame.length); y++) {
+                    for (let x = 0; x < Math.min(appState.displayW, frame[y].length); x++) {
+                        if (frame[y] && frame[y][x]) ctx.fillRect(x, y, 1, 1);
+                    }
+                }
+            }
+
+            // Clonar arreglos multidimensionales
+            function deepCloneFrames(frames) {
+                return frames.map(f => {
+                    const nf = window.createEmptyFrame(appState.displayW, appState.displayH);
+                    for (let y = 0; y < Math.min(appState.displayH, f.length); y++) {
+                        for (let x = 0; x < Math.min(appState.displayW, f[y].length); x++) nf[y][x] = f[y][x];
+                    }
+                    return nf;
+                });
+            }
+
+            // 1. Inicializar Lienzo
+            function initEditor() {
+                if (typeof window.OLEDCanvas !== 'function') {
+                    document.getElementById('templateList').innerHTML = `<div style="grid-column: 1/-1; padding:20px; color:#ef4444; background: var(--surface); border-radius: 8px; border: 1px solid #ef4444;"><b>Error Crítico:</b> No se encontró <code>js/canvas.js</code>. Verifica rutas.</div>`;
+                    return false;
+                }
+
+                // Fijar tamaños iniciales de Canvas
+                mainCanvas.width = appState.displayW; mainCanvas.height = appState.displayH;
+                mainCanvas.style.width = (appState.displayW * appState.scale) + 'px';
+                mainCanvas.style.height = (appState.displayH * appState.scale) + 'px';
+
+                previewCanvas.width = appState.displayW; previewCanvas.height = appState.displayH;
+                importPreviewCanvas.width = appState.displayW; importPreviewCanvas.height = appState.displayH;
+
+                if (appState.frames.length === 0) {
+                    appState.frames.push(window.createEmptyFrame(appState.displayW, appState.displayH));
+                    appState.originalFrames = deepCloneFrames(appState.frames);
+                }
+
+                appState.onDrawCommit = () => {
+                    updateTimelineThumb(appState.currentFrame);
+                    appState.originalFrames = deepCloneFrames(appState.frames); // Actualizar base original
+                };
+
+                oledEditor = new window.OLEDCanvas(mainCanvas, previewCanvas, appState);
+                oledEditor.render();
+                updateTimelineUI();
+                return true;
+            }
+
+            // 2. Cargar Plantillas a la Galería
+            function loadTemplates(searchQuery = "") {
+                const listEl = document.getElementById("templateList");
+                let templates = window.TEMPLATES || [];
+                if (templates.length === 0) return;
+
+                listEl.innerHTML = "";
+
+                const filtered = templates.filter(t => {
+                    return t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        (t.desc && t.desc.toLowerCase().includes(searchQuery.toLowerCase()));
+                });
+
+                filtered.forEach(tpl => {
+                    const card = document.createElement("div");
+                    card.className = "preview-card";
+                    card.innerHTML = `
+                        <div class="preview-display">
+                            <canvas width="${appState.displayW}" height="${appState.displayH}" class="thumb-canvas"></canvas>
+                        </div>
+                        <div class="preview-label">
+                            <span style="color: var(--primary);"><i class="fas fa-star"></i></span> ${tpl.name}
+                        </div>
+                    `;
+
+                    let tplFrames = [];
+                    try { tplFrames = tpl.gen(appState.displayW, appState.displayH); } catch (e) { }
+
+                    const thumbCanvas = card.querySelector('canvas');
+                    if (tplFrames.length > 0) renderFrameToThumb(thumbCanvas, tplFrames[0]);
+
+                    let hoverInterval, hIdx = 0;
+                    card.addEventListener('mouseenter', () => {
+                        if (tplFrames.length > 1) {
+                            hoverInterval = setInterval(() => {
+                                hIdx = (hIdx + 1) % tplFrames.length;
+                                renderFrameToThumb(thumbCanvas, tplFrames[hIdx]);
+                            }, 1000 / (tpl.fps || 10));
+                        }
+                    });
+                    card.addEventListener('mouseleave', () => {
+                        clearInterval(hoverInterval); hIdx = 0;
+                        if (tplFrames.length > 0) renderFrameToThumb(thumbCanvas, tplFrames[0]);
+                    });
+
+                    card.onclick = () => {
+                        document.querySelectorAll('.preview-card').forEach(c => c.style.borderColor = "var(--border)");
+                        card.style.borderColor = "var(--primary)";
+                        stopAnimation();
+                        if (tplFrames.length > 0) {
+                            appState.originalFrames = tplFrames.map(f => window.cloneFrame(f));
+                            appState.frames = deepCloneFrames(appState.originalFrames);
+                            appState.currentFrame = 0;
+                            appState.fps = tpl.fps || 10;
+                            document.getElementById('rngScale').value = 100;
+                            document.getElementById('lblScale').textContent = "100%";
+                            updateTimelineUI();
+                            oledEditor.render();
+                            playAnimation();
+                            codeOutput.textContent = "// Plantilla cargada. Lista para editar, escalar o exportar.";
+                        }
+                    };
+                    listEl.appendChild(card);
+                });
+            }
+
+            // ESCALADO / PIXELACIÓN
+            document.getElementById('rngScale').addEventListener('input', (e) => {
+                const scaleVal = e.target.value;
+                document.getElementById('lblScale').textContent = scaleVal + "%";
+                applyScaleToFrames(parseInt(scaleVal) / 100);
+            });
+
+            function applyScaleToFrames(scaleFactor) {
+                if (!appState.originalFrames || appState.originalFrames.length === 0) return;
+                const w = appState.displayW;
+                const h = appState.displayH;
+
+                appState.frames = appState.originalFrames.map(f => {
+                    const newF = window.createEmptyFrame(w, h);
+                    const scaledW = w * scaleFactor;
+                    const scaledH = h * scaleFactor;
+                    const offsetX = Math.floor((w - scaledW) / 2);
+                    const offsetY = Math.floor((h - scaledH) / 2);
+
+                    for (let y = 0; y < h; y++) {
+                        for (let x = 0; x < w; x++) {
+                            // Nearest neighbor hacia la textura original para hacer el efecto de pixel gigante al encoger
+                            if (x >= offsetX && x < offsetX + scaledW && y >= offsetY && y < offsetY + scaledH) {
+                                const origX = Math.floor((x - offsetX) / scaleFactor);
+                                const origY = Math.floor((y - offsetY) / scaleFactor);
+                                if (origY >= 0 && origY < h && origX >= 0 && origX < w) {
+                                    newF[y][x] = f[origY] && f[origY][origX] ? 1 : 0;
+                                }
+                            }
+                        }
+                    }
+                    return newF;
+                });
+                updateTimelineUI();
+                if (oledEditor) oledEditor.render();
+            }
+
+            // CAMBIO DE TAMAÑO DE PANTALLA
+            document.getElementById('selDisplay').addEventListener('change', (e) => {
+                const opt = e.target.options[e.target.selectedIndex];
+                const newW = parseInt(opt.getAttribute('data-w'));
+                const newH = parseInt(opt.getAttribute('data-h'));
+
+                appState.displayW = newW; appState.displayH = newH;
+                mainCanvas.width = newW; mainCanvas.height = newH;
+                mainCanvas.style.width = (newW * appState.scale) + 'px';
+                mainCanvas.style.height = (newH * appState.scale) + 'px';
+                previewCanvas.width = newW; previewCanvas.height = newH;
+                importPreviewCanvas.width = newW; importPreviewCanvas.height = newH;
+                document.getElementById('svgDisplayLabel').textContent = opt.text;
+
+                appState.frames = deepCloneFrames(appState.frames);
+                appState.originalFrames = deepCloneFrames(appState.originalFrames);
+
+                updateTimelineUI();
+                oledEditor.render();
+                loadTemplates(document.getElementById("searchTpl").value);
+            });
+
+            // 3. Sistema de TIMELINE
+            const timelineContainer = document.getElementById("timelineContainer");
+            const btnAddFrame = document.getElementById("btnAddFrame");
+
+            function updateTimelineThumb(idx) {
+                const boxes = timelineContainer.querySelectorAll('.frame-box');
+                if (boxes[idx] && appState.frames[idx]) {
+                    renderFrameToThumb(boxes[idx].querySelector('canvas'), appState.frames[idx]);
+                }
+            }
+
+            function updateTimelineUI() {
+                timelineContainer.querySelectorAll('.frame-box').forEach(b => b.remove());
+                appState.frames.forEach((frame, idx) => {
+                    const box = document.createElement("div");
+                    box.className = `frame-box ${idx === appState.currentFrame ? 'active' : ''}`;
+                    box.innerHTML = `
+                        <div class="frame-num">${idx + 1}</div>
+                        <canvas width="${appState.displayW}" height="${appState.displayH}"></canvas>
+                        ${appState.frames.length > 1 ? '<button class="frame-delete"><i class="fas fa-times"></i></button>' : ''}
+                    `;
+                    renderFrameToThumb(box.querySelector('canvas'), frame);
+
+                    box.addEventListener('click', (e) => {
+                        if (e.target.closest('.frame-delete')) return;
+                        appState.currentFrame = idx;
+                        updateTimelineUI();
+                        oledEditor.render();
+                    });
+
+                    const delBtn = box.querySelector('.frame-delete');
+                    if (delBtn) {
+                        delBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            appState.frames.splice(idx, 1);
+                            appState.originalFrames.splice(idx, 1);
+                            if (appState.currentFrame >= appState.frames.length) appState.currentFrame = appState.frames.length - 1;
+                            updateTimelineUI();
+                            oledEditor.render();
+                        });
+                    }
+                    timelineContainer.insertBefore(box, btnAddFrame);
+                });
+            }
+
+            btnAddFrame.addEventListener('click', () => {
+                const currentF = appState.frames[appState.currentFrame];
+                const currentOrig = appState.originalFrames[appState.currentFrame];
+                appState.frames.push(window.cloneFrame(currentF));
+                appState.originalFrames.push(window.cloneFrame(currentOrig));
+                appState.currentFrame = appState.frames.length - 1;
+                updateTimelineUI();
+                oledEditor.render();
+            });
+
+            // 4. Herramientas de Dibujo
+            const tools = { 'btnToolPencil': 'pencil', 'btnToolEraser': 'eraser', 'btnToolFill': 'fill' };
+            for (const [id, toolName] of Object.entries(tools)) {
+                document.getElementById(id).addEventListener('click', (e) => {
+                    Object.keys(tools).forEach(btnId => document.getElementById(btnId).classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    appState.tool = toolName;
+                });
+            }
+
+            document.getElementById('btnToolClear').addEventListener('click', () => {
+                if (oledEditor) { oledEditor.clearFrame(); updateTimelineThumb(appState.currentFrame); appState.originalFrames[appState.currentFrame] = window.cloneFrame(appState.frames[appState.currentFrame]); }
+            });
+
+            // 5. IMPORTACIÓN EN TIEMPO REAL
+            const importInput = document.getElementById('importFileInput');
+            const dropzone = document.getElementById('importDropzone');
+            const previewContainer = document.getElementById('importPreviewContainer');
+
+            let currentImportFile = null;
+            let currentPreviewFrames = [];
+            let previewAnimInterval = null;
+            let previewIdx = 0;
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+                dropzone.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); });
+            });
+            dropzone.addEventListener('dragover', () => dropzone.style.borderColor = 'var(--primary)');
+            dropzone.addEventListener('dragleave', () => dropzone.style.borderColor = 'var(--border)');
+            dropzone.addEventListener('drop', (e) => {
+                dropzone.style.borderColor = 'var(--border)';
+                if (e.dataTransfer.files.length) initRealtimeImport(e.dataTransfer.files[0]);
+            });
+            importInput.addEventListener('change', (e) => {
+                if (e.target.files.length) initRealtimeImport(e.target.files[0]);
+            });
+
+            document.getElementById('rngThreshold').addEventListener('input', e => {
+                document.getElementById('lblThreshold').textContent = e.target.value;
+                if (currentImportFile) processImportFrame();
+            });
+            document.getElementById('chkDither').addEventListener('change', () => { if (currentImportFile) processImportFrame(); });
+            document.getElementById('chkInvert').addEventListener('change', () => { if (currentImportFile) processImportFrame(); });
+
+            document.getElementById('btnCancelImport').addEventListener('click', () => {
+                currentImportFile = null;
+                clearInterval(previewAnimInterval);
+                previewContainer.style.display = 'none';
+                dropzone.style.display = 'block';
+                importInput.value = '';
+            });
+
+            document.getElementById('btnConfirmImport').addEventListener('click', () => {
+                if (currentPreviewFrames.length > 0) {
+                    appState.originalFrames = currentPreviewFrames.map(f => window.cloneFrame(f));
+                    appState.frames = deepCloneFrames(appState.originalFrames);
+                    appState.currentFrame = 0;
+                    document.getElementById('rngScale').value = 100;
+                    document.getElementById('lblScale').textContent = "100%";
+                    document.querySelector('[data-target="view-draw"]').click();
+                    updateTimelineUI();
+                    oledEditor.render();
+                    codeOutput.textContent = "// Importación completada. Listo para editar, escalar o generar código.";
+
+                    document.getElementById('btnCancelImport').click(); // Limpia estado visual
+                }
+            });
+
+            function initRealtimeImport(file) {
+                if (!window.loadImageFile) { alert("El convertidor no está cargado."); return; }
+                currentImportFile = file;
+                dropzone.style.display = 'none';
+                previewContainer.style.display = 'flex';
+                processImportFrame();
+            }
+
+            async function processImportFrame() {
+                if (!currentImportFile) return;
+                const threshold = parseInt(document.getElementById('rngThreshold').value);
+                const dither = document.getElementById('chkDither').checked;
+                const invert = document.getElementById('chkInvert').checked;
+                const options = { threshold, dither, invert, fit: 'contain' };
+
+                try {
+                    clearInterval(previewAnimInterval);
+                    if (currentImportFile.name.toLowerCase().endsWith('.gif') && window.loadGifFile) {
+                        currentPreviewFrames = await window.loadGifFile(currentImportFile, appState.displayW, appState.displayH, options);
+                        if (currentPreviewFrames.length > 1) {
+                            previewAnimInterval = setInterval(() => {
+                                previewIdx = (previewIdx + 1) % currentPreviewFrames.length;
+                                renderFrameToThumb(importPreviewCanvas, currentPreviewFrames[previewIdx]);
+                            }, 100);
+                        } else {
+                            renderFrameToThumb(importPreviewCanvas, currentPreviewFrames[0]);
+                        }
+                    } else {
+                        const frame = await window.loadImageFile(currentImportFile, appState.displayW, appState.displayH, options);
+                        currentPreviewFrames = [frame];
+                        renderFrameToThumb(importPreviewCanvas, currentPreviewFrames[0]);
+                    }
+                } catch (e) {
+                    console.error(e);
+                    document.getElementById('btnCancelImport').click();
+                    alert("Error al procesar el archivo. Formato no soportado.");
+                }
+            }
+
+            // 6. Reproducción
+            function playAnimation() {
+                if (appState.frames.length <= 1) return;
+                appState.isPlaying = true;
+                clearInterval(playInterval);
+                playInterval = setInterval(() => {
+                    appState.currentFrame = (appState.currentFrame + 1) % appState.frames.length;
+                    oledEditor.render();
+                    const boxes = timelineContainer.querySelectorAll('.frame-box');
+                    boxes.forEach(b => b.classList.remove('active'));
+                    if (boxes[appState.currentFrame]) boxes[appState.currentFrame].classList.add('active');
+                }, 1000 / appState.fps);
+            }
+
+            function stopAnimation() {
+                appState.isPlaying = false;
+                clearInterval(playInterval);
+                oledEditor.render();
+            }
+
+            document.getElementById("btnPlay").onclick = playAnimation;
+            document.getElementById("btnStop").onclick = stopAnimation;
+            document.getElementById("searchTpl").addEventListener("input", (e) => loadTemplates(e.target.value));
+
+            // 7. Generación de Código
+            document.getElementById("btnGenerate").onclick = () => {
+                if (appState.frames.length === 0 || !appState.frames[0]) {
+                    alert("El lienzo está vacío. Dibuja o importa algo primero.");
+                    return;
+                }
+
+                const config = {
+                    display: document.getElementById('selDisplay').value,
+                    board: document.getElementById('selBoard').value,
+                    library: document.getElementById('selLib').value,
+                    language: 'arduino',
+                    address: '0x3C',
+                    fps: appState.fps
+                };
+
+                try {
+                    if (typeof window.generateCode !== 'function') throw new Error("Dependencia codegen.js no activa.");
+                    const code = window.generateCode(appState.frames, config);
+                    codeOutput.textContent = code;
+                } catch (err) {
+                    codeOutput.textContent = "// Error al generar código:\n// " + err.message;
+                }
+            };
+
+            document.getElementById("btnCopyCode").onclick = () => {
+                navigator.clipboard.writeText(codeOutput.textContent).then(() => {
+                    const btn = document.getElementById("btnCopyCode");
+                    btn.innerHTML = `<i class="fa-solid fa-check" style="color:#56d364;"></i>`;
+                    setTimeout(() => btn.innerHTML = `<i class="fa-regular fa-copy"></i>`, 2000);
+                });
+            };
+
+            // Auto-arranque
+            setTimeout(() => { if (initEditor()) loadTemplates(); }, 300);
+        });
+    </script>
+</body>
+
+</html>
